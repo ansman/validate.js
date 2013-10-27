@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>validate.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>validate.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>Validate.js 0.0.1
+(c) 2013 Wrapp
+Validate.js may be freely distributed under the MIT license.
+For all details and documentation:
+<a href="https://github.com/wrapp/validate.js">https://github.com/wrapp/validate.js</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>(<span class="function"><span class="keyword">function</span><span class="params">(exports, module)</span> {</span>
+  <span class="string">"use strict"</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>The main function that calls the validators specified by the constraints.
+The options are the following:</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> validate = <span class="function"><span class="keyword">function</span><span class="params">(attributes, constraints, options)</span> {</span>
+    <span class="keyword">var</span> attr
+      , error
+      , validator
+      , validatorName
+      , validatorOptions
+      , value
+      , validators
+      , errors = {};
+
+    options = options || {};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Loops through each constraints, finds the correct validator and run it.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">for</span> (attr <span class="keyword">in</span> constraints) {
+      value = attributes[attr];
+      validators = v.result(constraints[attr], value, attributes, attr);
+
+      <span class="keyword">for</span> (validatorName <span class="keyword">in</span> validators) {
+        validator = v.validators[validatorName];
+
+        <span class="keyword">if</span> (!validator) {
+          error = v.format(<span class="string">"Unknown validator %{name}"</span>, {name: validatorName});
+          <span class="keyword">throw</span> <span class="keyword">new</span> Error(error);
+        }
+
+        validatorOptions = validators[validatorName];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>This allows the options to be a function. The function will be called
+with the value, attribute name and the complete dict of attribues.
+This is useful when you want to have different validations depending
+on the attribute value.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        validatorOptions = v.result(validatorOptions, value, attributes, attr);
+        <span class="keyword">if</span> (!validatorOptions) <span class="keyword">continue</span>;
+        error = validator.call(validator,
+                               value,
+                               validatorOptions,
+                               attr,
+                               attributes);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>The validator is allowed to return a string or an array.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">if</span> (v.isString(error)) error = [error];
+
+        <span class="keyword">if</span> (error &amp;&amp; error.length &gt; <span class="number">0</span>)
+          errors[attr] = (errors[attr] || []).concat(error);
+      }
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Return the errors if we have any</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">for</span> (attr <span class="keyword">in</span> errors) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Call fullMessages if the options is set</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (options.fullMessages !== <span class="literal">false</span>)
+        errors = v.fullMessages(errors, options);
+      <span class="keyword">return</span> errors;
+    }
+  };
+
+  <span class="keyword">var</span> v = validate
+    , root = <span class="keyword">this</span>
+    , XDate = root.XDate</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Finds %{key} style patterns in the given string</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    , FORMAT_REGEXP = <span class="regexp">/%\{([^\}]+)\}/g</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Copies over attributes from one or more sources to a single destination.
+Very much similar to underscore&#39;s extend.
+The first argument is the target object and the remaining arguments will be
+used as targets.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  v.extend = <span class="function"><span class="keyword">function</span><span class="params">(obj)</span> {</span>
+    <span class="keyword">var</span> i
+      , attr
+      , source
+      , sources = [].slice.call(arguments, <span class="number">1</span>);
+
+    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; sources.length; ++i) {
+      source = sources[i];
+      <span class="keyword">for</span> (attr <span class="keyword">in</span> source) obj[attr] = source[attr];
+    }
+    <span class="keyword">return</span> obj;
+  };
+
+  v.extend(validate, {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>If the given argument is a call: function the and: function return the value
+otherwise just return the value. Additional arguments will be passed as
+arguments to the function.
+Example:</p>
+<pre><code>result(&#39;foo&#39;) // &#39;foo&#39;
+result(Math.max, 1, 2) // 2</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    result: <span class="function"><span class="keyword">function</span><span class="params">(value)</span> {</span>
+      <span class="keyword">var</span> args = [].slice.call(arguments, <span class="number">1</span>);
+      <span class="keyword">if</span> (<span class="keyword">typeof</span> value === <span class="string">'function'</span>) value = value.apply(<span class="literal">null</span>, args);
+      <span class="keyword">return</span> value;
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Checks if the value is a number. This function does not consider NaN a
+number like many other <code>isNumber</code> functions do.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    isNumber: <span class="function"><span class="keyword">function</span><span class="params">(value)</span> {</span>
+      <span class="keyword">return</span> <span class="keyword">typeof</span> value === <span class="string">'number'</span> &amp;&amp; !isNaN(value);
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>A simple check to verify that the value is an integer. Uses <code>isNumber</code>
+and a simple modulo check.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    isInteger: <span class="function"><span class="keyword">function</span><span class="params">(value)</span> {</span>
+      <span class="keyword">return</span> v.isNumber(value) &amp;&amp; value % <span class="number">1</span> === <span class="number">0</span>;
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Uses the <code>Object</code> function to check if the given argument is an object.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    isObject: <span class="function"><span class="keyword">function</span><span class="params">(obj)</span> {</span>
+      <span class="keyword">return</span> obj === Object(obj);
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Returns false if the object is <code>null</code> of <code>undefined</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    isDefined: <span class="function"><span class="keyword">function</span><span class="params">(obj)</span> {</span>
+      <span class="keyword">return</span> obj !== <span class="literal">null</span> &amp;&amp; obj !== <span class="literal">undefined</span>;
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Formats the specified strings with the given values like so:</p>
+<pre><code>format(&quot;Foo: %{foo}&quot;, {foo: &quot;bar&quot;}) // &quot;Foo bar&quot;</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    format: <span class="function"><span class="keyword">function</span><span class="params">(str, vals)</span> {</span>
+      <span class="keyword">return</span> str.replace(FORMAT_REGEXP, <span class="function"><span class="keyword">function</span><span class="params">(m0, m1)</span> {</span>
+        <span class="keyword">return</span> String(vals[m1]);
+      });
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>&quot;Prettifies&quot; the given string.
+Prettifying means replacing - and _ with spaces as well as splitting
+camel case words.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    prettify: <span class="function"><span class="keyword">function</span><span class="params">(str)</span> {</span>
+      <span class="keyword">return</span> str</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Replaces - and _ with spaces</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        .replace(<span class="regexp">/[_\-]/g</span>, <span class="string">' '</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Splits camel cased words</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        .replace(<span class="regexp">/([a-z])([A-Z])/g</span>, <span class="function"><span class="keyword">function</span><span class="params">(m0, m1, m2)</span> {</span>
+          <span class="keyword">return</span> <span class="string">""</span> + m1 + <span class="string">" "</span> + m2.toLowerCase();
+        })
+        .toLowerCase();
+    },
+
+    isString: <span class="function"><span class="keyword">function</span><span class="params">(value)</span> {</span>
+      <span class="keyword">return</span> <span class="keyword">typeof</span> value === <span class="string">'string'</span>;
+    },
+
+    isArray: <span class="function"><span class="keyword">function</span><span class="params">(value)</span> {</span>
+      <span class="keyword">return</span> {}.toString.call(value) === <span class="string">'[object Array]'</span>;
+    },
+
+    contains: <span class="function"><span class="keyword">function</span><span class="params">(obj, value)</span> {</span>
+      <span class="keyword">var</span> i;
+      <span class="keyword">if</span> (!v.isDefined(obj)) <span class="keyword">return</span> <span class="literal">false</span>;
+      <span class="keyword">if</span> (v.isArray(obj)) {
+        <span class="keyword">if</span> (obj.indexOf(value)) <span class="keyword">return</span> obj.indexOf(value) !== -<span class="number">1</span>;
+        <span class="keyword">for</span> (i = obj.length - <span class="number">1</span>; i &gt;= <span class="number">0</span>; --i) {
+          <span class="keyword">if</span> (obj[i] === value) <span class="keyword">return</span> <span class="literal">true</span>;
+        }
+        <span class="keyword">return</span> <span class="literal">false</span>;
+      }
+      <span class="keyword">return</span> value <span class="keyword">in</span> obj;
+    },
+
+    capitalize: <span class="function"><span class="keyword">function</span><span class="params">(str)</span> {</span>
+      <span class="keyword">if</span> (!str) <span class="keyword">return</span> str;
+      <span class="keyword">return</span> str[<span class="number">0</span>].toUpperCase() + str.slice(<span class="number">1</span>);
+    },
+
+    fullMessages: <span class="function"><span class="keyword">function</span><span class="params">(errors, options)</span> {</span>
+      options = options || {};
+
+      <span class="keyword">var</span> ret = options.flatten ? [] : {}
+        , attr
+        , i
+        , error;
+
+      <span class="keyword">if</span> (!errors) <span class="keyword">return</span> ret;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>Converts the errors of object of the format
+{attr: [<error>, <error>, ...]} to contain the attribute name.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">for</span> (attr <span class="keyword">in</span> errors) {
+        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; errors[attr].length; ++i) {
+          error = errors[attr][i];
+          <span class="keyword">if</span> (error[<span class="number">0</span>] === <span class="string">'^'</span>) error = error.slice(<span class="number">1</span>);
+          <span class="keyword">else</span> {
+            error = v.format(<span class="string">"%{attr} %{message}"</span>, {
+              attr: v.capitalize(v.prettify(attr)),
+              message: error
+            });
+          }
+          error = error.replace(<span class="regexp">/\\\^/g</span>, <span class="string">"^"</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>If flatten is true a flat array is returned.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>          <span class="keyword">if</span> (options.flatten) ret.push(error);
+          <span class="keyword">else</span> (ret[attr] || (ret[attr] = [])).push(error);
+        }
+      }
+      <span class="keyword">return</span> ret;
+    },
+  });
+
+  validate.validators = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Presence validates that the value isn&#39;t empty</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    presence: <span class="function"><span class="keyword">function</span><span class="params">(value, options)</span> {</span>
+      <span class="keyword">var</span> message = options.message || <span class="string">"can't be blank"</span>
+        , attr;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>Null and undefined aren&#39;t allowed</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (!v.isDefined(value)) <span class="keyword">return</span> message;
+
+      <span class="keyword">if</span> (<span class="keyword">typeof</span> value === <span class="string">'string'</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>Tests if the string contains only whitespace (tab, newline, space etc)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">if</span> ((<span class="regexp">/^\s*$/</span>).test(value)) <span class="keyword">return</span> message;
+      }
+      <span class="keyword">else</span> <span class="keyword">if</span> (v.isArray(value)) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>For arrays we use the length property</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">if</span> (value.length === <span class="number">0</span>) <span class="keyword">return</span> message;
+      }
+      <span class="keyword">else</span> <span class="keyword">if</span> (v.isObject(value)) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>If we find at least one property we consider it non empty</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">for</span> (attr <span class="keyword">in</span> value) <span class="keyword">return</span>;
+        <span class="keyword">return</span> message;
+      }
+    },
+    length: <span class="function"><span class="keyword">function</span><span class="params">(value, options)</span> {</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Null and undefined are fine</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (!v.isDefined(value)) <span class="keyword">return</span>;
+
+      <span class="keyword">var</span> is = options.is
+        , maximum = options.maximum
+        , minimum = options.minimum
+        , tokenizer = options.tokenizer || <span class="function"><span class="keyword">function</span><span class="params">(val)</span> {</span> <span class="keyword">return</span> val; }
+        , err
+        , errors = [];
+
+      value = tokenizer(value);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>Is checks</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (v.isNumber(is) &amp;&amp; value.length !== is) {
+        err = options.wrongLength ||
+          <span class="string">"is the wrong length (should be %{count} characters)"</span>;
+        errors.push(v.format(err, {count: is}));
+      }
+
+      <span class="keyword">if</span> (v.isNumber(minimum) &amp;&amp; value.length &lt; minimum) {
+        err = options.tooShort ||
+          <span class="string">"is too short (minimum is %{count} characters)"</span>;
+        errors.push(v.format(err, {count: minimum}));
+      }
+
+      <span class="keyword">if</span> (v.isNumber(maximum) &amp;&amp; value.length &gt; maximum) {
+        err = options.tooLong ||
+          <span class="string">"is too long (maximum is %{count} characters)"</span>;
+        errors.push(v.format(err, {count: maximum}));
+      }
+
+      <span class="keyword">if</span> (errors.length &gt; <span class="number">0</span>) <span class="keyword">return</span> options.message || errors;
+    },
+    numericality: <span class="function"><span class="keyword">function</span><span class="params">(value, options)</span> {</span>
+      <span class="keyword">if</span> (!v.isDefined(value)) <span class="keyword">return</span>;
+
+      <span class="keyword">var</span> errors = []
+        , name
+        , count
+        , checks = {
+            greaterThan:          <span class="function"><span class="keyword">function</span><span class="params">(v, c)</span> {</span> <span class="keyword">return</span> v &gt; c; },
+            greaterThanOrEqualTo: <span class="function"><span class="keyword">function</span><span class="params">(v, c)</span> {</span> <span class="keyword">return</span> v &gt;= c; },
+            equalTo:              <span class="function"><span class="keyword">function</span><span class="params">(v, c)</span> {</span> <span class="keyword">return</span> v === c; },
+            lessThan:             <span class="function"><span class="keyword">function</span><span class="params">(v, c)</span> {</span> <span class="keyword">return</span> v &lt; c; },
+            lessThanOrEqualTo:    <span class="function"><span class="keyword">function</span><span class="params">(v, c)</span> {</span> <span class="keyword">return</span> v &lt;= c; }
+          };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>Coerce the value to a number unless we&#39;re being strict.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (options.noStrings !== <span class="literal">true</span> &amp;&amp; v.isString(value)) value = +value;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>If it&#39;s not a number we shouldn&#39;t continue since it will compare it.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (!v.isNumber(value)) <span class="keyword">return</span> options.message || <span class="string">"is not a number"</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p>Same logic as above, sort of. Don&#39;t bother with comparisons if this
+doesn&#39;t pass.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (options.onlyInteger &amp;&amp; !v.isInteger(value))
+        <span class="keyword">return</span> options.message || <span class="string">"must be an integer"</span>;
+
+      <span class="keyword">for</span> (name <span class="keyword">in</span> checks) {
+        count = options[name];
+        <span class="keyword">if</span> (v.isNumber(count) &amp;&amp; !checks[name](value, count)) {
+          errors.push(v.format(<span class="string">"must be %{type} %{count}"</span>, {
+            count: count,
+            type: v.prettify(name)
+          }));
+        }
+      }
+
+      <span class="keyword">if</span> (options.odd &amp;&amp; value % <span class="number">2</span> !== <span class="number">1</span>) errors.push(<span class="string">"must be odd"</span>);
+      <span class="keyword">if</span> (options.even &amp;&amp; value % <span class="number">2</span> !== <span class="number">0</span>) errors.push(<span class="string">"must be even"</span>);
+
+      <span class="keyword">if</span> (errors.length) <span class="keyword">return</span> options.message || errors;
+    },
+    datetime: v.extend(<span class="function"><span class="keyword">function</span><span class="params">(value, options)</span> {</span>
+      <span class="keyword">if</span> (!v.isDefined(value)) <span class="keyword">return</span>;
+
+      <span class="keyword">var</span> err
+        , errors = []
+        , message = options.message
+        , earliest = options.earliest ? <span class="keyword">this</span>.parse(options.earliest, options) : <span class="literal">NaN</span>
+        , latest = options.latest ? <span class="keyword">this</span>.parse(options.latest, options) : <span class="literal">NaN</span>;
+
+      value = <span class="keyword">this</span>.parse(value, options);
+
+      <span class="keyword">if</span> (isNaN(value) || options.dateOnly &amp;&amp; value % <span class="number">86400000</span> !== <span class="number">0</span>)
+        <span class="keyword">return</span> message || <span class="string">"must be a valid date"</span>;
+
+      <span class="keyword">if</span> (!isNaN(earliest) &amp;&amp; value &lt; earliest) {
+        err = <span class="string">"must be no earlier than %{date}"</span>;
+        err = v.format(err, {date: <span class="keyword">this</span>.format(earliest, options)});
+        errors.push(err);
+      }
+
+      <span class="keyword">if</span> (!isNaN(latest) &amp;&amp; value &gt; latest) {
+        err = <span class="string">"must be no later than %{date}"</span>;
+        err = v.format(err, {date: <span class="keyword">this</span>.format(latest, options)});
+        errors.push(err);
+      }
+
+      <span class="keyword">if</span> (errors.length) <span class="keyword">return</span> options.message || errors;
+    }, {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>This is the function that will be used to convert input to the number
+of millis since the epoch.
+It should return NaN if it&#39;s not a valid date.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      parse: <span class="function"><span class="keyword">function</span><span class="params">(value, options)</span> {</span>
+        <span class="keyword">return</span> <span class="keyword">new</span> XDate(value, <span class="literal">true</span>).getTime();
+      },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>Formats the given timestamp. Uses ISO8601 to format them.
+If options.dateOnly is true then only the year, month and day will be
+output.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      format: <span class="function"><span class="keyword">function</span><span class="params">(date, options)</span> {</span>
+        <span class="keyword">var</span> format = options.dateFormat || (options.dateOnly ? <span class="string">"yyyy-MM-dd"</span> : <span class="string">"u"</span>);
+        <span class="keyword">return</span> <span class="keyword">new</span> XDate(date, <span class="literal">true</span>).toString(format);
+      }
+    }),
+    date: <span class="function"><span class="keyword">function</span><span class="params">(value, options)</span> {</span>
+      options = v.extend({}, options, {onlyDate: <span class="literal">true</span>});
+      <span class="keyword">return</span> v.validators.datetime(value, options);
+    },
+    format: <span class="function"><span class="keyword">function</span><span class="params">(value, options)</span> {</span>
+      <span class="keyword">if</span> (v.isString(options) || (options <span class="keyword">instanceof</span> RegExp))
+        options = {pattern: options};
+
+      <span class="keyword">var</span> message = options.message || <span class="string">"is invalid"</span>
+        , pattern = options.pattern
+        , match;
+
+      <span class="keyword">if</span> (!v.isDefined(value)) <span class="keyword">return</span>;
+      <span class="keyword">if</span> (!v.isString(value)) <span class="keyword">return</span> message;
+
+      <span class="keyword">if</span> (v.isString(pattern))
+        pattern = <span class="keyword">new</span> RegExp(options.pattern, options.flags);
+      match = pattern.exec(value);
+      <span class="keyword">if</span> (!match || match[<span class="number">0</span>].length != value.length) <span class="keyword">return</span> message;
+    },
+    inclusion: <span class="function"><span class="keyword">function</span><span class="params">(value, options)</span> {</span>
+      <span class="keyword">if</span> (v.isArray(options)) options = {within: options};
+      <span class="keyword">if</span> (!v.isDefined(value)) <span class="keyword">return</span>;
+      <span class="keyword">if</span> (v.contains(options.within, value)) <span class="keyword">return</span>;
+      <span class="keyword">var</span> message = options.message || <span class="string">"^%{value} is not included in the list"</span>;
+      <span class="keyword">return</span> v.format(message, {value: value});
+    },
+    exclusion: <span class="function"><span class="keyword">function</span><span class="params">(value, options)</span> {</span>
+      <span class="keyword">if</span> (v.isArray(options)) options = {within: options};
+      <span class="keyword">if</span> (!v.isDefined(value)) <span class="keyword">return</span>;
+      <span class="keyword">if</span> (!v.contains(options.within, value)) <span class="keyword">return</span>;
+      <span class="keyword">var</span> message = options.message || <span class="string">"^%{value} is restricted"</span>;
+      <span class="keyword">return</span> v.format(message, {value: value});
+    }
+  };
+
+  <span class="keyword">if</span> (exports) {
+    <span class="keyword">if</span> (module &amp;&amp; module.exports) exports = module.exports = validate;
+    exports.validate = validate;
+  }
+  <span class="keyword">else</span> root.validate = validate;
+}).call(<span class="keyword">this</span>,
+        <span class="keyword">typeof</span> exports !== <span class="string">'undefined'</span> ? exports : <span class="literal">null</span>,
+        <span class="keyword">typeof</span> module !== <span class="string">'undefined'</span> ? module : <span class="literal">null</span>);</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

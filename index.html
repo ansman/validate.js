@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Validate.js</title>
+  <meta name="viewport" content="width=device-width, user-scalable=0">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/7.4/styles/default.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/7.4/styles/github.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/7.4/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script src="//cdn.jsdelivr.net/xdate/0.8/xdate.min.js"></script>
+  <script src="validate.js"></script>
+  <style>
+    body {
+      display: flex;
+      font-weight: 200;
+      font-family: Helvetica, Arial, sans-serif;
+    }
+
+    h1, h2, h3 {
+      font-weight: 200;
+    }
+
+    #sidebar {
+      background-color: #F7F5FA;
+      box-sizing: border-box;
+      padding-top: 10px;
+      padding-left: 10px;
+      height: 100vh;
+      overflow-y: scroll;
+      width: 299px;
+      border-right: 1px solid #eee;
+    }
+
+    #sidebar a {
+      color: #333;
+      text-shadow: 0 1px 0 #FFF;
+    }
+
+    #sidebar ul {
+      list-style: none;
+      margin: 0;
+      padding-left: 10px;
+    }
+
+    #sidebar > ul > li {
+      margin-bottom: 10px;
+    }
+
+    #sidebar > ul > li > a {
+      font-size: 16px;
+      font-weight: 400;
+    }
+
+    #sidebar ul ul li {
+      padding-left: 10px;
+      position: relative;
+    }
+
+    #sidebar ul ul li:after {
+      display: block;
+      content: '-';
+      position: absolute;
+      left: 0px;
+      top: 0;
+    }
+
+    #sidebar ul ul li.external:after {
+      content: "»";
+    }
+
+    #content {
+      flex: 1;
+      height: 100vh;
+      overflow-y: scroll;
+    }
+
+    #scroller {
+      max-width: 800px;
+      min-width: 640px;
+      padding: 0 30px 30px;
+    }
+
+    #scroller > div {
+      padding: 10px 0;
+    }
+
+    #scroller > div:first-child {
+      padding-top: 0;
+    }
+
+    #validate-js h2 {
+      margin-top: 20px;
+    }
+
+    h1 {
+      font-size: 50px;
+      text-transform: uppercase;
+      border-bottom: 5px solid #333;
+      display: inline-block;
+    }
+
+    .download {
+      margin-top: 20px;
+    }
+
+    .download a {
+      width: 250px;
+    }
+
+    .dependencies {
+      margin-top: 20px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .signature {
+      margin-bottom: 10px;
+    }
+
+    .signature b {
+      margin-right: 5px;
+      font-size: 18px;
+    }
+
+    pre > code {
+      padding: 0;
+      background-color: transparent;
+    }
+
+    .notes {
+      font-style: italic;
+    }
+
+    ul > li > code {
+      display: inline-block;
+      margin-bottom: 3px;
+    }
+
+    #validators > div {
+      padding: 10px 0px;
+    }
+
+    #changelog h3 {
+      font-size: 14px;
+    }
+
+    #changelog h3 .version {
+      font-size: 18px;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        text-align: center;
+      }
+
+      .download {
+        text-align: center;
+      }
+
+      .download a {
+        width: 100%;
+        margin-bottom: 3px;
+      }
+
+      h1 {
+        font-size: 40px;
+        margin-top: 0;
+      }
+
+      #sidebar {
+        display: none;
+      }
+
+      #scroller {
+        min-width: 0;
+        padding: 10px;
+      }
+
+      code {
+        white-space: normal;
+      }
+
+      pre {
+        overflow: scroll;
+      }
+
+      pre code {
+        min-width: 600px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav id="sidebar">
+    <ul>
+      <li>
+        <a href="#validate-js">Validate.js</a>
+        <ul>
+          <li class="external">
+            <a href="https://github.com/wrapp/validate.js">GitHub Repository</a>
+          </li>
+          <li class="external">
+            <a href="http://htmlpreview.github.com/?https://raw.github.com/wrapp/validate.js/0.1.0/docs/validate.html">Annotated source</a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="#overview">Overview</a>
+        <ul>
+          <li><a href="#acknowledgements">Acknowledgements</a></li>
+          <li><a href="#custom-validator">Writing your own validator</a></li>
+        </ul>
+      </li>
+      <li><a href="#constraints">Constraints</a></li>
+      <li><a href="#validate">Validate function</a></li>
+      <li>
+        <a href="#validators">Validators</a>
+        <ul>
+          <li><a href="#validators-presence">Presence</a></li>
+          <li><a href="#validators-length">Length</a></li>
+          <li><a href="#validators-numericality">Numericality</a></li>
+          <li><a href="#validators-datetime">Datetime</a></li>
+          <li><a href="#validators-date">Date</a></li>
+          <li><a href="#validators-format">Format</a></li>
+          <li><a href="#validators-inclusion">Inclusion</a></li>
+          <li><a href="#validators-exclusion">Exclusion</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#changelog">Changelog</a>
+        <ul>
+          <li><a href="#changelog-0-1-0">0.1.0</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+  <div id="content">
+    <div id="scroller">
+      <div id="validate-js">
+        <div class="header"><h1>Validate.js</h1></div>
+        <p>
+          Validate.js providers a declarative way of validating javascript objects.
+          There are already many validation libraries out there today but most of them
+          are very tightly coupled to a language or framework.
+        </p>
+        <p>
+          The project can be found on <a href="https://github.com/wrapp/validate.js">GitHub</a>
+          where you can also find our <a href="https://github.com/wrapp/validate.js/issues">issue tracker</a>.
+          There is also an <a href="/tests.html">online test suite</a>. Validate.js
+          is licensed under <a href="LICENSE.txt">the MIT license</a>.
+        </p>
+        <p class="notes">
+          Validate.js is an open source component of <a href="https://www.wrapp.com">Wrapp</a>.
+        </p>
+        <h2>Downloads &amp; Dependencies</h2>
+        <div class="download">
+          <a class="btn btn-default" download href="https://raw.github.com/wrapp/validate.js/0.1.0/validate.js">Development version (0.1.0)</a>
+          <span class="details">13KB, uncompressed and plenty of comments</span>
+        </div>
+        <div class="download">
+          <a class="btn btn-default" download href="https://raw.github.com/wrapp/validate.js/0.1.0/validate.min.js">Production version (0.1.0)</a>
+          <span class="details">1KB, minified and gzipped</span>
+        </div>
+        <p class="dependencies">
+          There are no required external dependencies but the default parser and
+          formatted for the datetime and date validator requires <a href="http://arshaw.com/xdate/">XDate</a>.
+        </p>
+      </div>
+      <div id="overview">
+        <h2>Overview</h2>
+        <p>
+          The goal of validate.js is to provide a cross framework and cross language
+          way of validating data. The validation constraints can be declared in JSON
+          and shared between clients and the server. Python validation is planned and
+          is on the roadmap and so is Clojure.
+        </p>
+        <p>
+          Validate.js works with any Ecmascript 5 runtime which means it works in
+          both the browser and in node.js
+        </p>
+        <p>
+          <b>Important!</b>
+          One thing that is a bit unorthodox is that most validators will consider
+          <code>null</code> and <code>undefined</code> valid values. So for
+          example adding a constraint of at least 6 characters will be like saying
+          <i>If the attribute is given it must be at least 6 characters</i>.<br>
+          This differs from example Ruby on Rails where validators instead have
+          the <code>allow_nil</code> option. I find it quite common that you
+          want to have constraints on an optional attribute.
+        </p>
+        <div id="acknowledgements">
+          <h3>Acknowledgements</h3>
+          <ul>
+            <li>The design of these docs pages have been heavily inspired by <a href="http://backbonejs.org/">backbonejs.org</a>.</li>
+            <li>All the validators have been inspired by <a href="http://edgeguides.rubyonrails.org/active_record_validations.html">Rails' validators</a>.</li>
+          </ul>
+        </div>
+        <div id="custom-validator">
+          <h3>Writing your own validator</h3>
+          <p class="description">
+            Writing your own validator is super simple! Just add it to the
+            <code>validate.validators</code> object and it will be automatically
+            picked up.
+          </p>
+          <p class="description">
+            The validator receives the following arguments:
+          </p>
+          <ol>
+            <li><b>value</b> - The value exactly how it looks in the attribute object.</li>
+            <li>
+              <b>options</b> - The options for the validator. Guaranteed to not
+              be <code>null</code> or <code>undefined</code>.
+            </li>
+            <li>
+              <b>key</b> - The attribute name.
+            </li>
+            <li>
+              <b>attributes</b> - The entire attributes object.
+            </li>
+          </ol>
+          <p class="description">
+            If the validator passes simply return <code>null</code> or <code>undefined</code>.
+            Otherwise return a string containing the error message.<br>
+            Make sure not to append the key name, this will be done automatically.
+          </p>
+          <pre><code>validate.validators.custom = function(value, options, key, attributes) {
+  console.log(value);
+  console.log(options);
+  console.log(key);
+  console.log(attributes);
+  return "is totally wrong";
+};
+
+// Will log:
+//   - "some value"
+//   - "some options"
+//   - "foo"
+//   - {"foo": "some value"}
+validate({foo: "some value"}, {foo: {custom: "some options"}});
+// =&gt; {foo: ["Foo is totally wrong"]}</code></pre>
+        </div>
+      </div>
+
+      <div id="constraints">
+        <h2>Constraints</h2>
+        <p class="description">The constraints have the following format</p>
+        <pre><code>{
+  &lt;attribute&gt;: {
+    &lt;validator name&gt;: &lt;validator options&gt;
+  }
+}</code></pre>
+        <p class="description">
+          Unless otherwise specified you can always specify the <b>message</b>
+          option to customize the message returned if the validator doesn't pass.
+          Just remember to not include the attribute name since it's automatically
+          prepended to the error message.
+        </p>
+        <p class="description">
+          Sometimes it's nice to be able validate field differently depending
+          on the input itself.
+          validate.js allows the validators object and validator options to be
+          a function that should return the constraints/options:
+        </p>
+        <pre><code>
+var constraints = {
+  creditCardNumber: {
+    presence: true,
+    format: {
+      pattern: /^(34|37|4|5[1-5]).*$/,
+      message: "must be a valid Amex, Visa or Mastercard number"
+    },
+    length: function(value, attributes, attributeName) {
+      if (value) {
+        // Amex
+        if ((/^(34|37).*$/).test(value)) return {is: 15};
+        // Visa, Mastercard
+        if ((/^(4|5[1-5]).*$/).test(value)) return {is: 16};
+      }
+      // Unknown card, don't validate length
+      return false;
+    }
+  },
+  creditCardZip: function(value, attributes, attributeName) {
+    if (!(/^(34|37).*$/).test(attributes.creditCardNumber)) return null;
+    return {
+      presence: true,
+      length: {is: 5}
+    };
+  }
+};
+
+validate({creditCardNumber: "4"}, constraints);
+// =&gt; {"creditCardNumber": ["Credit card number is the wrong length (should be 16 characters)"]}
+
+validate({creditCardNumber: "4242424242424242"}, constraints);
+// =&gt; undefined
+
+validate({creditCardNumber: "340000000000000"}, constraints);
+// =&gt; {"creditCardZip": ["Credit card zip can't be blank"]}
+        </code></pre>
+
+        <p class="description">
+          If you don't want to give any options to a validator you may pass
+          <code>true</code> instead of an empty object. The validator will not
+          be run if the options are falsy.
+        </p>
+        <p class="notes">
+          <b>Important!</b> Most validators consider <code>null</code> and
+          <code>undefined</code> valid values so make sure you use the
+          <code>presence</code> validator on attributes that are required.
+        </p>
+      </div>
+
+      <div id="validate">
+        <h2>Validate function</h2>
+        <div class="signature">
+          <b>validate</b>
+          <code>window.validate(attributes, constraints, [options])</code>
+        </div>
+        <p class="description">
+          Validates the <b>attributes</b> object against the <b>constraints</b>.<br>
+          The <b>attributes</b> must be a plain object, things like backbone models
+          etc are not supported.<br>
+          For the format of the <b>constraints</b> see the <a href="#constraints">constraints section</a>.
+        </p>
+        <p class="description">
+          If there are no errors nothing is returned. Otherwise an object in this
+          format is returned: <code>{&lt;attribute&gt;: [&lt;error&gt;, &lt;error&gt;, ...]}</code>
+        </p>
+        <p class="description">
+          Per default validators don't include the attribute name in the error
+          message (for example <i>can't be blank</i> is returned rather than
+          <i>Name can't be blank</i>), the validate function prepends the
+          attribute name per default. This behaviour can be disabled by
+          setting the <b>fullMessages</b> option to <code>false</code>.
+        </p>
+        <p class="description">
+          If you need an error not to be prefixed by the attribute add a leading
+          <code>^</code> to the error and it won't be prepended. If you need to
+          have a leading <code>^</code> but want the prefixing just write <code>\^</code>.
+        </p>
+        <p class="description">
+          If you want to customize how the attribute names are prettified you
+          can just override the <code>validate.prettify</code> to your liking.
+        </p>
+        <p class="description">
+          There is also a <b>flatten</b> option which, if <code>true</code>, returns a flat
+          array instead of an object. Please note that this will only work if <b>fullMessages</b> isn't <code>false</code>.
+        </p>
+        <pre><code>var constraints = {
+  username: {presence: true},
+  password: {
+    presence: true,
+    length: {
+      minimum: 6,
+      message: "must be at least 6 characters"
+    }
+  }
+};
+validate({password: "bad"}, constraints);
+// =&gt; {
+//   "username": ["Username can't be blank"],
+//   "password": ["Password must be at least 6 characters"]
+// }
+
+validate({username: "nicklas", password: "better"}, constraints);
+// =&gt; undefined
+
+validate({password: "better"}, constraints, {fullMessages: false})
+// =&gt; {"username": ["can't be blank"]}
+
+validate({}, constraints, {flatten: true})
+// =&gt; ["Username can't be blank", "Password can't be blank"]
+
+validate({}, {username: {presence: {message: "^You must pick a username"}}});
+// =&gt; {"username": ["You must pick a username"]}
+</code></pre>
+      </div>
+      <div id="validators">
+        <h2>Validators</h2>
+        <div id="validators-presence">
+          <div class="signature"><b>presence</b></div>
+          <p class="description">
+            The presence validator validates that the value isn't empty.
+            This validator will probably the most used one, it corresponds to
+            HTML5's required attribute.<br>
+            You can use the <b>message</b> option to customize the message. The
+            default message is <i>can't be blank</i>.
+          </p>
+          <p class="description">
+            These are the values that are considered empty:
+          </p>
+          <ul>
+            <li><code>null</code></li>
+            <li><code>undefined</code></li>
+            <li><code>[]</code> (empty objects)</li>
+            <li><code>{}</code> (empty arrays)</li>
+            <li><code>""</code> (empty string)</li>
+            <li><code>" "</code> (whitespace only string)</li>
+          </ul>
+          <p class="notes">
+            <b>Important!</b> All other values are considered valid!
+          </p>
+
+          <pre><code>validate({}, {username: {presence: true}})
+// =&gt; {"username": ["Username can't be blank"]}
+
+validate({username: "ansman"}, {username: {presence: true}})
+// =&gt; undefined
+
+validate({}, {username: {presence: {message: "is required"}}})
+// =&gt; {"username": ["Username is required"]}</code></pre>
+        </div>
+
+        <div id="validators-length">
+          <div class="signature"><b>length</b></div>
+          <p class="description">
+            The length validator will check the length of a string.<br>
+            Any object with the <code>length</code> property can be validated
+            but all the default error messages refers to strings so make sure
+            you override them if you plan on validating arrays using this.
+          </p>
+          <p class="description">
+            You may specify the following length constraints:
+          </p>
+          <dl class="dl-horizontal">
+            <dt>is</dt>
+            <dd>
+              The value has to have exactly this length. The default error is
+              <i>is the wrong length (should be %{count} characters)</i>
+            </dd>
+            <dt>minimum</dt>
+            <dd>
+              The value cannot be shorter than this value. The default error is
+              <i>is too short (minimum is %{count} characters)</i>
+            </dd>
+            <dt>maximum</dt>
+            <dd>
+              The value cannot be longer than this value. The default error is
+              <i>is too long (maximum is %{count} characters)</i>
+            </dd>
+          </dl>
+          <p class="description">
+            You can specify the error message using the <b>wrongLength</b>,
+            <b>tooShort</b> and <b>tooLong</b> options. The default values are
+            <i>is the wrong length (should be %{count} characters)</i>,
+            <i>is too short (minimum is %{count} characters)</i> and
+            <i>is too long (maximum is %{count} characters)</i> respectively.<br>
+            <br>
+            As you may have noticed you can use <code>%{count}</code> as a placeholder
+            for the actual constraint and it will be replaced for you.
+          </p>
+          <p class="description">
+            You can also use the <b>message</b> as the message for all errors
+            (this overrides any other custom errors).
+          </p>
+          <p class="description">
+            Per default the number of characters are counted (using the <code>length</code>
+            property), if you want to count something else you can specify the
+            <b>tokenizer</b> option which should be a function that takes a single
+            argument (the value) and the returns a value that should be used when
+            counting.<br>
+            <br>
+            The tokenizer will never be called with <code>nil</code> or <code>undefined</code>
+            as an argument.
+          </p>
+          <pre><code>var constraints = {
+  key1: {length: {is: 3}},
+  key2: {length: {minimum: 20}},
+  key3: {length: {maximum: 3}},
+  key4: {
+    length: {
+      minimum: 3,
+      tooShort: "needs to have %{count} words or more",
+      tokenizer: function(value) {
+        return value.split(/\s+/g);
+      }
+    }
+  }
+};
+
+validate({}, constraints);
+// =&gt; undefined
+// This is because nil and undefined are valid values.
+// Use the presence validator if you don't want to allow empty values.
+
+var values = {
+  key1: "wrong length",
+  key2: "too short",
+  key3: "too long",
+  key4: "too short"
+};
+validate(values, constraints);
+// =&gt; {
+//   "key1": ["Key1 is the wrong length (should be 3 characters)"],
+//   "key2": ["Key2 is too short (minimum is 20 characters)"],
+//   "key3": ["Key3 is too long (maximum is 3 characters)"],
+//   "key4": ["Key4 needs to have 3 words or more"]
+// }</code></pre>
+        </div>
+
+        <div id="validators-numericality">
+          <div class="signature"><b>numericality</b></div>
+          <p class="description">
+            The numericality validator will only allow numbers.
+            Per default strings are coerced to numbers using the <code>+</code>
+            operator If this is not desirable you can set the <b>noStrings</b>
+            option to <code>false</code> to disable this behaviour.
+          </p>
+          <p class="description">
+            The following rescriptions can be applied:
+          </p>
+          <dl class="dl-horizontal">
+            <dt>onlyInteger</dt>
+            <dd>Real numbers won't be allowed. The error message is <i>must be an integer</i></dd>
+            <dt>greaterThan</dt>
+            <dd>The input has to be greater than this value. The error message is <i>must be greater than %{count}</i></dd>
+            <dt>greaterThanOrEqualTo</dt>
+            <dd>The input has to be at least this value. The error message is <i>must be greater than or equal to %{count}</i></dd>
+            <dt>equalTo</dt>
+            <dd>The input has to be exactly this value. The error message is <i>must be equal to %{count}</i></dd>
+            <dt>lessThanOrEqualTo</dt>
+            <dd>The input can be this value at the most. The error message is <i>must be less than or equal to %{count}</i></dd>
+            <dt>lessThan</dt>
+            <dd>The input has to be less than this value. The error message is <i>must be less than %{count}</i></dd>
+            <dt>odd</dt>
+            <dd>The input has to be odd. The error message is <i>must be odd</i></dd>
+            <dt>even</dt>
+            <dd>The input has to be even. The error message is <i>must be even</i></dd>
+          </dl>
+          <p class="description">
+            If you want a custom error message you may specify it using the
+            <b>message</b> option.
+          </p>
+          <pre><code>// null and undefined are valid values regardless of the options
+validate({}, {duration: {numericality: true}});
+//= &gt; undefined
+
+validate({duration: "foobar"}, {duration: {numericality: true}});
+// =&gt; {"duration": ["Duration is not a number"]}
+
+validate({duration: "3"}, {duration: {numericality: true}});
+// =&gt; undefined
+
+validate({duration: "3"}, {duration: {numericality: {noStrings: true}}});
+// =&gt; {"duration": ["Duration is not a number"]}
+
+var constraints = {
+  duration: {
+    numericality: {
+      onlyInteger: true,
+      greaterThan: 0,
+      lessThanOrEqualTo: 30,
+      even: true
+    }
+  }
+};
+
+validate({duration: 3.14}, constraints);
+// =&gt; {"duration": ["Duration must be an integer"]}
+
+validate({duration: 4711}, constraints);
+// =&gt; {
+//   "duration": [
+//     "Duration must be less than or equal to 30",
+//     "Duration must be even"
+//   ]
+// }</code></pre>
+        </div>
+
+        <div id="validators-datetime">
+          <div class="signature"><b>datetime</b></div>
+          <p class="description">
+            This datetime validator can be used to validate dates and times.
+            The default implementation depends on the
+            <a href="http://arshaw.com/xdate/" target="_blank">XDate</a> library.
+            If you want to switch to use some other library see the example below.
+          </p>
+          <p class="description">
+            You can specify the follow constraints:
+          </p>
+          <dl class="dl-horizontal">
+            <dt>earliest</dt>
+            <dd>
+              The date cannot be before this time. This argument will be parsed
+              using the <code>parse</code> function, just like the value.
+              The default error <i>must be no earlier than %{date}</i>
+            </dd>
+            <dt>latest</dt>
+            <dd>
+              The date cannot be after this time. This argument will be parsed
+              using the <code>parse</code> function, just like the value.
+              The default error <i>must be no later than %{date}</i>
+            </dd>
+            <dt>dateOnly</dt>
+            <dd>
+              If true, only dates (not datetimes) will be allowed.
+              The default error is <i>must be a valid date</i>
+            </dd>
+          </dl>
+          <p>
+            If you want to use some other library you can override the
+            <code>parse</code> and <code>format</code> functions:
+          </p>
+          <pre><code>validate({}, {depature: {datetime: true}});
+// =&gt; undefined
+
+validate({departure: "foobar"}, {depature: {datetime: true}});
+// =&gt; {"departure": ["Departure must be a valid date"]}
+
+validate({departure: "2013-12-11 10:09:08", {departure: {datetime: true}}});
+// =&gt; undefined
+
+var constraints = {
+  birthday: {
+    datetime: {
+      dateOnly: true,
+      latest: XDate.today().addYears(-18),
+      message: "^You need to be atleast 18 years old"
+    }
+  }
+};
+
+validate({birthday: "3013-11-14 22:34:52"}, constraints);
+// =&gt; {"birthday": ["Birthday must be a valid date"]}
+
+validate({birthday: "3013-11-14"}, constraints);
+// =&gt; {"birthday": ["You need to be atleast 18 years old"]}
+
+
+// Value will be the input (guaranteed not to be null or undefined) and options
+// are options given to the validator.
+// This function should return the number of milliseconds since the UTC epoch
+// or NaN if it's not a valid date.
+validate.validators.datetime.parse = function(value, options) {
+  return new XDate(value, true).getTime();
+};
+
+// This function is only used when formatting dates for error messages.
+// Value is the number of milliseconds since the UTC epoch.
+// You should return a formatted strings of the given date.
+// Make sure to check options.dateOnly and options.dateFormat when formatting.
+validate.validators.datetime.format = function(value, options) {
+  var format = options.dateFormat || (options.dateOnly ? "yyyy-MM-dd" : "u");
+  return new XDate(date, true).toString(format);
+};</code></pre>
+          <p class="notes">
+            You may also want to override the <code>format</code> function in order to
+            customize the formatting of dates which are formatted as
+            <a href="https://en.wikipedia.org/wiki/ISO8601" target="_blank">ISO8601</a> per default.<br>
+            If you want to change the parsing but keep using XDate you can
+            create a <a href="https://gist.github.com/arshaw/1221373" target="_blank">custom XDate parser</a>.
+          </p>
+        </div>
+        <div id="validators-date">
+          <div class="signature"><b>date</b></div>
+          <p class="description">
+            The date validator is just a shorthand for the
+            <a href="#validators-datetime">datetime validator</a>
+            with the <code>dateOnly</code> option set to <code>true</code>.
+          </p>
+        </div>
+        <div id="validators-format">
+          <div class="signature"><b>format</b></div>
+          <p class="description">
+            The format validator will validate a value against a regular expression
+            of your chosing.
+            The default message if the value doesn't match is <i>is invalid</i>
+            so you'll likely want to customize it.
+          </p>
+          <p class="description">
+            The <b>pattern</b> option can either be a javascript regexp or
+            string that will be passed to the
+            <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp">RegExp</a>
+            constructor. If the pattern is a string and you want to specify flags
+            you may use the <b>flags</b> option.
+          </p>
+          <p class="notes">
+            Please note that the whole string must match the regexp, not just a
+            part of the value.
+          </p>
+
+          <pre><code>var pattern = /\d{5}(-\d{4})?/;
+
+validate({}, {zipCode: {format: pattern}});
+// =&gt; undefined
+
+validate({zipCode: "foobar"}, {zipCode: {format: pattern}});
+// =&gt; {"zipCode": ["Zip code is invalid"]};
+
+validate({zipCode: "12345"}, {zipCode: {format: pattern}});
+// =&gt; undefined
+
+var constraints = {
+  username: {
+    format: {
+      pattern: "[a-z0-9]+",
+      flags: "i",
+      message: "can only contain a-z and 0-9"
+    }
+  }
+};
+
+validate({username: "Nicklas!"}, constraints);
+// =&gt; {"username": ["Username can only contain a-z and 0-9"]}
+
+validate({username: "Nicklas"}, constraints);
+// =&gt; undefined</code></pre>
+        </div>
+        <div id="validators-inclusion">
+          <div class="signature"><b>inclusion</b></div>
+          <p class="description">
+            The inclusion validator is useful for validating input from a dropdown
+            for example.<br>
+            It checks that the given value exists in the list given by the <b>within</b> option.
+          </p>
+          <p class="description">
+            You can specify <b>within</b> as a list or as an object (in which
+            case the keys of the object are used).<br>
+            The default message is <i>^%{value} is not included in the list</i>
+          </p>
+          <pre><code>var sizes = ["small", "medium", "large"];
+
+validate({}, {size: {inclusion: sizes}});
+// =&gt; undefined
+
+validate({size: "xlarge"}, {size: {inclusion: sizes}});
+// =&gt; {"size": ["xlarge is not included in the list"]}
+
+var constraints = {
+  size: {
+    inclusion: {
+      within: {"Small": "s", "Medium": "m", "Large": "l"},
+      message: "^We're currently out of %{value}"
+    }
+  }
+};
+
+validate({size: "Extra large"}, constraints);
+// =&gt; {"size": ["We're currently out of Extra large"]}
+
+validate({size: "Medium"}, constraints);
+// =&gt; undefined</code></pre>
+        </div>
+        <div id="validators-exclusion">
+          <div class="signature"><b>exclusion</b></div>
+          <p class="description">
+            The exclusion validator is useful for restriction certain values.<br>
+            It checks that the given value is not in the list given by the
+            <b>within</b> option.
+          </p>
+          <p class="description">
+            You can specify <b>within</b> as a list or as an object (in which
+            case the keys of the object are used).<br>
+            The default message is <i>^%{value} is restricted</i>
+          </p>
+          <pre><code>var restrictedDomains = ["jp", "ch"];
+
+validate({}, {subdomain: {exclusion: restrictedDomains}});
+// =&gt; undefined
+
+validate({subdomain: "jp"}, {subdomain: {exclusion: restrictedDomains}});
+// =&gt; {"size": ["jp is restricted"]}
+
+var constraints = {
+  subdomain: {
+    exclusion: {
+      within: {jp: "Japan", "ch": "China"},
+      message: "^We don't support %{value} right now, sorry"
+    }
+  }
+};
+
+validate({subdomain: "jp"}, constraints);
+// =&gt; {"subdomain": ["We don't support jp right now, sorry"]}
+
+validate({subdomain: "com"}, constraints);
+// =&gt; undefined</code></pre>
+        </div>
+      </div>
+      <div id="changelog">
+        <h2>Changelog</h2>
+        <div id="changelog-0-1-0">
+          <h3>
+            <b class="version">0.1.0</b>
+            -
+            <span class="date">Nov 15, 2013</span>
+            -
+            <a href="http://htmlpreview.github.com/?https://raw.github.com/wrapp/validate.js/0.1.0/index.html">Docs</a>
+          </h3>
+          <ul>
+            <li>Initial release</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

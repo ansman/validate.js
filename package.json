@@ -1,0 +1,36 @@
+{
+  "name": "validate",
+  "version": "0.0.1",
+  "author": "Nicklas Ansman <nicklas@ansman.se>",
+  "description": "A Rails inspired validation framework for javascript",
+  "main": "validate.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wrapp/validate.js.git"
+  },
+  "scripts": {
+    "test": "grunt test",
+    "build": "grunt build",
+    "watch": "grunt watch",
+    "docs": "grunt docco"
+  },
+  "keywords": [
+    "validation",
+    "validate",
+    "server",
+    "client"
+  ],
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-notify": "~0.2.13",
+    "grunt-contrib-watch": "~0.5.2",
+    "grunt-contrib-jshint": "~0.7.0",
+    "grunt-contrib-uglify": "~0.2.4",
+    "grunt-contrib-jasmine": "~0.5.2",
+    "grunt-docco": "~0.3.0"
+  },
+  "licenses": [{
+    "type": "MIT",
+    "url": "https://github.com/wrapp/validate.js/tree/master/LICENSE.txt"
+  }]
+}
