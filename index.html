@@ -221,7 +221,7 @@
             <a href="https://github.com/wrapp/validate.js">GitHub Repository</a>
           </li>
           <li class="external">
-            <a href="http://htmlpreview.github.com/?https://raw.github.com/wrapp/validate.js/0.1.0/docs/validate.html">Annotated source</a>
+            <a href="http://htmlpreview.github.com/?https://raw.github.com/wrapp/validate.js/0.1.1/docs/validate.html">Annotated source</a>
           </li>
         </ul>
       </li>
@@ -257,6 +257,7 @@
       <li>
         <a href="#changelog">Changelog</a>
         <ul>
+          <li><a href="#changelog-0-1-1">0.1.1</a></li>
           <li><a href="#changelog-0-1-0">0.1.0</a></li>
         </ul>
       </li>
@@ -280,13 +281,13 @@
         </p>
         <h2>Downloads &amp; Dependencies</h2>
         <div class="download">
-          <a class="btn btn-default" download href="validate.js">Development version (0.1.0)</a>
+          <a class="btn btn-default" download href="validate.js">Development version (0.1.1)</a>
           <div class="info">
             <span class="details">13KB, uncompressed and plenty of comments</span>
           </div>
         </div>
         <div class="download">
-          <a class="btn btn-primary" download href="validate.min.js">Production version (0.1.0)</a>
+          <a class="btn btn-primary" download href="validate.min.js">Production version (0.1.1)</a>
           <div class="info">
             <span class="details">1KB, minified and gzipped</span><br>
             <a download href="validate.min.map">(Source map)</a>
@@ -486,7 +487,7 @@ validate({creditCardNumber: "340000000000000"}, constraints);
         </p>
         <p class="description">
           There is also a <b>flatten</b> option which, if <code>true</code>, returns a flat
-          array instead of an object. Please note that this will only work if <b>fullMessages</b> isn't <code>false</code>.
+          array instead of an object.
         </p>
         <pre class="javascript"><code>var constraints = {
   username: {presence: true},
@@ -934,7 +935,7 @@ validate({subdomain: "com"}, constraints);
           </p>
           <pre class="json"><code>{
   "dependencies": {
-    "validate.js": "~0.1.0"
+    "validate.js": "~0.1.1"
   }
 }</code></pre>
           <p class="description">
@@ -960,6 +961,19 @@ validate({}, {username: {presence: true}});
       </div>
       <div id="changelog">
         <h2>Changelog</h2>
+        <div id="changelog-0-1-1">
+          <h3>
+            <b class="version">0.1.1</b>
+            -
+            <span class="date">Nov 16, 2013</span>
+            -
+            <a href="http://htmlpreview.github.com/?https://raw.github.com/wrapp/validate.js/0.1.1/index.html">Docs</a>
+            <a href="https://github.com/wrapp/validate.js/compare/0.1.0...0.1.1">Diff</a>
+          </h3>
+          <ul>
+            <li>Fix a bug when fullMessages was false and errors were prefixed by ^</li>
+          </ul>
+        </div>
         <div id="changelog-0-1-0">
           <h3>
             <b class="version">0.1.0</b>

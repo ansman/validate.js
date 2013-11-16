@@ -1,6 +1,6 @@
 {
   "name": "validate.js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Nicklas Ansman <nicklas@ansman.se>",
   "description": "A Rails inspired validation framework for javascript",
   "main": "validate.js",

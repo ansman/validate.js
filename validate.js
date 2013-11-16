@@ -1,4 +1,4 @@
-// Validate.js 0.1.0
+// Validate.js 0.1.1
 // (c) 2013 Wrapp
 // Validate.js may be freely distributed under the MIT license.
 // For all details and documentation:
