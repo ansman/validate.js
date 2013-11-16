@@ -13,7 +13,7 @@ module.exports = function(grunt) {
         }
       },
       validate: {
-        src: '<%= pkg.name %>.js',
+        src: '<%= pkg.name %>',
         options: {
           laxcomma: true
         }
@@ -28,7 +28,7 @@ module.exports = function(grunt) {
         }
       },
       validate: {
-        files: '<%= pkg.name %>.js',
+        files: '<%= pkg.name %>',
         tasks: ['jshint:validate', 'jasmine'],
         options: {
           atBegin: true
@@ -44,7 +44,7 @@ module.exports = function(grunt) {
     },
     jasmine: {
       pivotal: {
-        src: "<%= pkg.name %>.js",
+        src: "<%= pkg.name %>",
         options: {
           vendor: "spec/vendor/**/*.js",
           specs: "spec/**/*-spec.js",
@@ -55,7 +55,7 @@ module.exports = function(grunt) {
       }
     },
     docco: {
-      src: "<%= pkg.name %>.js",
+      src: "<%= pkg.name %>",
       options: {
         output: 'docs'
       }
@@ -63,16 +63,16 @@ module.exports = function(grunt) {
     uglify: {
       options: {
         report: 'gzip',
-        banner: '// <%= pkg.name %>.js <%= pkg.version %>\n' +
+        banner: '// <%= pkg.name %> <%= pkg.version %>\n' +
                 '// https://github.com/wrapp/validate.js\n' +
                 '// (c) 2013 Wrapp\n' +
-                '// <%= pkg.name %>.js may be freely distributed under the MIT license.\n'
+                '// <%= pkg.name %> may be freely distributed under the MIT license.\n'
       },
       dist: {
-        src: "<%= pkg.name %>.js",
-        dest: "<%= pkg.name %>.min.js",
+        src: "<%= pkg.name %>",
+        dest: "validate.min.js",
         options: {
-          sourceMap: '<%= pkg.name %>.min.map'
+          sourceMap: 'validate.min.map'
         }
       }
     }
