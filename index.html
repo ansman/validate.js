@@ -303,7 +303,7 @@
         </div>
         <p class="dependencies">
           There are no required external dependencies but the default parser and
-          formatted for the datetime and date validator requires <a href="http://arshaw.com/xdate/">XDate</a>.
+          formatter for the datetime and date validator requires <a href="http://arshaw.com/xdate/">XDate</a>.
         </p>
       </div>
       <div id="overview">
@@ -315,8 +315,8 @@
         <p>
           The goal of validate.js is to provide a cross framework and cross language
           way of validating data. The validation constraints can be declared in JSON
-          and shared between clients and the server. Python validation is planned and
-          is on the roadmap and so is Clojure.
+          and shared between clients and the server. Python validation is planned
+          so is Clojure.
         </p>
         <p>
           Validate.js works with any ECMAScript 5 runtime which means it works in
@@ -364,10 +364,11 @@
           </ol>
           <p class="description">
             If the validator passes simply return <code>null</code> or <code>undefined</code>.
-            Otherwise return a string containing the error message.<br>
+            Otherwise return a string or an array of strings containing the
+            error message(s).<br>
             Make sure not to append the key name, this will be done automatically.
           </p>
-          <pre><code>validate.validators.custom = function(value, options, key, attributes) {
+          <pre class="javascript"><code>validate.validators.custom = function(value, options, key, attributes) {
   console.log(value);
   console.log(options);
   console.log(key);
@@ -388,7 +389,7 @@ validate({foo: "some value"}, {foo: {custom: "some options"}});
       <div id="constraints">
         <h2>Constraints</h2>
         <p class="description">The constraints have the following format</p>
-        <pre><code>{
+        <pre class="json"><code>{
   &lt;attribute&gt;: {
     &lt;validator name&gt;: &lt;validator options&gt;
   }
@@ -405,8 +406,7 @@ validate({foo: "some value"}, {foo: {custom: "some options"}});
           validate.js allows the validators object and validator options to be
           a function that should return the constraints/options:
         </p>
-        <pre><code>
-var constraints = {
+        <pre class="javascript"><code>var constraints = {
   creditCardNumber: {
     presence: true,
     format: {
@@ -440,8 +440,7 @@ validate({creditCardNumber: "4242424242424242"}, constraints);
 // =&gt; undefined
 
 validate({creditCardNumber: "340000000000000"}, constraints);
-// =&gt; {"creditCardZip": ["Credit card zip can't be blank"]}
-        </code></pre>
+// =&gt; {"creditCardZip": ["Credit card zip can't be blank"]}</code></pre>
 
         <p class="description">
           If you don't want to give any options to a validator you may pass
@@ -472,11 +471,9 @@ validate({creditCardNumber: "340000000000000"}, constraints);
           format is returned: <code>{&lt;attribute&gt;: [&lt;error&gt;, &lt;error&gt;, ...]}</code>
         </p>
         <p class="description">
-          Per default validators don't include the attribute name in the error
-          message (for example <i>can't be blank</i> is returned rather than
-          <i>Name can't be blank</i>), the validate function prepends the
-          attribute name per default. This behaviour can be disabled by
-          setting the <b>fullMessages</b> option to <code>false</code>.
+          Since validators don't include the argument name in the error message
+          the validate function prepends it for them. This behaviour can be
+          disabled by setting the <b>fullMessages</b> option to <code>false</code>.
         </p>
         <p class="description">
           If you need an error not to be prefixed by the attribute add a leading
@@ -491,7 +488,7 @@ validate({creditCardNumber: "340000000000000"}, constraints);
           There is also a <b>flatten</b> option which, if <code>true</code>, returns a flat
           array instead of an object. Please note that this will only work if <b>fullMessages</b> isn't <code>false</code>.
         </p>
-        <pre><code>var constraints = {
+        <pre class="javascript"><code>var constraints = {
   username: {presence: true},
   password: {
     presence: true,
@@ -546,7 +543,7 @@ validate({}, {username: {presence: {message: "^You must pick a username"}}});
             <b>Important!</b> All other values are considered valid!
           </p>
 
-          <pre><code>validate({}, {username: {presence: true}})
+          <pre class="javascript"><code>validate({}, {username: {presence: true}})
 // =&gt; {"username": ["Username can't be blank"]}
 
 validate({username: "ansman"}, {username: {presence: true}})
@@ -608,7 +605,7 @@ validate({}, {username: {presence: {message: "is required"}}})
             The tokenizer will never be called with <code>nil</code> or <code>undefined</code>
             as an argument.
           </p>
-          <pre><code>var constraints = {
+          <pre class="javascript"><code>var constraints = {
   key1: {length: {is: 3}},
   key2: {length: {minimum: 20}},
   key3: {length: {maximum: 3}},
@@ -676,7 +673,7 @@ validate(values, constraints);
             If you want a custom error message you may specify it using the
             <b>message</b> option.
           </p>
-          <pre><code>// null and undefined are valid values regardless of the options
+          <pre class="javascript"><code>// null and undefined are valid values regardless of the options
 validate({}, {duration: {numericality: true}});
 //= &gt; undefined
 
@@ -746,7 +743,7 @@ validate({duration: 4711}, constraints);
             If you want to use some other library you can override the
             <code>parse</code> and <code>format</code> functions:
           </p>
-          <pre><code>validate({}, {depature: {datetime: true}});
+          <pre class="javascript"><code>validate({}, {depature: {datetime: true}});
 // =&gt; undefined
 
 validate({departure: "foobar"}, {depature: {datetime: true}});
@@ -824,7 +821,7 @@ validate.validators.datetime.format = function(value, options) {
             part of the value.
           </p>
 
-          <pre><code>var pattern = /\d{5}(-\d{4})?/;
+          <pre class="javascript"><code>var pattern = /\d{5}(-\d{4})?/;
 
 validate({}, {zipCode: {format: pattern}});
 // =&gt; undefined
@@ -863,7 +860,7 @@ validate({username: "Nicklas"}, constraints);
             case the keys of the object are used).<br>
             The default message is <i>^%{value} is not included in the list</i>
           </p>
-          <pre><code>var sizes = ["small", "medium", "large"];
+          <pre class="javascript"><code>var sizes = ["small", "medium", "large"];
 
 validate({}, {size: {inclusion: sizes}});
 // =&gt; undefined
@@ -898,7 +895,7 @@ validate({size: "Medium"}, constraints);
             case the keys of the object are used).<br>
             The default message is <i>^%{value} is restricted</i>
           </p>
-          <pre><code>var restrictedDomains = ["jp", "ch"];
+          <pre class="javascript"><code>var restrictedDomains = ["jp", "ch"];
 
 validate({}, {subdomain: {exclusion: restrictedDomains}});
 // =&gt; undefined
@@ -935,7 +932,7 @@ validate({subdomain: "com"}, constraints);
           <a href="https://npmjs.org/doc/json.html">package.json</a>
           like so:
           </p>
-          <pre><code>{
+          <pre class="json"><code>{
   "dependencies": {
     "validate.js": "~0.1.0"
   }
@@ -953,7 +950,7 @@ validate({}, {username: {presence: true}});
           <p class="description">
             Simply add this to your HTML:
           </p>
-          <pre><code>&lt;script src="path/to/validate.min.js"&gt;&lt;/script&gt;</code></pre>
+          <pre class="xml"><code>&lt;script src="path/to/validate.min.js"&gt;&lt;/script&gt;</code></pre>
           <p class="description">
             If you want to use <a href="http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/">Source Maps</a>
             just place the <b>validate.min.map</b> file in the same directory as
