@@ -263,5 +263,23 @@ describe("validate", function() {
       var errors = {foo: ["\\^ weird error"]};
       expect(fullMessages(errors)).toEqual({foo: ["Foo ^ weird error"]});
     });
+
+    it("doesn't prepend the attribute name if fullMessages is false", function() {
+      var errors = {
+        foo: ["can't be blank", "is too short"],
+        foo_bar: ["is simply not good enough"]
+      };
+
+      expect(fullMessages(errors, {fullMessages: false})).toEqual({
+        foo: ["can't be blank", "is too short"],
+        foo_bar: ["is simply not good enough"]
+      });
+    });
+
+    it("still strips the leading ^ even if fullmessages if false", function() {
+      var errors = {foo: ["^Please don't do that"]}
+        , expected = {foo: ["Please don't do that"]};
+      expect(fullMessages(errors, {fullMessages: false})).toEqual(expected);
+    });
   });
 });

@@ -57,12 +57,7 @@
     }
 
     // Return the errors if we have any
-    for (attr in errors) {
-      // Call fullMessages if the options is set
-      if (options.fullMessages !== false)
-        errors = v.fullMessages(errors, options);
-      return errors;
-    }
+    for (attr in errors) return v.fullMessages(errors, options);
   };
 
   var v = validate
@@ -191,7 +186,7 @@
         for (i = 0; i < errors[attr].length; ++i) {
           error = errors[attr][i];
           if (error[0] === '^') error = error.slice(1);
-          else {
+          else if (options.fullMessages !== false) {
             error = v.format("%{attr} %{message}", {
               attr: v.capitalize(v.prettify(attr)),
               message: error

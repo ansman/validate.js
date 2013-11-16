@@ -110,13 +110,16 @@ describe("validate", function() {
   });
 
   describe("fullMessages", function() {
-    it("calls fullMessages only if fullMessages isn't false", function() {
+    it("calls fullMessages regardless of the fullMessages option", function() {
       spyOn(validate, 'fullMessages');
       var options = {option1: "value1", fullMessages: false}
         , constraints = {name: {fail: true}};
 
       validate({}, constraints, options);
-      expect(validate.fullMessages).not.toHaveBeenCalled();
+      expect(validate.fullMessages).toHaveBeenCalledWith(
+        {name: ["my error"]},
+        options
+      );
 
       options.fullMessages = true;
       validate({}, constraints, options);
