@@ -1,8 +1,6 @@
 validate.js
 ===
-Validate.js providers a declarative way of validating javascript objects.
-There are already many validation libraries out there today but most of them
-are very tightly coupled to a language or framework.
+Validate.js provides a declarative way of validating javascript objects.
 
 For documentation please see [validatejs.org/](http://validatejs.org/).
 
