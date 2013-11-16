@@ -64,7 +64,7 @@ module.exports = function(grunt) {
       options: {
         report: 'gzip',
         banner: '// <%= pkg.name %> <%= pkg.version %>\n' +
-                '// https://github.com/wrapp/validate.js\n' +
+                '// http://validatejs.org/\n' +
                 '// (c) 2013 Wrapp\n' +
                 '// <%= pkg.name %> may be freely distributed under the MIT license.\n'
       },
