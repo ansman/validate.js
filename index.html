@@ -231,6 +231,13 @@
         </ul>
       </li>
       <li>
+        <a href="#installing">Installing</a>
+        <ul>
+          <li><a href="#installing-node">node.js</a></li>
+          <li><a href="#installing-browser">Browser</a></li>
+        </ul>
+      </li>
+      <li>
         <a href="#changelog">Changelog</a>
         <ul>
           <li><a href="#changelog-0-1-0">0.1.0</a></li>
@@ -880,6 +887,40 @@ validate({subdomain: "jp"}, constraints);
 
 validate({subdomain: "com"}, constraints);
 // =&gt; undefined</code></pre>
+        </div>
+      </div>
+      <div id="installing">
+        <h2>Installing</h2>
+        <div id="installing-node">
+          <h3>node.js</h3>
+          <p class="description">
+            Install it like every other npm package:
+          </p>
+          <pre class="bash"><code>$ npm install validate.js</code></pre>
+          <p class="description">
+          You can also add it to the <code>dependencies</code> section of your
+          <a href="https://npmjs.org/doc/json.html">package.json</a>
+          like so:
+          </p>
+          <pre><code>{
+  "dependencies": {
+    "validate.js": "~0.1.0"
+  }
+}</code></pre>
+          <p class="description">
+            Then in your code you can do something like this:
+          </p>
+          <pre class="javascript"><code>var validate = require("validate.js");
+
+validate({}, {username: {presence: true}});
+// =&gt; {"username": ["Username can't be blank"]};</code></pre>
+        </div>
+        <div id="installing-browser">
+          <h3>Browser</h3>
+          <p class="description">
+            Simply add this to your HTML:
+          </p>
+          <pre><code>&lt;script src="path/to/validate.min.js"&gt;&lt;/script&gt;</code></pre>
         </div>
       </div>
       <div id="changelog">
