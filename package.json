@@ -4,6 +4,7 @@
   "author": "Nicklas Ansman <nicklas@ansman.se>",
   "description": "A Rails inspired validation framework for javascript",
   "main": "validate.js",
+  "homepage": "http://validatejs.org",
   "repository": {
     "type": "git",
     "url": "https://github.com/wrapp/validate.js.git"
