@@ -105,8 +105,16 @@
       margin-top: 20px;
     }
 
-    .download a {
+    .download .btn {
       width: 250px;
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    .download .info {
+      display: inline-block;
+      font-size: 12px;
+      margin-left: 5px;
     }
 
     .dependencies {
@@ -161,7 +169,7 @@
         text-align: center;
       }
 
-      .download a {
+      .download .btn {
         width: 100%;
         margin-bottom: 3px;
       }
@@ -265,12 +273,26 @@
         </p>
         <h2>Downloads &amp; Dependencies</h2>
         <div class="download">
-          <a class="btn btn-default" download href="https://raw.github.com/wrapp/validate.js/0.1.0/validate.js">Development version (0.1.0)</a>
-          <span class="details">13KB, uncompressed and plenty of comments</span>
+          <a class="btn btn-default" download href="validate.js">Development version (0.1.0)</a>
+          <div class="info">
+            <span class="details">13KB, uncompressed and plenty of comments</span>
+          </div>
         </div>
         <div class="download">
-          <a class="btn btn-default" download href="https://raw.github.com/wrapp/validate.js/0.1.0/validate.min.js">Production version (0.1.0)</a>
-          <span class="details">1KB, minified and gzipped</span>
+          <a class="btn btn-default" download href="validate.min.js">Production version (0.1.0)</a>
+          <div class="info">
+            <span class="details">1KB, minified and gzipped</span><br>
+            <a download href="validate.min.map">(Source map)</a>
+          </div>
+        </div>
+        <div class="download">
+          <a class="btn btn-default" download href="https://raw.github.com/wrapp/validate.js/master/validate.js">Bleeding edge</a>
+          <div class="info">
+            <span class="details">Might not be 100% stable</span><br>
+            <a href="https://travis-ci.org/wrapp/validate.js">
+              <img src="https://travis-ci.org/wrapp/validate.js.png?branch=master" height="19">
+            </a>
+          </div>
         </div>
         <p class="dependencies">
           There are no required external dependencies but the default parser and
