@@ -1,8 +1,8 @@
-// Validate.js 0.1.1
-// (c) 2013 Wrapp
-// Validate.js may be freely distributed under the MIT license.
-// For all details and documentation:
-// http://validatejs.org/
+//     Validate.js 0.1.1
+//     (c) 2013 Wrapp
+//     Validate.js may be freely distributed under the MIT license.
+//     For all details and documentation:
+//     http://validatejs.org/
 
 (function(exports, module) {
   "use strict";
