@@ -27,7 +27,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>Validate.js 0.1.2
+              <pre><code>Validate.js 0.1.3
 (c) 2013 Wrapp
 Validate.js may be freely distributed under the MIT license.
 For all details and documentation:
@@ -780,7 +780,7 @@ output.</p>
       <span class="keyword">if</span> (!v.isString(value)) <span class="keyword">return</span> message;
       <span class="keyword">if</span> (!<span class="keyword">this</span>.PATTERN.exec(value)) <span class="keyword">return</span> message;
     }, {
-      PATTERN: <span class="regexp">/^[a-z0-9\u007F-\uffff!#$%&amp;'*+\/=?^_`{|}~-]+(?:\.[a-z0-9\u007F-\uffff!#$%&amp;'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|edu|gov|mil|biz|info|mobi|name|aero|asia|jobs|museum)$/</span>
+      PATTERN: <span class="regexp">/^[a-z0-9\u007F-\uffff!#$%&amp;'*+\/=?^_`{|}~-]+(?:\.[a-z0-9\u007F-\uffff!#$%&amp;'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/</span>
     })
   };
 
