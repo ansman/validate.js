@@ -280,6 +280,7 @@
           <li><a href="#validators-format">Format</a></li>
           <li><a href="#validators-inclusion">Inclusion</a></li>
           <li><a href="#validators-exclusion">Exclusion</a></li>
+          <li><a href="#validators-email">Email</a></li>
         </ul>
       </li>
       <li>
@@ -959,6 +960,65 @@ validate({subdomain: "jp"}, constraints);
 validate({subdomain: "com"}, constraints);
 // =&gt; undefined</code></pre>
           </div>
+          <div id="validators-email">
+            <div class="signature"><b>email</b></div>
+            <p class="description">
+              The email validator attempts to make sure the input is a valid email.<br>
+              Validating emails is tricky business due to the complex rules of
+              email address formatting.
+            </p>
+            <p class="description">
+              For example <code>john.doe@gmail</code> is a perfectly valid email
+              but it's mostly likely just the case that John has forgotten to write
+              <code>.com</code> at the end.
+            </p>
+            <p class="description">
+              Validate.js tries to be pragmatic and allows most valid emails but
+              tries to catch common typos such as forgetting the <a href="https://en.wikipedia.org/wiki/TLD" target="_blank">TLD</a>.<br>
+              If you want to know more about email validation the
+              <a href="https://en.wikipedia.org/wiki/Email_address" target="_blank">Wikipedia article</a>
+              and the <a href="http://www.regular-expressions.info/email.html" target="_blank">email page on regular-expressions.info</a>
+              are good places to start.
+            </p>
+            <p class="description">
+              You can customize the regexp used by setting <code>validate.validators.email.PATTERN</code>
+              to a regexp of your chosing, just remember that javascript regexp
+              does substring matching.
+            </p>
+            <p class="description">
+              The default message is <i>is not a valid email</i> and as usual you
+              can override it using the <b>message</b> option.
+            </p>
+            <pre class="javascript"><code>var constraints = {
+  from: {
+    email: true
+  }
+};
+
+validate({from: null}, constraints);
+// =&gt; undefined
+
+validate({from: "nicklas@ansman"}, constraints);
+// =&gt; {"email": ["From is not a valid email"]}
+
+validate({from: "nicklas@foo.faketld"}, constraints);
+// =&gt; {"email": ["From is not a valid email"]}
+
+constraints = {
+  from: {
+    email: {
+      message: "doesn't look like a valid email"
+    }
+  }
+};
+
+validate({from: "foobar"}, constraints);
+// =&gt; {"email": ["From doesn't look like a valid email"]}
+
+// It allows unicode
+validate({from: "first.läst@example.com"}, constraints);
+// =&gt; undefined</code></pre>
+          </div>
         </div>
         <div id="installing">
           <h2>Installing</h2>
@@ -1021,6 +1081,7 @@ validate({}, {username: {presence: true}});
             </h3>
             <ul>
               <li>Add bower.json</li>
+              <li>Add an easy way of validating emails using the <a href="#validators-email">email validator</a></li>
             </ul>
           </div>
           <div id="changelog-0-1-1">

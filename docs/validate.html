@@ -773,7 +773,15 @@ output.</p>
       <span class="keyword">if</span> (!v.contains(options.within, value)) <span class="keyword">return</span>;
       <span class="keyword">var</span> message = options.message || <span class="string">"^%{value} is restricted"</span>;
       <span class="keyword">return</span> v.format(message, {value: value});
-    }
+    },
+    email: v.extend(<span class="function"><span class="keyword">function</span><span class="params">(value, options)</span> {</span>
+      <span class="keyword">var</span> message = options.message || <span class="string">"is not a valid email"</span>;
+      <span class="keyword">if</span> (!v.isDefined(value)) <span class="keyword">return</span>;
+      <span class="keyword">if</span> (!v.isString(value)) <span class="keyword">return</span> message;
+      <span class="keyword">if</span> (!<span class="keyword">this</span>.PATTERN.exec(value)) <span class="keyword">return</span> message;
+    }, {
+      PATTERN: <span class="regexp">/^[a-z0-9\u007F-\uffff!#$%&amp;'*+\/=?^_`{|}~-]+(?:\.[a-z0-9\u007F-\uffff!#$%&amp;'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|edu|gov|mil|biz|info|mobi|name|aero|asia|jobs|museum)$/</span>
+    })
   };
 
   <span class="keyword">if</span> (exports) {

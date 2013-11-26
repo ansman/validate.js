@@ -374,7 +374,15 @@
       if (!v.contains(options.within, value)) return;
       var message = options.message || "^%{value} is restricted";
       return v.format(message, {value: value});
-    }
+    },
+    email: v.extend(function(value, options) {
+      var message = options.message || "is not a valid email";
+      if (!v.isDefined(value)) return;
+      if (!v.isString(value)) return message;
+      if (!this.PATTERN.exec(value)) return message;
+    }, {
+      PATTERN: /^[a-z0-9\u007F-\uffff!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9\u007F-\uffff!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|edu|gov|mil|biz|info|mobi|name|aero|asia|jobs|museum)$/
+    })
   };
 
   if (exports) {
