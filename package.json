@@ -2,7 +2,7 @@
   "name": "validate.js",
   "version": "0.1.1",
   "author": "Nicklas Ansman <nicklas@ansman.se>",
-  "description": "A Rails inspired validation framework for javascript",
+  "description": "Declarative validations for JavaScript",
   "main": "validate.js",
   "homepage": "http://validatejs.org",
   "repository": {
