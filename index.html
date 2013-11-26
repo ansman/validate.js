@@ -410,20 +410,20 @@
               Make sure not to append the key name, this will be done automatically.
             </p>
             <pre class="javascript"><code>validate.validators.custom = function(value, options, key, attributes) {
-    console.log(value);
-    console.log(options);
-    console.log(key);
-    console.log(attributes);
-    return "is totally wrong";
-  };
+  console.log(value);
+  console.log(options);
+  console.log(key);
+  console.log(attributes);
+  return "is totally wrong";
+};
 
-  // Will log:
-  //   - "some value"
-  //   - "some options"
-  //   - "foo"
-  //   - {"foo": "some value"}
-  validate({foo: "some value"}, {foo: {custom: "some options"}});
-  // =&gt; {foo: ["Foo is totally wrong"]}</code></pre>
+// Will log:
+//   - "some value"
+//   - "some options"
+//   - "foo"
+//   - {"foo": "some value"}
+validate({foo: "some value"}, {foo: {custom: "some options"}});
+// =&gt; {foo: ["Foo is totally wrong"]}</code></pre>
           </div>
         </div>
 
@@ -431,10 +431,10 @@
           <h2>Constraints</h2>
           <p class="description">The constraints have the following format</p>
           <pre class="json"><code>{
-    &lt;attribute&gt;: {
-      &lt;validator name&gt;: &lt;validator options&gt;
-    }
-  }</code></pre>
+  &lt;attribute&gt;: {
+    &lt;validator name&gt;: &lt;validator options&gt;
+  }
+}</code></pre>
           <p class="description">
             Unless otherwise specified you can always specify the <b>message</b>
             option to customize the message returned if the validator doesn't pass.
@@ -448,40 +448,40 @@
             a function that should return the constraints/options:
           </p>
           <pre class="javascript"><code>var constraints = {
-    creditCardNumber: {
-      presence: true,
-      format: {
-        pattern: /^(34|37|4|5[1-5]).*$/,
-        message: "must be a valid Amex, Visa or Mastercard number"
-      },
-      length: function(value, attributes, attributeName) {
-        if (value) {
-          // Amex
-          if ((/^(34|37).*$/).test(value)) return {is: 15};
-          // Visa, Mastercard
-          if ((/^(4|5[1-5]).*$/).test(value)) return {is: 16};
-        }
-        // Unknown card, don't validate length
-        return false;
-      }
+  creditCardNumber: {
+    presence: true,
+    format: {
+      pattern: /^(34|37|4|5[1-5]).*$/,
+      message: "must be a valid Amex, Visa or Mastercard number"
     },
-    creditCardZip: function(value, attributes, attributeName) {
-      if (!(/^(34|37).*$/).test(attributes.creditCardNumber)) return null;
-      return {
-        presence: true,
-        length: {is: 5}
-      };
+    length: function(value, attributes, attributeName) {
+      if (value) {
+        // Amex
+        if ((/^(34|37).*$/).test(value)) return {is: 15};
+        // Visa, Mastercard
+        if ((/^(4|5[1-5]).*$/).test(value)) return {is: 16};
+      }
+      // Unknown card, don't validate length
+      return false;
     }
-  };
+  },
+  creditCardZip: function(value, attributes, attributeName) {
+    if (!(/^(34|37).*$/).test(attributes.creditCardNumber)) return null;
+    return {
+      presence: true,
+      length: {is: 5}
+    };
+  }
+};
 
-  validate({creditCardNumber: "4"}, constraints);
-  // =&gt; {"creditCardNumber": ["Credit card number is the wrong length (should be 16 characters)"]}
+validate({creditCardNumber: "4"}, constraints);
+// =&gt; {"creditCardNumber": ["Credit card number is the wrong length (should be 16 characters)"]}
 
-  validate({creditCardNumber: "4242424242424242"}, constraints);
-  // =&gt; undefined
+validate({creditCardNumber: "4242424242424242"}, constraints);
+// =&gt; undefined
 
-  validate({creditCardNumber: "340000000000000"}, constraints);
-  // =&gt; {"creditCardZip": ["Credit card zip can't be blank"]}</code></pre>
+validate({creditCardNumber: "340000000000000"}, constraints);
+// =&gt; {"creditCardZip": ["Credit card zip can't be blank"]}</code></pre>
 
           <p class="description">
             If you don't want to give any options to a validator you may pass
@@ -530,32 +530,32 @@
             array instead of an object.
           </p>
           <pre class="javascript"><code>var constraints = {
-    username: {presence: true},
-    password: {
-      presence: true,
-      length: {
-        minimum: 6,
-        message: "must be at least 6 characters"
-      }
+  username: {presence: true},
+  password: {
+    presence: true,
+    length: {
+      minimum: 6,
+      message: "must be at least 6 characters"
     }
-  };
-  validate({password: "bad"}, constraints);
-  // =&gt; {
-  //   "username": ["Username can't be blank"],
-  //   "password": ["Password must be at least 6 characters"]
-  // }
+  }
+};
+validate({password: "bad"}, constraints);
+// =&gt; {
+//   "username": ["Username can't be blank"],
+//   "password": ["Password must be at least 6 characters"]
+// }
 
-  validate({username: "nicklas", password: "better"}, constraints);
-  // =&gt; undefined
+validate({username: "nicklas", password: "better"}, constraints);
+// =&gt; undefined
 
-  validate({password: "better"}, constraints, {fullMessages: false})
-  // =&gt; {"username": ["can't be blank"]}
+validate({password: "better"}, constraints, {fullMessages: false})
+// =&gt; {"username": ["can't be blank"]}
 
-  validate({}, constraints, {flatten: true})
-  // =&gt; ["Username can't be blank", "Password can't be blank"]
+validate({}, constraints, {flatten: true})
+// =&gt; ["Username can't be blank", "Password can't be blank"]
 
-  validate({}, {username: {presence: {message: "^You must pick a username"}}});
-  // =&gt; {"username": ["You must pick a username"]}
+validate({}, {username: {presence: {message: "^You must pick a username"}}});
+// =&gt; {"username": ["You must pick a username"]}
   </code></pre>
         </div>
         <div id="validators">
@@ -585,13 +585,13 @@
             </p>
 
             <pre class="javascript"><code>validate({}, {username: {presence: true}})
-  // =&gt; {"username": ["Username can't be blank"]}
+// =&gt; {"username": ["Username can't be blank"]}
 
-  validate({username: "ansman"}, {username: {presence: true}})
-  // =&gt; undefined
+validate({username: "ansman"}, {username: {presence: true}})
+// =&gt; undefined
 
-  validate({}, {username: {presence: {message: "is required"}}})
-  // =&gt; {"username": ["Username is required"]}</code></pre>
+validate({}, {username: {presence: {message: "is required"}}})
+// =&gt; {"username": ["Username is required"]}</code></pre>
           </div>
 
           <div id="validators-length">
@@ -647,38 +647,38 @@
               as an argument.
             </p>
             <pre class="javascript"><code>var constraints = {
-    key1: {length: {is: 3}},
-    key2: {length: {minimum: 20}},
-    key3: {length: {maximum: 3}},
-    key4: {
-      length: {
-        minimum: 3,
-        tooShort: "needs to have %{count} words or more",
-        tokenizer: function(value) {
-          return value.split(/\s+/g);
-        }
+  key1: {length: {is: 3}},
+  key2: {length: {minimum: 20}},
+  key3: {length: {maximum: 3}},
+  key4: {
+    length: {
+      minimum: 3,
+      tooShort: "needs to have %{count} words or more",
+      tokenizer: function(value) {
+        return value.split(/\s+/g);
       }
     }
-  };
+  }
+};
 
-  validate({}, constraints);
-  // =&gt; undefined
-  // This is because nil and undefined are valid values.
-  // Use the presence validator if you don't want to allow empty values.
+validate({}, constraints);
+// =&gt; undefined
+// This is because nil and undefined are valid values.
+// Use the presence validator if you don't want to allow empty values.
 
-  var values = {
-    key1: "wrong length",
-    key2: "too short",
-    key3: "too long",
-    key4: "too short"
-  };
-  validate(values, constraints);
-  // =&gt; {
-  //   "key1": ["Key1 is the wrong length (should be 3 characters)"],
-  //   "key2": ["Key2 is too short (minimum is 20 characters)"],
-  //   "key3": ["Key3 is too long (maximum is 3 characters)"],
-  //   "key4": ["Key4 needs to have 3 words or more"]
-  // }</code></pre>
+var values = {
+  key1: "wrong length",
+  key2: "too short",
+  key3: "too long",
+  key4: "too short"
+};
+validate(values, constraints);
+// =&gt; {
+//   "key1": ["Key1 is the wrong length (should be 3 characters)"],
+//   "key2": ["Key2 is too short (minimum is 20 characters)"],
+//   "key3": ["Key3 is too long (maximum is 3 characters)"],
+//   "key4": ["Key4 needs to have 3 words or more"]
+// }</code></pre>
           </div>
 
           <div id="validators-numericality">
@@ -715,39 +715,39 @@
               <b>message</b> option.
             </p>
             <pre class="javascript"><code>// null and undefined are valid values regardless of the options
-  validate({}, {duration: {numericality: true}});
-  //= &gt; undefined
+validate({}, {duration: {numericality: true}});
+//= &gt; undefined
 
-  validate({duration: "foobar"}, {duration: {numericality: true}});
-  // =&gt; {"duration": ["Duration is not a number"]}
+validate({duration: "foobar"}, {duration: {numericality: true}});
+// =&gt; {"duration": ["Duration is not a number"]}
 
-  validate({duration: "3"}, {duration: {numericality: true}});
-  // =&gt; undefined
+validate({duration: "3"}, {duration: {numericality: true}});
+// =&gt; undefined
 
-  validate({duration: "3"}, {duration: {numericality: {noStrings: true}}});
-  // =&gt; {"duration": ["Duration is not a number"]}
+validate({duration: "3"}, {duration: {numericality: {noStrings: true}}});
+// =&gt; {"duration": ["Duration is not a number"]}
 
-  var constraints = {
-    duration: {
-      numericality: {
-        onlyInteger: true,
-        greaterThan: 0,
-        lessThanOrEqualTo: 30,
-        even: true
-      }
+var constraints = {
+  duration: {
+    numericality: {
+      onlyInteger: true,
+      greaterThan: 0,
+      lessThanOrEqualTo: 30,
+      even: true
     }
-  };
+  }
+};
 
-  validate({duration: 3.14}, constraints);
-  // =&gt; {"duration": ["Duration must be an integer"]}
+validate({duration: 3.14}, constraints);
+// =&gt; {"duration": ["Duration must be an integer"]}
 
-  validate({duration: 4711}, constraints);
-  // =&gt; {
-  //   "duration": [
-  //     "Duration must be less than or equal to 30",
-  //     "Duration must be even"
-  //   ]
-  // }</code></pre>
+validate({duration: 4711}, constraints);
+// =&gt; {
+//   "duration": [
+//     "Duration must be less than or equal to 30",
+//     "Duration must be even"
+//   ]
+// }</code></pre>
           </div>
 
           <div id="validators-datetime">
@@ -785,47 +785,47 @@
               <code>parse</code> and <code>format</code> functions:
             </p>
             <pre class="javascript"><code>validate({}, {depature: {datetime: true}});
-  // =&gt; undefined
+// =&gt; undefined
 
-  validate({departure: "foobar"}, {depature: {datetime: true}});
-  // =&gt; {"departure": ["Departure must be a valid date"]}
+validate({departure: "foobar"}, {depature: {datetime: true}});
+// =&gt; {"departure": ["Departure must be a valid date"]}
 
-  validate({departure: "2013-12-11 10:09:08", {departure: {datetime: true}}});
-  // =&gt; undefined
+validate({departure: "2013-12-11 10:09:08", {departure: {datetime: true}}});
+// =&gt; undefined
 
-  var constraints = {
-    birthday: {
-      datetime: {
-        dateOnly: true,
-        latest: XDate.today().addYears(-18),
-        message: "^You need to be atleast 18 years old"
-      }
+var constraints = {
+  birthday: {
+    datetime: {
+      dateOnly: true,
+      latest: XDate.today().addYears(-18),
+      message: "^You need to be atleast 18 years old"
     }
-  };
+  }
+};
 
-  validate({birthday: "3013-11-14 22:34:52"}, constraints);
-  // =&gt; {"birthday": ["Birthday must be a valid date"]}
+validate({birthday: "3013-11-14 22:34:52"}, constraints);
+// =&gt; {"birthday": ["Birthday must be a valid date"]}
 
-  validate({birthday: "3013-11-14"}, constraints);
-  // =&gt; {"birthday": ["You need to be atleast 18 years old"]}
+validate({birthday: "3013-11-14"}, constraints);
+// =&gt; {"birthday": ["You need to be atleast 18 years old"]}
 
 
-  // Value will be the input (guaranteed not to be null or undefined) and options
-  // are options given to the validator.
-  // This function should return the number of milliseconds since the UTC epoch
-  // or NaN if it's not a valid date.
-  validate.validators.datetime.parse = function(value, options) {
-    return new XDate(value, true).getTime();
-  };
+// Value will be the input (guaranteed not to be null or undefined) and options
+// are options given to the validator.
+// This function should return the number of milliseconds since the UTC epoch
+// or NaN if it's not a valid date.
+validate.validators.datetime.parse = function(value, options) {
+  return new XDate(value, true).getTime();
+};
 
-  // This function is only used when formatting dates for error messages.
-  // Value is the number of milliseconds since the UTC epoch.
-  // You should return a formatted strings of the given date.
-  // Make sure to check options.dateOnly and options.dateFormat when formatting.
-  validate.validators.datetime.format = function(value, options) {
-    var format = options.dateFormat || (options.dateOnly ? "yyyy-MM-dd" : "u");
-    return new XDate(date, true).toString(format);
-  };</code></pre>
+// This function is only used when formatting dates for error messages.
+// Value is the number of milliseconds since the UTC epoch.
+// You should return a formatted strings of the given date.
+// Make sure to check options.dateOnly and options.dateFormat when formatting.
+validate.validators.datetime.format = function(value, options) {
+  var format = options.dateFormat || (options.dateOnly ? "yyyy-MM-dd" : "u");
+  return new XDate(date, true).toString(format);
+};</code></pre>
             <p class="notes">
               You may also want to override the <code>format</code> function in order to
               customize the formatting of dates which are formatted as
@@ -864,30 +864,30 @@
 
             <pre class="javascript"><code>var pattern = /\d{5}(-\d{4})?/;
 
-  validate({}, {zipCode: {format: pattern}});
-  // =&gt; undefined
+validate({}, {zipCode: {format: pattern}});
+// =&gt; undefined
 
-  validate({zipCode: "foobar"}, {zipCode: {format: pattern}});
-  // =&gt; {"zipCode": ["Zip code is invalid"]};
+validate({zipCode: "foobar"}, {zipCode: {format: pattern}});
+// =&gt; {"zipCode": ["Zip code is invalid"]};
 
-  validate({zipCode: "12345"}, {zipCode: {format: pattern}});
-  // =&gt; undefined
+validate({zipCode: "12345"}, {zipCode: {format: pattern}});
+// =&gt; undefined
 
-  var constraints = {
-    username: {
-      format: {
-        pattern: "[a-z0-9]+",
-        flags: "i",
-        message: "can only contain a-z and 0-9"
-      }
+var constraints = {
+  username: {
+    format: {
+      pattern: "[a-z0-9]+",
+      flags: "i",
+      message: "can only contain a-z and 0-9"
     }
-  };
+  }
+};
 
-  validate({username: "Nicklas!"}, constraints);
-  // =&gt; {"username": ["Username can only contain a-z and 0-9"]}
+validate({username: "Nicklas!"}, constraints);
+// =&gt; {"username": ["Username can only contain a-z and 0-9"]}
 
-  validate({username: "Nicklas"}, constraints);
-  // =&gt; undefined</code></pre>
+validate({username: "Nicklas"}, constraints);
+// =&gt; undefined</code></pre>
           </div>
           <div id="validators-inclusion">
             <div class="signature"><b>inclusion</b></div>
@@ -903,26 +903,26 @@
             </p>
             <pre class="javascript"><code>var sizes = ["small", "medium", "large"];
 
-  validate({}, {size: {inclusion: sizes}});
-  // =&gt; undefined
+validate({}, {size: {inclusion: sizes}});
+// =&gt; undefined
 
-  validate({size: "xlarge"}, {size: {inclusion: sizes}});
-  // =&gt; {"size": ["xlarge is not included in the list"]}
+validate({size: "xlarge"}, {size: {inclusion: sizes}});
+// =&gt; {"size": ["xlarge is not included in the list"]}
 
-  var constraints = {
-    size: {
-      inclusion: {
-        within: {"Small": "s", "Medium": "m", "Large": "l"},
-        message: "^We're currently out of %{value}"
-      }
+var constraints = {
+  size: {
+    inclusion: {
+      within: {"Small": "s", "Medium": "m", "Large": "l"},
+      message: "^We're currently out of %{value}"
     }
-  };
+  }
+};
 
-  validate({size: "Extra large"}, constraints);
-  // =&gt; {"size": ["We're currently out of Extra large"]}
+validate({size: "Extra large"}, constraints);
+// =&gt; {"size": ["We're currently out of Extra large"]}
 
-  validate({size: "Medium"}, constraints);
-  // =&gt; undefined</code></pre>
+validate({size: "Medium"}, constraints);
+// =&gt; undefined</code></pre>
           </div>
           <div id="validators-exclusion">
             <div class="signature"><b>exclusion</b></div>
@@ -938,26 +938,26 @@
             </p>
             <pre class="javascript"><code>var restrictedDomains = ["jp", "ch"];
 
-  validate({}, {subdomain: {exclusion: restrictedDomains}});
-  // =&gt; undefined
+validate({}, {subdomain: {exclusion: restrictedDomains}});
+// =&gt; undefined
 
-  validate({subdomain: "jp"}, {subdomain: {exclusion: restrictedDomains}});
-  // =&gt; {"size": ["jp is restricted"]}
+validate({subdomain: "jp"}, {subdomain: {exclusion: restrictedDomains}});
+// =&gt; {"size": ["jp is restricted"]}
 
-  var constraints = {
-    subdomain: {
-      exclusion: {
-        within: {jp: "Japan", "ch": "China"},
-        message: "^We don't support %{value} right now, sorry"
-      }
+var constraints = {
+  subdomain: {
+    exclusion: {
+      within: {jp: "Japan", "ch": "China"},
+      message: "^We don't support %{value} right now, sorry"
     }
-  };
+  }
+};
 
-  validate({subdomain: "jp"}, constraints);
-  // =&gt; {"subdomain": ["We don't support jp right now, sorry"]}
+validate({subdomain: "jp"}, constraints);
+// =&gt; {"subdomain": ["We don't support jp right now, sorry"]}
 
-  validate({subdomain: "com"}, constraints);
-  // =&gt; undefined</code></pre>
+validate({subdomain: "com"}, constraints);
+// =&gt; undefined</code></pre>
           </div>
         </div>
         <div id="installing">
@@ -974,17 +974,17 @@
             like so:
             </p>
             <pre class="json"><code>{
-    "dependencies": {
-      "validate.js": "~0.1.1"
-    }
-  }</code></pre>
+  "dependencies": {
+    "validate.js": "~0.1.1"
+  }
+}</code></pre>
             <p class="description">
               Then in your code you can do something like this:
             </p>
             <pre class="javascript"><code>var validate = require("validate.js");
 
-  validate({}, {username: {presence: true}});
-  // =&gt; {"username": ["Username can't be blank"]};</code></pre>
+validate({}, {username: {presence: true}});
+// =&gt; {"username": ["Username can't be blank"]};</code></pre>
           </div>
           <div id="installing-browser">
             <h3>Browser</h3>
