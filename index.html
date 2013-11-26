@@ -1001,7 +1001,12 @@ validate({from: null}, constraints);
 validate({from: "nicklas@ansman"}, constraints);
 // =&gt; {"email": ["From is not a valid email"]}
 
+// Any TLD is allowed
 validate({from: "nicklas@foo.faketld"}, constraints);
+// =&gt; undefined
+
+// Upper cased emails are not allowed
+validate({from: "NICKLAS@ANSMAN.SE"}, constraints);
 // =&gt; {"email": ["From is not a valid email"]}
 
 constraints = {

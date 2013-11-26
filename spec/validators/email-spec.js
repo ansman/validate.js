@@ -21,16 +21,17 @@ describe('validators.email', function() {
     expect(email('disposable.style.email.with+symbol@example.com', {})).not.toBeDefined();
     expect(email('other.email-with-dash@example.com', {})).not.toBeDefined();
     expect(email('üñîçøðé@example.com', {})).not.toBeDefined();
+    expect(email("foo@some.customtld", {})).not.toBeDefined();
   });
 
-  it("doesn't allow invalid emails", function() {
+  it("doesn't allow 'invalid' emails", function() {
     var expected = "is not a valid email";
     expect(email("foobar", {})).toEqual(expected);
     expect(email("foo@bar", {})).toEqual(expected);
 
     // Source: https://en.wikipedia.org/wiki/Email_address#Invalid_email_addresses
-    expect(email('Abc.example.com', {})).toEqual(expected);
-    expect(email('A@b@c@example.com', {})).toEqual(expected);
+    expect(email('abc.example.com', {})).toEqual(expected);
+    expect(email('a@b@c@example.com', {})).toEqual(expected);
     expect(email('a"b(c)d,e:f;g<h>i[j\\k]l@example.com', {})).toEqual(expected);
     expect(email('just"not"right@example.com', {})).toEqual(expected);
     expect(email('this is"not\\allowed@example.com', {})).toEqual(expected);
