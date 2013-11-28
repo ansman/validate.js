@@ -264,10 +264,10 @@
         <a href="#overview">Overview</a>
         <ul>
           <li><a href="#acknowledgements">Acknowledgements</a></li>
-          <li><a href="#custom-validator">Writing your own validator</a></li>
         </ul>
       </li>
       <li><a href="#constraints">Constraints</a></li>
+      <li><a href="#custom-validator">Writing your own validator</a></li>
       <li><a href="#validate">Validate function</a></li>
       <li>
         <a href="#validators">Validators</a>
@@ -382,51 +382,6 @@
               <li>All the validators have been inspired by <a href="http://edgeguides.rubyonrails.org/active_record_validations.html">Rails' validators</a>.</li>
             </ul>
           </div>
-          <div id="custom-validator">
-            <h3>Writing your own validator</h3>
-            <p class="description">
-              Writing your own validator is super simple! Just add it to the
-              <code>validate.validators</code> object and it will be automatically
-              picked up.
-            </p>
-            <p class="description">
-              The validator receives the following arguments:
-            </p>
-            <ol>
-              <li><b>value</b> - The value exactly how it looks in the attribute object.</li>
-              <li>
-                <b>options</b> - The options for the validator. Guaranteed to not
-                be <code>null</code> or <code>undefined</code>.
-              </li>
-              <li>
-                <b>key</b> - The attribute name.
-              </li>
-              <li>
-                <b>attributes</b> - The entire attributes object.
-              </li>
-            </ol>
-            <p class="description">
-              If the validator passes simply return <code>null</code> or <code>undefined</code>.
-              Otherwise return a string or an array of strings containing the
-              error message(s).<br>
-              Make sure not to append the key name, this will be done automatically.
-            </p>
-            <pre class="javascript"><code>validate.validators.custom = function(value, options, key, attributes) {
-  console.log(value);
-  console.log(options);
-  console.log(key);
-  console.log(attributes);
-  return "is totally wrong";
-};
-
-// Will log:
-//   - "some value"
-//   - "some options"
-//   - "foo"
-//   - {"foo": "some value"}
-validate({foo: "some value"}, {foo: {custom: "some options"}});
-// =&gt; {foo: ["Foo is totally wrong"]}</code></pre>
-          </div>
         </div>
 
         <div id="constraints">
@@ -495,6 +450,51 @@ validate({creditCardNumber: "340000000000000"}, constraints);
             <code>undefined</code> valid values so make sure you use the
             <code>presence</code> validator on attributes that are required.
           </p>
+        </div>
+        <div id="custom-validator">
+          <h2>Writing your own validator</h2>
+          <p class="description">
+            Writing your own validator is super simple! Just add it to the
+            <code>validate.validators</code> object and it will be automatically
+            picked up.
+          </p>
+          <p class="description">
+            The validator receives the following arguments:
+          </p>
+          <ol>
+            <li><b>value</b> - The value exactly how it looks in the attribute object.</li>
+            <li>
+              <b>options</b> - The options for the validator. Guaranteed to not
+              be <code>null</code> or <code>undefined</code>.
+            </li>
+            <li>
+              <b>key</b> - The attribute name.
+            </li>
+            <li>
+              <b>attributes</b> - The entire attributes object.
+            </li>
+          </ol>
+          <p class="description">
+            If the validator passes simply return <code>null</code> or <code>undefined</code>.
+            Otherwise return a string or an array of strings containing the
+            error message(s).<br>
+            Make sure not to append the key name, this will be done automatically.
+          </p>
+          <pre class="javascript"><code>validate.validators.custom = function(value, options, key, attributes) {
+  console.log(value);
+  console.log(options);
+  console.log(key);
+  console.log(attributes);
+  return "is totally wrong";
+};
+
+// Will log:
+//   - "some value"
+//   - "some options"
+//   - "foo"
+//   - {"foo": "some value"}
+validate({foo: "some value"}, {foo: {custom: "some options"}});
+// =&gt; {foo: ["Foo is totally wrong"]}</code></pre>
         </div>
 
         <div id="validate">
