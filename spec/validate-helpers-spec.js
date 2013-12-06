@@ -209,6 +209,11 @@ describe("validate", function() {
       expect(capitalize("foo bar")).toEqual("Foo bar");
       expect(capitalize("foo bar baz")).toEqual("Foo bar baz");
     });
+
+    it("returns the value for non strings", function() {
+      var o = {foo: "bar"};
+      expect(capitalize(o)).toEqual(o);
+    });
   });
 
   describe('fullMessages', function() {
