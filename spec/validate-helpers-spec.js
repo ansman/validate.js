@@ -180,6 +180,14 @@ describe("validate", function() {
       it("works with empty arrays", function() {
         expect(contains([], "foo")).toBe(false);
       });
+
+      it("works for browsers without support for .indexOf", function() {
+        var l = ["foo", "bar", "baz"];
+        l.indexOf = null;
+        expect(contains(l, "baz")).toBe(true);
+        expect(contains(l, "quux")).toBe(false);
+        expect(contains(l, null)).toBe(false);
+      });
     });
 
     describe("objects", function() {
