@@ -5,3 +5,5 @@ node_js:
   - "0.10.x"
 before_script:
   - npm install -g grunt-cli
+after_script:
+  - cat lcov.info | ./node_modules/coveralls/bin/coveralls.js

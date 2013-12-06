@@ -29,28 +29,56 @@ module.exports = function(grunt) {
       },
       validate: {
         files: '<%= pkg.name %>',
-        tasks: ['jshint:validate', 'jasmine'],
+        tasks: ['jshint:validate', 'jasmine:specs'],
         options: {
           atBegin: true
         }
       },
       test: {
         files: 'spec/**/*.js',
-        tasks: ['jshint:spec', 'jasmine'],
+        tasks: ['jshint:spec', 'jasmine:specs'],
         options: {
           atBegin: true
         }
       }
     },
     jasmine: {
-      pivotal: {
+      specs: {
         src: "<%= pkg.name %>",
         options: {
           vendor: "spec/vendor/**/*.js",
           specs: "spec/**/*-spec.js",
           helpers: "spec/helpers.js",
           outfile: 'tests.html',
-          keepRunner: true
+          keepRunner: true,
+        }
+      },
+      coverage: {
+        src: "<%= jasmine.specs.src %>",
+        options: {
+          vendor: "<%= jasmine.specs.options.vendor %>",
+          specs: "<%= jasmine.specs.options.specs %>",
+          helpers: "<%= jasmine.specs.options.helpers %>",
+          template: require('grunt-template-jasmine-istanbul'),
+          templateOptions: {
+            coverage: 'coverage.json',
+            report: [{
+              type: 'text-summary'
+            }, {
+              type: 'lcovonly'
+            }, {
+              type: 'html',
+              options: {
+                dir: 'coverage'
+              }
+            }],
+            thresholds: {
+              lines: 75,
+              statements: 75,
+              branches: 75,
+              functions: 90
+            }
+          }
         }
       }
     },
@@ -86,6 +114,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-notify');
 
   grunt.registerTask('default', 'watch');
-  grunt.registerTask('build', ['jshint:validate', 'jasmine', 'uglify', 'docco']);
+  grunt.registerTask('build', ['jshint:validate', 'jasmine:specs', 'uglify', 'docco']);
   grunt.registerTask('test', ['jshint', 'jasmine']);
 };
