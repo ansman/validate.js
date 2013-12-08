@@ -215,7 +215,7 @@
 
       // Null and undefined aren't allowed
       if (!v.isDefined(value)) return message;
-      
+
       // functions are ok
       if (v.isFunction(value)) return;
 
