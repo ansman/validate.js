@@ -205,6 +205,19 @@
       }
       return ret;
     },
+
+    exposeModule: function(validate, root, exports, module, define) {
+      if (exports) {
+        if (module && module.exports) exports = module.exports = validate;
+        exports.validate = validate;
+      }
+      else {
+        root.validate = validate;
+
+        if (validate.isFunction(define) && define.amd)
+          define("validate", [], function () { return validate; });
+      }
+    }
   });
 
   validate.validators = {
@@ -393,16 +406,8 @@
     })
   };
 
-  if (exports) {
-    if (module && module.exports) exports = module.exports = validate;
-    exports.validate = validate;
-  }
-  else {
-    root.validate = validate;
+  validate.exposeModule(validate, root, exports, module, define);
 
-    if (validate.isFunction(define) && define.amd)
-      define("validate", [], function () { return validate; });
-  }
 }).call(this,
         typeof exports !== 'undefined' ? exports : null,
         typeof module !== 'undefined' ? module : null,

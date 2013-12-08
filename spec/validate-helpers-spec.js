@@ -310,4 +310,60 @@ describe("validate", function() {
       expect(isFunction(true)).toBe(false);
     });
   });
+
+  describe('exposeModule', function() {
+    var exposeModule = validate.exposeModule;
+
+    it("supports simple browser inclusion", function() {
+      var root = {};
+      exposeModule(validate, root, null, null, null);
+      expect(root.validate).toBe(validate);
+    });
+
+    it("supports AMD", function() {
+      var root = {}
+        , define = function(name, deps, func) {
+          expect(name).toEqual("validate");
+          expect(deps).toEqual([]);
+          expect(typeof func).toBe('function');
+          expect(func()).toBe(validate);
+        };
+
+      var defineSpy = jasmine.createSpy('define').andCallFake(define);
+
+      exposeModule(validate, root, null, null, defineSpy);
+      expect(defineSpy).not.toHaveBeenCalled();
+
+      defineSpy.amd = true;
+
+      exposeModule(validate, root, null, null, defineSpy);
+
+      expect(defineSpy).toHaveBeenCalled();
+
+      // It should still expose it through the root
+      expect(root.validate).toBe(validate);
+    });
+
+    it("supports exports", function() {
+      var root = {}
+        , exports = {};
+
+      exposeModule(validate, root, exports, null, null);
+
+      expect(root).toEqual({});
+      expect(exports.validate).toBe(validate);
+    });
+
+    it("supports module.exports", function() {
+      var root = {}
+        , exports = {}
+        , module = {exports: true};
+
+      exposeModule(validate, root, exports, module, null);
+
+      expect(root).toEqual({});
+      expect(module.exports).toEqual(validate);
+      expect(module.exports.validate).toEqual(validate);
+    });
+  });
 });
