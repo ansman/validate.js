@@ -4,7 +4,7 @@
 //     For all details and documentation:
 //     http://validatejs.org/
 
-(function(exports, module) {
+(function(exports, module, define) {
   "use strict";
 
   // The main function that calls the validators specified by the constraints.
@@ -397,7 +397,13 @@
     if (module && module.exports) exports = module.exports = validate;
     exports.validate = validate;
   }
-  else root.validate = validate;
+  else {
+    root.validate = validate;
+
+    if (validate.isFunction(define) && define.amd)
+      define("validate", [], function () { return validate; });
+  }
 }).call(this,
         typeof exports !== 'undefined' ? exports : null,
-        typeof module !== 'undefined' ? module : null);
+        typeof module !== 'undefined' ? module : null,
+        typeof define !== 'undefined' ? define : null);
