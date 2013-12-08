@@ -104,6 +104,11 @@
       return typeof value === 'number' && !isNaN(value);
     },
 
+    // Returns false if the object is not a function
+    isFunction: function(value) {
+      return typeof value === 'function';
+    },
+
     // A simple check to verify that the value is an integer. Uses `isNumber`
     // and a simple modulo check.
     isInteger: function(value) {
@@ -210,6 +215,9 @@
 
       // Null and undefined aren't allowed
       if (!v.isDefined(value)) return message;
+      
+      // functions are ok
+      if (v.isFunction(value)) return;
 
       if (typeof value === 'string') {
         // Tests if the string contains only whitespace (tab, newline, space etc)
