@@ -295,4 +295,19 @@ describe("validate", function() {
       expect(fullMessages(errors, {fullMessages: false})).toEqual(expected);
     });
   });
+
+  describe('isFunction', function() {
+    var isFunction = validate.isFunction;
+
+    it("returns true for functions", function() {
+      expect(isFunction(function() {})).toBe(true);
+    });
+
+    it("returns false for non functions", function() {
+      expect(isFunction({})).toBe(false);
+      expect(isFunction(null)).toBe(false);
+      expect(isFunction(1)).toBe(false);
+      expect(isFunction(true)).toBe(false);
+    });
+  });
 });
