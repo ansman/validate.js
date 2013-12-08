@@ -1067,6 +1067,13 @@ validate({}, {username: {presence: true}});
               just place the <b>validate.min.map</b> file in the same directory as
               the javascript file.
             </p>
+            <p class="description">
+              If you're using a commonjs compatible AMD such as require.js you can
+              use this code to include validate.js
+            </p>
+            <pre class="javascript"><code>require(["validate"], function(validate) {
+  // Your code
+});</code></pre>
           </div>
           <div id="installing-bower">
             <h3>Bower</h3>
@@ -1094,6 +1101,11 @@ validate({}, {username: {presence: true}});
               <li>
                 Fix a bug where functions were considered blank. Thanks
                 <a href="https://github.com/wrapp/validate.js/pull/9">MarFarMa</a> for discovering and fixing this.
+              </li>
+              <li>
+                Added support for AMD (require.js, commonjs etc). Thanks to
+                <a href="https://github.com/wrapp/validate.js/pull/8">zubulonj</a>
+                for this.
               </li>
             </ul>
           </div>
