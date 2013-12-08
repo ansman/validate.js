@@ -587,7 +587,7 @@ validate({}, {username: {presence: {message: "^You must pick a username"}}});
               <li><code>" "</code> (whitespace only string)</li>
             </ul>
             <p class="notes">
-              <b>Important!</b> All other values are considered valid!
+              <b>Important!</b> All other values are considered valid (including functions)!
             </p>
 
             <pre class="javascript"><code>validate({}, {username: {presence: true}})
@@ -1091,6 +1091,10 @@ validate({}, {username: {presence: true}});
             </h3>
             <ul>
               <li>Fix for browsers that don't support indexOf on arrays</li>
+              <li>
+                Fix a bug where functions were considered blank. Thanks
+                <a href="https://github.com/wrapp/validate.js/pull/9">MarFarMa</a> for discovering and fixing this.
+              </li>
             </ul>
           </div>
           <div id="changelog-0-1-3">
