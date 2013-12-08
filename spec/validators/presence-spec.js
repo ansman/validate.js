@@ -16,7 +16,6 @@ describe('validator.presence', function() {
     expect(presence(false, {})).not.toBeDefined();
     expect(presence([null], {})).not.toBeDefined();
     expect(presence({foo: null}, {})).not.toBeDefined();
-    expect(presence({foo: function(){return null;}}, {})).not.toBeDefined();
   });
 
   it("has a nice default message", function() {
