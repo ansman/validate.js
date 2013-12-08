@@ -252,6 +252,23 @@ number like many other <code>isNumber</code> functions do.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
+              <p>Returns false if the object is not a function</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    isFunction: <span class="function"><span class="keyword">function</span><span class="params">(value)</span> {</span>
+      <span class="keyword">return</span> <span class="keyword">typeof</span> value === <span class="string">'function'</span>;
+    },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
               <p>A simple check to verify that the value is an integer. Uses <code>isNumber</code>
 and a simple modulo check.</p>
 
@@ -264,11 +281,11 @@ and a simple modulo check.</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>Uses the <code>Object</code> function to check if the given argument is an object.</p>
 
@@ -281,11 +298,11 @@ and a simple modulo check.</p>
         </li>
         
         
-        <li id="section-13">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Returns false if the object is <code>null</code> of <code>undefined</code></p>
 
@@ -298,11 +315,11 @@ and a simple modulo check.</p>
         </li>
         
         
-        <li id="section-14">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Formats the specified strings with the given values like so:</p>
 <pre><code>format(&quot;Foo: %{foo}&quot;, {foo: &quot;bar&quot;}) // &quot;Foo bar&quot;</code></pre>
@@ -318,11 +335,11 @@ and a simple modulo check.</p>
         </li>
         
         
-        <li id="section-15">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>&quot;Prettifies&quot; the given string.
 Prettifying means replacing - and _ with spaces as well as splitting
@@ -336,11 +353,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Replaces - and _ with spaces</p>
 
@@ -351,11 +368,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>Splits camel cased words</p>
 
@@ -379,7 +396,7 @@ camel case words.</p>
       <span class="keyword">var</span> i;
       <span class="keyword">if</span> (!v.isDefined(obj)) <span class="keyword">return</span> <span class="literal">false</span>;
       <span class="keyword">if</span> (v.isArray(obj)) {
-        <span class="keyword">if</span> (obj.indexOf(value)) <span class="keyword">return</span> obj.indexOf(value) !== -<span class="number">1</span>;
+        <span class="keyword">if</span> (obj.indexOf) <span class="keyword">return</span> obj.indexOf(value) !== -<span class="number">1</span>;
         <span class="keyword">for</span> (i = obj.length - <span class="number">1</span>; i &gt;= <span class="number">0</span>; --i) {
           <span class="keyword">if</span> (obj[i] === value) <span class="keyword">return</span> <span class="literal">true</span>;
         }
@@ -389,7 +406,7 @@ camel case words.</p>
     },
 
     capitalize: <span class="function"><span class="keyword">function</span><span class="params">(str)</span> {</span>
-      <span class="keyword">if</span> (!str) <span class="keyword">return</span> str;
+      <span class="keyword">if</span> (!v.isString(str)) <span class="keyword">return</span> str;
       <span class="keyword">return</span> str[<span class="number">0</span>].toUpperCase() + str.slice(<span class="number">1</span>);
     },
 
@@ -406,11 +423,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-18">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>Converts the errors of object of the format
 {attr: [<error>, <error>, ...]} to contain the attribute name.</p>
@@ -432,11 +449,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-19">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>If flatten is true a flat array is returned.</p>
 
@@ -455,11 +472,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-20">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Presence validates that the value isn&#39;t empty</p>
 
@@ -472,28 +489,43 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-21">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>Null and undefined aren&#39;t allowed</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (!v.isDefined(value)) <span class="keyword">return</span> message;
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (!v.isDefined(value)) <span class="keyword">return</span> message;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>functions are ok</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="keyword">if</span> (v.isFunction(value)) <span class="keyword">return</span>;
 
       <span class="keyword">if</span> (<span class="keyword">typeof</span> value === <span class="string">'string'</span>) {</pre></div></div>
             
         </li>
         
         
-        <li id="section-22">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>Tests if the string contains only whitespace (tab, newline, space etc)</p>
 
@@ -506,11 +538,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-23">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>For arrays we use the length property</p>
 
@@ -523,11 +555,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-24">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>If we find at least one property we consider it non empty</p>
 
@@ -542,11 +574,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-25">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Null and undefined are fine</p>
 
@@ -566,11 +598,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-26">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Is checks</p>
 
@@ -613,11 +645,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-27">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Coerce the value to a number unless we&#39;re being strict.</p>
 
@@ -628,11 +660,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-28">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>If it&#39;s not a number we shouldn&#39;t continue since it will compare it.</p>
 
@@ -643,11 +675,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-29">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>Same logic as above, sort of. Don&#39;t bother with comparisons if this
 doesn&#39;t pass.</p>
@@ -704,11 +736,11 @@ doesn&#39;t pass.</p>
         </li>
         
         
-        <li id="section-30">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>This is the function that will be used to convert input to the number
 of millis since the epoch.
@@ -723,11 +755,11 @@ It should return NaN if it&#39;s not a valid date.</p>
         </li>
         
         
-        <li id="section-31">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
               <p>Formats the given timestamp. Uses ISO8601 to format them.
 If options.dateOnly is true then only the year, month and day will be
