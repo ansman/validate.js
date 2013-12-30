@@ -5,10 +5,10 @@ module.exports = function(grunt) {
       gruntfile: {
         src: 'Gruntfile.js'
       },
-      spec: {
-        src: 'spec/**/*.js',
+      specs: {
+        src: 'specs/**/*.js',
         options: {
-          ignores: ['spec/vendor/**/*.js'],
+          ignores: ['specs/vendor/**/*.js'],
           laxcomma: true
         }
       },
@@ -34,9 +34,9 @@ module.exports = function(grunt) {
           atBegin: true
         }
       },
-      test: {
-        files: 'spec/**/*.js',
-        tasks: ['jshint:spec', 'jasmine:specs'],
+      specs: {
+        files: 'specs/**/*.js',
+        tasks: ['jshint:specs', 'jasmine:specs'],
         options: {
           atBegin: true
         }
@@ -46,9 +46,9 @@ module.exports = function(grunt) {
       specs: {
         src: "<%= pkg.name %>",
         options: {
-          vendor: "spec/vendor/**/*.js",
-          specs: "spec/**/*-spec.js",
-          helpers: "spec/helpers.js",
+          vendor: "specs/vendor/**/*.js",
+          specs: "specs/**/*-spec.js",
+          helpers: "specs/helpers.js",
           outfile: 'tests.html',
           keepRunner: true,
         }
