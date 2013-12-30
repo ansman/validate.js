@@ -23,7 +23,7 @@ describe("validate", function() {
     delete validators.pass2;
   });
 
-  it("throws a error when the validator is not found", function() {
+  it("throws an error when the validator is not found", function() {
     expect(function() {
       validate({}, {name: {foobar: true}});
     }).toThrow("Unknown validator foobar");
