@@ -78,13 +78,7 @@ module.exports = function(grunt) {
               options: {
                 dir: 'coverage'
               }
-            }],
-            thresholds: {
-              lines: 100,
-              statements: 100,
-              branches: 97,
-              functions: 100
-            }
+            }]
           }
         }
       }
