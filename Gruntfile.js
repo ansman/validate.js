@@ -20,23 +20,30 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      gruntfile: {
+      jshintGruntfile: {
         files: 'Gruntfile.js',
         tasks: ['jshint:gruntfile'],
         options: {
           atBegin: true
         }
       },
-      validate: {
+      jshintSrc: {
         files: '<%= pkg.name %>',
-        tasks: ['jshint:validate', 'jasmine:specs'],
+        tasks: ['jshint:validate'],
+        options: {
+          atBegin: true
+        }
+      },
+      jshintSpecs: {
+        files: 'specs/**/*.js',
+        tasks: ['jshint:specs'],
         options: {
           atBegin: true
         }
       },
       specs: {
-        files: 'specs/**/*.js',
-        tasks: ['jshint:specs', 'jasmine:specs'],
+        files: ['specs/**/*.js', '<%= pkg.name %>'],
+        tasks: ['jasmine'],
         options: {
           atBegin: true
         }
