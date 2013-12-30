@@ -53,11 +53,10 @@ module.exports = function(grunt) {
       specs: {
         src: "<%= pkg.name %>",
         options: {
+          keepRunner: true,
           vendor: "specs/vendor/**/*.js",
           specs: "specs/**/*-spec.js",
           helpers: "specs/helpers.js",
-          outfile: 'tests.html',
-          keepRunner: true,
         }
       },
       coverage: {
