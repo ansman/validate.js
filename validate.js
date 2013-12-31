@@ -11,53 +11,18 @@
   // The options are the following:
   //
   var validate = function(attributes, constraints, options) {
-    var attr
-      , error
-      , validator
-      , validatorName
-      , validatorOptions
-      , value
-      , validators
-      , errors = {};
-
     options = options || {};
+    var results = v.runValidations(attributes, constraints, options)
+      , attr
+      , validator;
 
-    // Loops through each constraints, finds the correct validator and run it.
-    for (attr in constraints) {
-      value = attributes[attr];
-      validators = v.result(constraints[attr], value, attributes, attr);
-
-      for (validatorName in validators) {
-        validator = v.validators[validatorName];
-
-        if (!validator) {
-          error = v.format("Unknown validator %{name}", {name: validatorName});
-          throw new Error(error);
-        }
-
-        validatorOptions = validators[validatorName];
-        // This allows the options to be a function. The function will be called
-        // with the value, attribute name and the complete dict of attribues.
-        // This is useful when you want to have different validations depending
-        // on the attribute value.
-        validatorOptions = v.result(validatorOptions, value, attributes, attr);
-        if (!validatorOptions) continue;
-        error = validator.call(validator,
-                               value,
-                               validatorOptions,
-                               attr,
-                               attributes);
-
-        // The validator is allowed to return a string or an array.
-        if (v.isString(error)) error = [error];
-
-        if (error && error.length > 0)
-          errors[attr] = (errors[attr] || []).concat(error);
+    for (attr in results) {
+      for (validator in results[attr]) {
+        if (v.isPromise(results[attr][validator]))
+          throw new Error("Use validate.async if you want support for promises");
       }
     }
-
-    // Return the errors if we have any
-    for (attr in errors) return v.fullMessages(errors, options);
+    return validate.processValidationResults(results, options);
   };
 
   var v = validate
@@ -78,6 +43,117 @@
   };
 
   v.extend(validate, {
+    // Runs the validators specified by the constraints object.
+    // Will return an array of the format:
+    //     [{attribute: "<attribute name>", error: "<validation result>"}, ...]
+    runValidations: function(attributes, constraints, options) {
+      var results = []
+        , attr
+        , validatorName
+        , value
+        , validators
+        , validator
+        , validatorOptions
+        , error;
+
+      // Loops through each constraints, finds the correct validator and run it.
+      for (attr in constraints) {
+        value = attributes[attr];
+        validators = v.result(constraints[attr], value, attributes, attr);
+
+        for (validatorName in validators) {
+          validator = v.validators[validatorName];
+
+          if (!validator) {
+            error = v.format("Unknown validator %{name}", {name: validatorName});
+            throw new Error(error);
+          }
+
+          validatorOptions = validators[validatorName];
+          // This allows the options to be a function. The function will be
+          // called with the value, attribute name and the complete dict of
+          // attributes. This is useful when you want to have different
+          // validations depending on the attribute value.
+          validatorOptions = v.result(validatorOptions, value, attributes, attr);
+          if (!validatorOptions) continue;
+          results.push({
+            attribute: attr,
+            error: validator.call(validator, value, validatorOptions, attr,
+                                  attributes)
+          });
+        }
+      }
+
+      return results;
+    },
+
+    // Takes the output from runValidations and converts it to the correct
+    // output format.
+    processValidationResults: function(results, options) {
+      var errors = {};
+
+      results.forEach(function(result) {
+        var error = result.error
+          , attribute = result.attribute;
+
+        if (v.isString(error)) error = [error];
+
+        if (error)
+          errors[attribute] = (errors[attribute] || []).concat(error);
+      });
+
+      // If there are any errors return them
+      for (var _ in errors)
+        return v.fullMessages(errors, options);
+    },
+
+    // Runs the validations with support for promises.
+    // This function will return a promise that is settled when all the
+    // validation promises have been completed.
+    // It can be called even if no validations returned a promise.
+    async: function(attributes, constraints, options) {
+      options = options || {};
+      var results = v.runValidations(attributes, constraints, options);
+
+      return v.Promise(function(resolve, reject) {
+        v.waitForResults(results).then(function() {
+          var errors = v.processValidationResults(results);
+          if (errors) reject(errors);
+          else resolve();
+        }).then(undefined, v.error);
+      });
+    },
+
+    // Returns a promise that is resolved when all promises in the results array
+    // are settled. The promise returned from this function is always resvoled,
+    // never rejected.
+    // This function modifies the input argument, it replaces the promises
+    // with the value returned from the promise.
+    waitForResults: function(results) {
+      // Create a sequence of all the results starting with a resolved promise.
+      var promise = results.reduce(function(memo, result) {
+        // If this result isn't a promise skip it in the sequence.
+        if (!v.isPromise(result.error)) return memo;
+
+        return memo.then(function() {
+          return result.error.then(
+            function() {
+              result.error = null;
+            },
+            function(error) {
+              // If for some reason the validator promise was rejected but no
+              // error was specified.
+              if (!error)
+                v.warn("Validator promise was rejected but didn't return an error");
+              result.error = error;
+            }
+          ).then(undefined, v.error);
+        }).then(undefined, v.error);
+      }, v.Promise(function(r) { r(); })); // A resolved promise
+
+      return promise.then(undefined, v.error);
+    },
+
     // If the given argument is a call: function the and: function return the value
     // otherwise just return the value. Additional arguments will be passed as
     // arguments to the function.
@@ -117,6 +193,12 @@
     // Returns false if the object is `null` of `undefined`
     isDefined: function(obj) {
       return obj !== null && obj !== undefined;
+    },
+
+    // Checks if the given argument is a promise. Anything with a `then`
+    // function is considered a promise.
+    isPromise: function(p) {
+      return !!p && typeof p.then === 'function';
     },
 
     // Formats the specified strings with the given values like so:
@@ -192,6 +274,42 @@
       return ret;
     },
 
+    // Returns a promise, should be called with the new operator.
+    // The first argument will be called with two functions, the first for
+    // resolving the promise and the second for rejecting it.
+    // Supports (in order of precedence):
+    //   * EcmaScript 6 Promises
+    //   * RSVP
+    //   * when
+    //   * Q
+    //
+    // If no supported promises are detected an error is thrown.
+    // A word of warning, only A+ style promises are supported. jQuery deferreds
+    // are NOT supported.
+    Promise: v.extend(function(callback) {
+      var promise = v.Promise.nativePromise(callback) ||
+                    v.Promise.RSVPPromise(callback) ||
+                    v.Promise.whenPromise(callback) ||
+                    v.Promise.QPromise(callback);
+
+      if (!promise) throw new Error("No promises could be detected");
+
+      return promise;
+    }, {
+      nativePromise: function(callback) {
+        if (typeof Promise !== "undefined") return new Promise(callback);
+      },
+      RSVPPromise: function(callback) {
+        if (typeof RSVP !== "undefined") return new RSVP.Promise(callback);
+      },
+      whenPromise: function(callback) {
+        if (typeof when !== "undefined") return when.promise(callback);
+      },
+      QPromise: function(callback) {
+        if (typeof Q !== "undefined") return Q.promise(callback);
+      }
+    }),
+
     exposeModule: function(validate, root, exports, module, define) {
       if (exports) {
         if (module && module.exports) exports = module.exports = validate;
@@ -203,6 +321,14 @@
         if (validate.isFunction(define) && define.amd)
           define("validate", [], function () { return validate; });
       }
+    },
+
+    warn: function(msg) {
+      if (typeof console !== "undefined" && console.warn) console.warn(msg);
+    },
+
+    error: function(msg) {
+      if (typeof console !== "undefined" && console.error) console.error(msg);
     }
   });
 
