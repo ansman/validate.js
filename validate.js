@@ -160,13 +160,7 @@
     contains: function(obj, value) {
       var i;
       if (!v.isDefined(obj)) return false;
-      if (v.isArray(obj)) {
-        if (obj.indexOf(value)) return obj.indexOf(value) !== -1;
-        for (i = obj.length - 1; i >= 0; --i) {
-          if (obj[i] === value) return true;
-        }
-        return false;
-      }
+      if (v.isArray(obj)) return obj.indexOf(value) !== -1;
       return value in obj;
     },
 
