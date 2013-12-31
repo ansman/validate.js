@@ -259,6 +259,7 @@
       <li>
         <a href="#overview">Overview</a>
         <ul>
+          <li><a href="#supported-runtimes">Supported runtimes</a></li>
           <li><a href="#acknowledgements">Acknowledgements</a></li>
         </ul>
       </li>
@@ -361,10 +362,6 @@
             so is Clojure.
           </p>
           <p>
-            Validate.js works with any ECMAScript 5 runtime which means it works in
-            both the browser and in node.js
-          </p>
-          <p>
             <b>Important!</b>
             One thing that is a bit unorthodox is that most validators will consider
             <code>null</code> and <code>undefined</code> valid values. So for
@@ -374,6 +371,20 @@
             the <code>allow_nil</code> option. I find it quite common that you
             want to have constraints on an optional attribute.
           </p>
+          <div id="supported-runtimes">
+            <h3>Supported runtimes</h3>
+            <p>
+              Validate.js works with any ECMAScript 5.1 runtime which means it works in
+              both the browser and in node.js
+            </p>
+            <p>
+              All modern browsers are supported (IE9+, Firefox 3+, Opera 10.5+, Safari 4+).<br>
+              IE8 support can likely be achived by polyfilling the following functions:
+            </p>
+            <ul>
+              <li><code>Array.prototype.indexOf</code></li>
+            </ul>
+          </div>
           <div id="acknowledgements">
             <h3>Acknowledgements</h3>
             <ul>
