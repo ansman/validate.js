@@ -71,15 +71,9 @@
   // The first argument is the target object and the remaining arguments will be
   // used as targets.
   v.extend = function(obj) {
-    var i
-      , attr
-      , source
-      , sources = [].slice.call(arguments, 1);
-
-    for (i = 0; i < sources.length; ++i) {
-      source = sources[i];
-      for (attr in source) obj[attr] = source[attr];
-    }
+    [].slice.call(arguments, 1).forEach(function(source) {
+      for (var attr in source) obj[attr] = source[attr];
+    });
     return obj;
   };
 
@@ -158,7 +152,6 @@
     },
 
     contains: function(obj, value) {
-      var i;
       if (!v.isDefined(obj)) return false;
       if (v.isArray(obj)) return obj.indexOf(value) !== -1;
       return value in obj;
@@ -173,16 +166,12 @@
       options = options || {};
 
       var ret = options.flatten ? [] : {}
-        , attr
-        , i
-        , error;
+        , attr;
 
       if (!errors) return ret;
 
-      // Converts the errors of object of the format
-      // {attr: [<error>, <error>, ...]} to contain the attribute name.
-      for (attr in errors) {
-        for (i = 0; i < errors[attr].length; ++i) {
+      function processErrors(attr, errors) {
+        errors.forEach(function(error) {
           error = errors[attr][i];
           if (error[0] === '^') error = error.slice(1);
           else if (options.fullMessages !== false) {
