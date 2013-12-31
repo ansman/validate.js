@@ -172,7 +172,6 @@
 
       function processErrors(attr, errors) {
         errors.forEach(function(error) {
-          error = errors[attr][i];
           if (error[0] === '^') error = error.slice(1);
           else if (options.fullMessages !== false) {
             error = v.format("%{attr} %{message}", {
@@ -184,8 +183,12 @@
           // If flatten is true a flat array is returned.
           if (options.flatten) ret.push(error);
           else (ret[attr] || (ret[attr] = [])).push(error);
-        }
+        });
       }
+
+      // Converts the errors of object of the format
+      // {attr: [<error>, <error>, ...]} to contain the attribute name.
+      for (attr in errors) processErrors(attr, errors[attr]);
       return ret;
     },
 
