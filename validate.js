@@ -297,16 +297,44 @@
       return promise;
     }, {
       nativePromise: function(callback) {
-        if (typeof Promise !== "undefined") return new Promise(callback);
+        var Promise_, module;
+        if (typeof Promise !== "undefined")
+          Promise_ = Promise;
+        else {
+          module = v.tryRequire("es6-promise");
+          if (module) Promise_ = module.Promise;
+        }
+        if (Promise_) return new Promise_(callback);
       },
       RSVPPromise: function(callback) {
-        if (typeof RSVP !== "undefined") return new RSVP.Promise(callback);
+        var Promise, module;
+        if (typeof RSVP !== "undefined")
+          Promise = RSVP.Promise;
+        else {
+          module = v.tryRequire("rsvp");
+          if (module) Promise = module.Promise;
+        }
+        if (Promise) return new Promise(callback);
       },
       whenPromise: function(callback) {
-        if (typeof when !== "undefined") return when.promise(callback);
+        var promise, module;
+        if (typeof when !== "undefined")
+          promise = when.promise;
+        else {
+          module = v.tryRequire("when");
+          if (module) promise = module.promise;
+        }
+        if (promise) return promise(callback);
       },
       QPromise: function(callback) {
-        if (typeof Q !== "undefined") return Q.promise(callback);
+        var promise, module;
+        if (typeof Q !== "undefined")
+          promise = Q.promise;
+        else {
+          module = v.tryRequire("q");
+          if (module) promise = module.promise;
+        }
+        if (promise) return promise(callback);
       }
     }),
 
