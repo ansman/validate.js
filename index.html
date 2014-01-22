@@ -264,8 +264,18 @@
         </ul>
       </li>
       <li><a href="#constraints">Constraints</a></li>
-      <li><a href="#custom-validator">Writing your own validator</a></li>
-      <li><a href="#validate">Validate function</a></li>
+      <li>
+        <a href="#validate">Validate function</a>
+        <ul>
+          <li><a href="#validate-async">Async validation</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#custom-validator">Writing your own validator</a>
+        <ul>
+          <li><a href="#custom-validator-async">Writing an async validator</a></li>
+        </ul>
+      </li>
       <li>
         <a href="#validators">Validators</a>
         <ul>
@@ -461,57 +471,12 @@ validate({creditCardNumber: "340000000000000"}, constraints);
             <code>presence</code> validator on attributes that are required.
           </p>
         </div>
-        <div id="custom-validator">
-          <h2>Writing your own validator</h2>
-          <p class="description">
-            Writing your own validator is super simple! Just add it to the
-            <code>validate.validators</code> object and it will be automatically
-            picked up.
-          </p>
-          <p class="description">
-            The validator receives the following arguments:
-          </p>
-          <ol>
-            <li><b>value</b> - The value exactly how it looks in the attribute object.</li>
-            <li>
-              <b>options</b> - The options for the validator. Guaranteed to not
-              be <code>null</code> or <code>undefined</code>.
-            </li>
-            <li>
-              <b>key</b> - The attribute name.
-            </li>
-            <li>
-              <b>attributes</b> - The entire attributes object.
-            </li>
-          </ol>
-          <p class="description">
-            If the validator passes simply return <code>null</code> or <code>undefined</code>.
-            Otherwise return a string or an array of strings containing the
-            error message(s).<br>
-            Make sure not to append the key name, this will be done automatically.
-          </p>
-          <pre class="javascript"><code>validate.validators.custom = function(value, options, key, attributes) {
-  console.log(value);
-  console.log(options);
-  console.log(key);
-  console.log(attributes);
-  return "is totally wrong";
-};
-
-// Will log:
-//   - "some value"
-//   - "some options"
-//   - "foo"
-//   - {"foo": "some value"}
-validate({foo: "some value"}, {foo: {custom: "some options"}});
-// =&gt; {foo: ["Foo is totally wrong"]}</code></pre>
-        </div>
 
         <div id="validate">
           <h2>Validate function</h2>
           <div class="signature">
             <b>validate</b>
-            <code>window.validate(attributes, constraints, [options])</code>
+            <code>validate(attributes, constraints, [options])</code>
           </div>
           <p class="description">
             Validates the <b>attributes</b> object against the <b>constraints</b>.<br>
@@ -569,6 +534,154 @@ validate({}, constraints, {flatten: true})
 validate({}, {username: {presence: {message: "^You must pick a username"}}});
 // =&gt; {"username": ["You must pick a username"]}
   </code></pre>
+          <div id="validate-async">
+            <h3>Async validation</h3>
+            <div class="signature">
+              <b>validate.async</b>
+              <code>validate.async(attributes, constraints, [options])</code>
+            </div>
+            <p class="description">
+              Even though none of the built in validators are async it is sometimes
+              useful to have async validations. One example would be to check if
+              a username is already used by asking the server.
+            </p>
+            <p class="description">
+              Validate.js supports async validations through the <code>validate.async</code>
+              function. It has the same signature as the regular validation function
+              and accepts the same options.
+            </p>
+            <p class="description">
+              <code>validate.async</code> returns a <a href="http://www.html5rocks.com/en/tutorials/es6/promises/" target="_blank">Promise</a>
+              that is resolved if the validation passes and is rejected if the
+              validation failed, passing the errors as the first argument.<br>
+              The errors has the same format as the errors from the regular validation function.
+            </p>
+            <p class="description">
+               You can use the async validate function even if no validations
+               are async, it still returns a promise. You can not, however, use
+               the regular function with async validations.
+            </p>
+            <p class="description">
+              Any A+ type promise can be used, the following are supported out
+              of the box (in order of precedence):
+            </p>
+            <ul>
+              <li>ES6 promises (or the <a href="https://github.com/jakearchibald/ES6-Promises" target="_blank">polyfill version</a>)</li>
+              <li><a href="https://github.com/tildeio/rsvp.js" target="_blank">RSVP.js</a></li>
+              <li><a href="https://github.com/cujojs/when" target="_blank">when</a></li>
+              <li><a href="http://documentup.com/kriskowal/q/" target="_blank">Q</a></li>
+            </ul>
+            <p class="description">
+              Validate.js looks for the promises in the global scope first and
+              if it can't find it, it tries to import them using the <code>require</code>
+              function if it exists. This means that AMD is supported but you will
+              need to make sure that the implementation you want to use is loaded
+              before you use the async function.
+            </p>
+            <p class="description">
+              You can easily use any other A+ compatible
+              Promise by simply setting <code>validate.Promise</code> to a function
+              that accepts the promise callback and returns the created promise.<br>
+              <em>Please note that jQuery's promise implementation is not A+ compatible and will not work.</em>
+            </p>
+            <p class="description">Example:</p>
+            <pre class="javascript"><button class="btn btn-default btn-sm" title="Run example">▶</button><code>var success = function() {
+      alert("The validations passed");
+    }
+  , error = function(errors) {
+      alert(JSON.stringify(errors, null, 2));
+    }
+  , constraints = {name: {presence: true}};
+
+// Will call the success function
+validate.async({name: "Nicklas"}, constraints).then(success, error);
+
+// Will call the error function
+validate.async({}, constraints).then(success, error);
+
+// Supporting another promise implementation, in this case we'll always use
+// the ES6 promise
+validate.Promise = function(callback) {
+  return new Promise(callback);
+};</code></pre>
+          </div>
+        </div>
+        <div id="custom-validator">
+          <h2>Writing your own validator</h2>
+          <p class="description">
+            Writing your own validator is super simple! Just add it to the
+            <code>validate.validators</code> object and it will be automatically
+            picked up.
+          </p>
+          <p class="description">
+            The validator receives the following arguments:
+          </p>
+          <ol>
+            <li><b>value</b> - The value exactly how it looks in the attribute object.</li>
+            <li>
+              <b>options</b> - The options for the validator. Guaranteed to not
+              be <code>null</code> or <code>undefined</code>.
+            </li>
+            <li>
+              <b>key</b> - The attribute name.
+            </li>
+            <li>
+              <b>attributes</b> - The entire attributes object.
+            </li>
+          </ol>
+          <p class="description">
+            If the validator passes simply return <code>null</code> or <code>undefined</code>.
+            Otherwise return a string or an array of strings containing the
+            error message(s).<br>
+            Make sure not to append the key name, this will be done automatically.
+          </p>
+          <pre class="javascript"><code>validate.validators.custom = function(value, options, key, attributes) {
+  console.log(value);
+  console.log(options);
+  console.log(key);
+  console.log(attributes);
+  return "is totally wrong";
+};
+
+// Will log:
+//   - "some value"
+//   - "some options"
+//   - "foo"
+//   - {"foo": "some value"}
+validate({foo: "some value"}, {foo: {custom: "some options"}});
+// =&gt; {foo: ["Foo is totally wrong"]}</code></pre>
+          <div id="custom-validator-async">
+            <h3>Writing an async validator</h3>
+            <p class="description">
+              Async validators are equal to a regular one in every way except
+              in what they return. An async validator should return a promise
+              (usually a <code>validate.Promise</code> instance).
+            </p>
+            <p class="description">
+              The promise should be resolved if the validation passed and rejected
+              if it fails giving the message as the first argument:
+            </p>
+            <pre class="javascript"><code>validate.validators.myAsyncValidator = function(value) {
+  return validate.Promise(function(resolve, reject) {
+    setTimeout(function() {
+      if (value === "foo") resolve();
+      else reject("is not foo");
+    }, 100);
+  });
+};
+
+var constraints = {name: {myAsyncValidator: true}}
+  , success = alert.bind(this, "The validations passed")
+  , error = function(errors) {
+      alert(JSON.stringify(errors, null, 2));
+    };
+
+// Will call the success callback
+validate.async({name: "foo"}, constraints).then(success, error);
+
+// Will call the error callback with {name: ["Name is not foo"]} as the first argument
+validate.async({name: "bar"}, constraints).then(success, error);</code></pre>
+          </div>
         </div>
         <div id="validators">
           <h2>Validators</h2>
@@ -1113,6 +1226,7 @@ validate({}, {username: {presence: true}});
                 for this.
               </li>
               <li><b>Breaking:</b> Dropped support for IE8</li>
+              <li>Support for async validations</li>
             </ul>
           </div>
           <div id="changelog-0-1-3">
