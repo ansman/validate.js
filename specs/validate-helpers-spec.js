@@ -91,6 +91,22 @@ describe("validate", function() {
     });
   });
 
+  describe("isPromise", function() {
+    it("returns false for null and undefined", function() {
+      expect(validate.isPromise(null)).toBe(false);
+      expect(validate.isPromise(undefined)).toBe(false);
+    });
+
+    it("returns false for objects", function() {
+      expect(validate.isPromise({})).toBe(false);
+    });
+
+    it("returns true for objects with a then function", function() {
+      expect(validate.isPromise({then: "that"})).toBe(false);
+      expect(validate.isPromise({then: function() {}})).toBe(true);
+    });
+  });
+
   describe('format', function() {
     it("replaces %{...} with the correct value", function() {
       var actual = validate.format("Foo is %{foo}, bar is %{bar}", {
@@ -356,6 +372,73 @@ describe("validate", function() {
       expect(root).toEqual({});
       expect(module.exports).toEqual(validate);
       expect(module.exports.validate).toEqual(validate);
+    });
+  });
+
+  describe("warn", function() {
+    var console = window.console;
+
+    beforeEach(function() {
+      window.console = undefined;
+    });
+
+    afterEach(function() {
+      window.console = console;
+    });
+
+    it("does not nothing if the console isn't defined", function() {
+      validate.warn("Msg");
+    });
+
+    it("calls console.warn if defined", function() {
+      window.console = {
+        warn: jasmine.createSpy("warn")
+      };
+      validate.warn("Msg");
+      expect(window.console.warn).toHaveBeenCalledWith("Msg");
+    });
+  });
+
+  describe("error", function() {
+    var console = window.console;
+
+    beforeEach(function() { window.console = undefined; });
+    afterEach(function() { window.console = console; });
+
+    it("does not nothing if the console isn't defined", function() {
+      validate.error("Msg");
+    });
+
+    it("calls console.error if defined", function() {
+      window.console = {
+        error: jasmine.createSpy("error")
+      };
+      validate.error("Msg");
+      expect(window.console.error).toHaveBeenCalledWith("Msg");
+    });
+  });
+
+  describe("tryRequire", function() {
+    var require = validate.require;
+
+    beforeEach(function() { validate.require = null; });
+    afterEach(function() { validate.require = require; });
+
+    it("returns null if v.require isn't defined", function() {
+      expect(validate.tryRequire("foobar")).toBe(null);
+    });
+
+    it("returns the imported module if found", function() {
+      var module = {foo: "bar"};
+      spyOn(validate, "require").andReturn(module);
+      expect(validate.tryRequire("foobar")).toBe(module);
+      expect(validate.require).toHaveBeenCalledWith("foobar");
+    });
+
+    it("returns null if the module isn't found", function() {
+      spyOn(validate, "require").andThrow(new Error("Not found"));
+      expect(validate.tryRequire("foobar")).toBe(null);
+      expect(validate.require).toHaveBeenCalledWith("foobar");
     });
   });
 });
