@@ -5,10 +5,10 @@ module.exports = function(grunt) {
       gruntfile: {
         src: 'Gruntfile.js'
       },
-      spec: {
-        src: 'spec/**/*.js',
+      specs: {
+        src: 'specs/**/*.js',
         options: {
-          ignores: ['spec/vendor/**/*.js'],
+          ignores: ['specs/vendor/**/*.js'],
           laxcomma: true
         }
       },
@@ -20,23 +20,30 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      gruntfile: {
+      jshintGruntfile: {
         files: 'Gruntfile.js',
         tasks: ['jshint:gruntfile'],
         options: {
           atBegin: true
         }
       },
-      validate: {
+      jshintSrc: {
         files: '<%= pkg.name %>',
-        tasks: ['jshint:validate', 'jasmine:specs'],
+        tasks: ['jshint:validate'],
         options: {
           atBegin: true
         }
       },
-      test: {
-        files: 'spec/**/*.js',
-        tasks: ['jshint:spec', 'jasmine:specs'],
+      jshintSpecs: {
+        files: 'specs/**/*.js',
+        tasks: ['jshint:specs'],
+        options: {
+          atBegin: true
+        }
+      },
+      specs: {
+        files: ['specs/**/*.js', '<%= pkg.name %>'],
+        tasks: ['jasmine'],
         options: {
           atBegin: true
         }
@@ -46,11 +53,10 @@ module.exports = function(grunt) {
       specs: {
         src: "<%= pkg.name %>",
         options: {
-          vendor: "spec/vendor/**/*.js",
-          specs: "spec/**/*-spec.js",
-          helpers: "spec/helpers.js",
-          outfile: 'tests.html',
           keepRunner: true,
+          vendor: "specs/vendor/**/*.js",
+          specs: "specs/**/*-spec.js",
+          helpers: "specs/helpers.js",
         }
       },
       coverage: {
@@ -71,13 +77,7 @@ module.exports = function(grunt) {
               options: {
                 dir: 'coverage'
               }
-            }],
-            thresholds: {
-              lines: 75,
-              statements: 75,
-              branches: 75,
-              functions: 90
-            }
+            }]
           }
         }
       }

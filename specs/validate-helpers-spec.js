@@ -91,6 +91,22 @@ describe("validate", function() {
     });
   });
 
+  describe("isPromise", function() {
+    it("returns false for null and undefined", function() {
+      expect(validate.isPromise(null)).toBe(false);
+      expect(validate.isPromise(undefined)).toBe(false);
+    });
+
+    it("returns false for objects", function() {
+      expect(validate.isPromise({})).toBe(false);
+    });
+
+    it("returns true for objects with a then function", function() {
+      expect(validate.isPromise({then: "that"})).toBe(false);
+      expect(validate.isPromise({then: function() {}})).toBe(true);
+    });
+  });
+
   describe('format', function() {
     it("replaces %{...} with the correct value", function() {
       var actual = validate.format("Foo is %{foo}, bar is %{bar}", {
@@ -209,6 +225,11 @@ describe("validate", function() {
       expect(capitalize("foo bar")).toEqual("Foo bar");
       expect(capitalize("foo bar baz")).toEqual("Foo bar baz");
     });
+
+    it("returns the value for non strings", function() {
+      var o = {foo: "bar"};
+      expect(capitalize(o)).toEqual(o);
+    });
   });
 
   describe('fullMessages', function() {
@@ -280,6 +301,144 @@ describe("validate", function() {
       var errors = {foo: ["^Please don't do that"]}
         , expected = {foo: ["Please don't do that"]};
       expect(fullMessages(errors, {fullMessages: false})).toEqual(expected);
+    });
+  });
+
+  describe('isFunction', function() {
+    var isFunction = validate.isFunction;
+
+    it("returns true for functions", function() {
+      expect(isFunction(function() {})).toBe(true);
+    });
+
+    it("returns false for non functions", function() {
+      expect(isFunction({})).toBe(false);
+      expect(isFunction(null)).toBe(false);
+      expect(isFunction(1)).toBe(false);
+      expect(isFunction(true)).toBe(false);
+    });
+  });
+
+  describe('exposeModule', function() {
+    var exposeModule = validate.exposeModule;
+
+    it("supports simple browser inclusion", function() {
+      var root = {};
+      exposeModule(validate, root, null, null, null);
+      expect(root.validate).toBe(validate);
+    });
+
+    it("supports AMD", function() {
+      var root = {}
+        , define = function(name, deps, func) {
+          expect(name).toEqual("validate");
+          expect(deps).toEqual([]);
+          expect(typeof func).toBe('function');
+          expect(func()).toBe(validate);
+        };
+
+      var defineSpy = jasmine.createSpy('define').andCallFake(define);
+
+      exposeModule(validate, root, null, null, defineSpy);
+      expect(defineSpy).not.toHaveBeenCalled();
+
+      defineSpy.amd = true;
+
+      exposeModule(validate, root, null, null, defineSpy);
+
+      expect(defineSpy).toHaveBeenCalled();
+
+      // It should still expose it through the root
+      expect(root.validate).toBe(validate);
+    });
+
+    it("supports exports", function() {
+      var root = {}
+        , exports = {};
+
+      exposeModule(validate, root, exports, null, null);
+
+      expect(root).toEqual({});
+      expect(exports.validate).toBe(validate);
+    });
+
+    it("supports module.exports", function() {
+      var root = {}
+        , exports = {}
+        , module = {exports: true};
+
+      exposeModule(validate, root, exports, module, null);
+
+      expect(root).toEqual({});
+      expect(module.exports).toEqual(validate);
+      expect(module.exports.validate).toEqual(validate);
+    });
+  });
+
+  describe("warn", function() {
+    var console = window.console;
+
+    beforeEach(function() {
+      window.console = undefined;
+    });
+
+    afterEach(function() {
+      window.console = console;
+    });
+
+    it("does not nothing if the console isn't defined", function() {
+      validate.warn("Msg");
+    });
+
+    it("calls console.warn if defined", function() {
+      window.console = {
+        warn: jasmine.createSpy("warn")
+      };
+      validate.warn("Msg");
+      expect(window.console.warn).toHaveBeenCalledWith("Msg");
+    });
+  });
+
+  describe("error", function() {
+    var console = window.console;
+
+    beforeEach(function() { window.console = undefined; });
+    afterEach(function() { window.console = console; });
+
+    it("does not nothing if the console isn't defined", function() {
+      validate.error("Msg");
+    });
+
+    it("calls console.error if defined", function() {
+      window.console = {
+        error: jasmine.createSpy("error")
+      };
+      validate.error("Msg");
+      expect(window.console.error).toHaveBeenCalledWith("Msg");
+    });
+  });
+
+  describe("tryRequire", function() {
+    var require = validate.require;
+
+    beforeEach(function() { validate.require = null; });
+    afterEach(function() { validate.require = require; });
+
+    it("returns null if v.require isn't defined", function() {
+      expect(validate.tryRequire("foobar")).toBe(null);
+    });
+
+    it("returns the imported module if found", function() {
+      var module = {foo: "bar"};
+      spyOn(validate, "require").andReturn(module);
+      expect(validate.tryRequire("foobar")).toBe(module);
+      expect(validate.require).toHaveBeenCalledWith("foobar");
+    });
+
+    it("returns null if the module isn't found", function() {
+      spyOn(validate, "require").andThrow(new Error("Not found"));
+      expect(validate.tryRequire("foobar")).toBe(null);
+      expect(validate.require).toHaveBeenCalledWith("foobar");
     });
   });
 });

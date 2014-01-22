@@ -1,6 +1,6 @@
 language: node_js
 cache:
-  - npm_modules
+  - node_modules
 node_js:
   - "0.10.x"
 before_script:

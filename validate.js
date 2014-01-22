@@ -1,63 +1,31 @@
-//     Validate.js 0.1.3
+//     Validate.js 0.2.0
 //     (c) 2013 Wrapp
 //     Validate.js may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://validatejs.org/
 
-(function(exports, module) {
+(function(exports, module, define, require) {
   "use strict";
 
   // The main function that calls the validators specified by the constraints.
   // The options are the following:
+  //   - flatten (boolean) - If `true` will return a flat array instead of an object.
+  //   - fullMessages (boolean) - If `true` (default) the attribute name is prepended to the error.
   //
+  // Please note that the options are also passed to each validator.
   var validate = function(attributes, constraints, options) {
-    var attr
-      , error
-      , validator
-      , validatorName
-      , validatorOptions
-      , value
-      , validators
-      , errors = {};
-
     options = options || {};
+    var results = v.runValidations(attributes, constraints, options)
+      , attr
+      , validator;
 
-    // Loops through each constraints, finds the correct validator and run it.
-    for (attr in constraints) {
-      value = attributes[attr];
-      validators = v.result(constraints[attr], value, attributes, attr);
-
-      for (validatorName in validators) {
-        validator = v.validators[validatorName];
-
-        if (!validator) {
-          error = v.format("Unknown validator %{name}", {name: validatorName});
-          throw new Error(error);
-        }
-
-        validatorOptions = validators[validatorName];
-        // This allows the options to be a function. The function will be called
-        // with the value, attribute name and the complete dict of attribues.
-        // This is useful when you want to have different validations depending
-        // on the attribute value.
-        validatorOptions = v.result(validatorOptions, value, attributes, attr);
-        if (!validatorOptions) continue;
-        error = validator.call(validator,
-                               value,
-                               validatorOptions,
-                               attr,
-                               attributes);
-
-        // The validator is allowed to return a string or an array.
-        if (v.isString(error)) error = [error];
-
-        if (error && error.length > 0)
-          errors[attr] = (errors[attr] || []).concat(error);
+    for (attr in results) {
+      for (validator in results[attr]) {
+        if (v.isPromise(results[attr][validator]))
+          throw new Error("Use validate.async if you want support for promises");
       }
     }
-
-    // Return the errors if we have any
-    for (attr in errors) return v.fullMessages(errors, options);
+    return validate.processValidationResults(results, options);
   };
 
   var v = validate
@@ -71,19 +39,126 @@
   // The first argument is the target object and the remaining arguments will be
   // used as targets.
   v.extend = function(obj) {
-    var i
-      , attr
-      , source
-      , sources = [].slice.call(arguments, 1);
-
-    for (i = 0; i < sources.length; ++i) {
-      source = sources[i];
-      for (attr in source) obj[attr] = source[attr];
-    }
+    [].slice.call(arguments, 1).forEach(function(source) {
+      for (var attr in source) obj[attr] = source[attr];
+    });
     return obj;
   };
 
   v.extend(validate, {
+    // Runs the validators specified by the constraints object.
+    // Will return an array of the format:
+    //     [{attribute: "<attribute name>", error: "<validation result>"}, ...]
+    runValidations: function(attributes, constraints, options) {
+      var results = []
+        , attr
+        , validatorName
+        , value
+        , validators
+        , validator
+        , validatorOptions
+        , error;
+
+      // Loops through each constraints, finds the correct validator and run it.
+      for (attr in constraints) {
+        value = attributes[attr];
+        validators = v.result(constraints[attr], value, attributes, attr);
+
+        for (validatorName in validators) {
+          validator = v.validators[validatorName];
+
+          if (!validator) {
+            error = v.format("Unknown validator %{name}", {name: validatorName});
+            throw new Error(error);
+          }
+
+          validatorOptions = validators[validatorName];
+          // This allows the options to be a function. The function will be
+          // called with the value, attribute name and the complete dict of
+          // attributes. This is useful when you want to have different
+          // validations depending on the attribute value.
+          validatorOptions = v.result(validatorOptions, value, attributes, attr);
+          if (!validatorOptions) continue;
+          results.push({
+            attribute: attr,
+            error: validator.call(validator, value, validatorOptions, attr,
+                                  attributes)
+          });
+        }
+      }
+
+      return results;
+    },
+
+    // Takes the output from runValidations and converts it to the correct
+    // output format.
+    processValidationResults: function(results, options) {
+      var errors = {};
+
+      // This indexes the errors per attribute
+      results.forEach(function(result) {
+        var error = result.error
+          , attribute = result.attribute;
+
+        if (v.isString(error)) error = [error];
+
+        if (error)
+          errors[attribute] = (errors[attribute] || []).concat(error);
+      });
+
+      // Semi ugly way to check if the errors are empty, try iterating over
+      // them and short circuit when something is found.
+      for (var _ in errors)
+        return v.fullMessages(errors, options);
+    },
+
+    // Runs the validations with support for promises.
+    // This function will return a promise that is settled when all the
+    // validation promises have been completed.
+    // It can be called even if no validations returned a promise.
+    async: function(attributes, constraints, options) {
+      options = options || {};
+      var results = v.runValidations(attributes, constraints, options);
+
+      return v.Promise(function(resolve, reject) {
+        v.waitForResults(results).then(function() {
+          var errors = v.processValidationResults(results);
+          if (errors) reject(errors);
+          else resolve();
+        }).then(undefined, v.error);
+      });
+    },
+
+    // Returns a promise that is resolved when all promises in the results array
+    // are settled. The promise returned from this function is always resolved,
+    // never rejected.
+    // This function modifies the input argument, it replaces the promises
+    // with the value returned from the promise.
+    waitForResults: function(results) {
+      // Create a sequence of all the results starting with a resolved promise.
+      var promise = results.reduce(function(memo, result) {
+        // If this result isn't a promise skip it in the sequence.
+        if (!v.isPromise(result.error)) return memo;
+
+        return memo.then(function() {
+          return result.error.then(
+            function() {
+              result.error = null;
+            },
+            function(error) {
+              // If for some reason the validator promise was rejected but no
+              // error was specified.
+              if (!error)
+                v.warn("Validator promise was rejected but didn't return an error");
+              result.error = error;
+            }
+          ).then(undefined, v.error);
+        }).then(undefined, v.error);
+      }, v.Promise(function(r) { r(); })); // A resolved promise
+
+      return promise.then(undefined, v.error);
+    },
+
     // If the given argument is a call: function the and: function return the value
     // otherwise just return the value. Additional arguments will be passed as
     // arguments to the function.
@@ -104,6 +179,11 @@
       return typeof value === 'number' && !isNaN(value);
     },
 
+    // Returns false if the object is not a function
+    isFunction: function(value) {
+      return typeof value === 'function';
+    },
+
     // A simple check to verify that the value is an integer. Uses `isNumber`
     // and a simple modulo check.
     isInteger: function(value) {
@@ -118,6 +198,12 @@
     // Returns false if the object is `null` of `undefined`
     isDefined: function(obj) {
       return obj !== null && obj !== undefined;
+    },
+
+    // Checks if the given argument is a promise. Anything with a `then`
+    // function is considered a promise.
+    isPromise: function(p) {
+      return !!p && typeof p.then === 'function';
     },
 
     // Formats the specified strings with the given values like so:
@@ -153,20 +239,13 @@
     },
 
     contains: function(obj, value) {
-      var i;
       if (!v.isDefined(obj)) return false;
-      if (v.isArray(obj)) {
-        if (obj.indexOf(value)) return obj.indexOf(value) !== -1;
-        for (i = obj.length - 1; i >= 0; --i) {
-          if (obj[i] === value) return true;
-        }
-        return false;
-      }
+      if (v.isArray(obj)) return obj.indexOf(value) !== -1;
       return value in obj;
     },
 
     capitalize: function(str) {
-      if (!str) return str;
+      if (!v.isString(str)) return str;
       return str[0].toUpperCase() + str.slice(1);
     },
 
@@ -174,17 +253,12 @@
       options = options || {};
 
       var ret = options.flatten ? [] : {}
-        , attr
-        , i
-        , error;
+        , attr;
 
       if (!errors) return ret;
 
-      // Converts the errors of object of the format
-      // {attr: [<error>, <error>, ...]} to contain the attribute name.
-      for (attr in errors) {
-        for (i = 0; i < errors[attr].length; ++i) {
-          error = errors[attr][i];
+      function processErrors(attr, errors) {
+        errors.forEach(function(error) {
           if (error[0] === '^') error = error.slice(1);
           else if (options.fullMessages !== false) {
             error = v.format("%{attr} %{message}", {
@@ -196,10 +270,110 @@
           // If flatten is true a flat array is returned.
           if (options.flatten) ret.push(error);
           else (ret[attr] || (ret[attr] = [])).push(error);
-        }
+        });
       }
+
+      // Converts the errors of object of the format
+      // {attr: [<error>, <error>, ...]} to contain the attribute name.
+      for (attr in errors) processErrors(attr, errors[attr]);
       return ret;
     },
+
+    // Returns a promise, should be called with the new operator.
+    // The first argument will be called with two functions, the first for
+    // resolving the promise and the second for rejecting it.
+    // Supports (in order of precedence):
+    //   * EcmaScript 6 Promises
+    //   * RSVP
+    //   * when
+    //   * Q
+    //
+    // If no supported promises are detected an error is thrown.
+    // A word of warning, only A+ style promises are supported. jQuery deferreds
+    // are NOT supported.
+    Promise: v.extend(function(callback) {
+      var promise = v.Promise.nativePromise(callback) ||
+                    v.Promise.RSVPPromise(callback) ||
+                    v.Promise.whenPromise(callback) ||
+                    v.Promise.QPromise(callback);
+
+      if (!promise) throw new Error("No promises could be detected");
+
+      return promise;
+    }, {
+      nativePromise: function(callback) {
+        var Promise_, module;
+        if (typeof Promise !== "undefined")
+          Promise_ = Promise;
+        else {
+          module = v.tryRequire("es6-promise");
+          if (module) Promise_ = module.Promise;
+        }
+        if (Promise_) return new Promise_(callback);
+      },
+      RSVPPromise: function(callback) {
+        var Promise, module;
+        if (typeof RSVP !== "undefined")
+          Promise = RSVP.Promise;
+        else {
+          module = v.tryRequire("rsvp");
+          if (module) Promise = module.Promise;
+        }
+        if (Promise) return new Promise(callback);
+      },
+      whenPromise: function(callback) {
+        var promise, module;
+        if (typeof when !== "undefined")
+          promise = when.promise;
+        else {
+          module = v.tryRequire("when");
+          if (module) promise = module.promise;
+        }
+        if (promise) return promise(callback);
+      },
+      QPromise: function(callback) {
+        var promise, module;
+        if (typeof Q !== "undefined")
+          promise = Q.promise;
+        else {
+          module = v.tryRequire("q");
+          if (module) promise = module.promise;
+        }
+        if (promise) return promise(callback);
+      }
+    }),
+
+    tryRequire: function(moduleName) {
+      if (!v.require) return null;
+      try {
+        return v.require(moduleName);
+      } catch(e) {
+        return null;
+      }
+    },
+
+    require: require,
+
+    exposeModule: function(validate, root, exports, module, define) {
+      if (exports) {
+        if (module && module.exports) exports = module.exports = validate;
+        exports.validate = validate;
+      }
+      else {
+        root.validate = validate;
+
+        if (validate.isFunction(define) && define.amd)
+          define("validate", [], function () { return validate; });
+      }
+    },
+
+    warn: function(msg) {
+      if (typeof console !== "undefined" && console.warn) console.warn(msg);
+    },
+
+    error: function(msg) {
+      if (typeof console !== "undefined" && console.error) console.error(msg);
+    }
   });
 
   validate.validators = {
@@ -210,6 +384,9 @@
 
       // Null and undefined aren't allowed
       if (!v.isDefined(value)) return message;
+
+      // functions are ok
+      if (v.isFunction(value)) return;
 
       if (typeof value === 'string') {
         // Tests if the string contains only whitespace (tab, newline, space etc)
@@ -385,11 +562,10 @@
     })
   };
 
-  if (exports) {
-    if (module && module.exports) exports = module.exports = validate;
-    exports.validate = validate;
-  }
-  else root.validate = validate;
+  validate.exposeModule(validate, root, exports, module, define);
+
 }).call(this,
         typeof exports !== 'undefined' ? exports : null,
-        typeof module !== 'undefined' ? module : null);
+        typeof module !== 'undefined' ? module : null,
+        typeof define !== 'undefined' ? define : null,
+        typeof require !== 'undefined' ? require : null);
