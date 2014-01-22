@@ -9,7 +9,10 @@
 
   // The main function that calls the validators specified by the constraints.
   // The options are the following:
+  //   - flatten (boolean) - If `true` will return a flat array instead of an object.
+  //   - fullMessages (boolean) - If `true` (default) the attribute name is prepended to the error.
   //
+  // Please note that the options are also passed to each validator.
   var validate = function(attributes, constraints, options) {
     options = options || {};
     var results = v.runValidations(attributes, constraints, options)
@@ -92,6 +95,7 @@
     processValidationResults: function(results, options) {
       var errors = {};
 
+      // This indexes the errors per attribute
       results.forEach(function(result) {
         var error = result.error
           , attribute = result.attribute;
@@ -102,7 +106,8 @@
           errors[attribute] = (errors[attribute] || []).concat(error);
       });
 
-      // If there are any errors return them
+      // Semi ugly way to check if the errors are empty, try iterating over
+      // them and short circuit when something is found.
       for (var _ in errors)
         return v.fullMessages(errors, options);
     },
@@ -125,7 +130,7 @@
     },
 
     // Returns a promise that is resolved when all promises in the results array
-    // are settled. The promise returned from this function is always resvoled,
+    // are settled. The promise returned from this function is always resolved,
     // never rejected.
     // This function modifies the input argument, it replaces the promises
     // with the value returned from the promise.
