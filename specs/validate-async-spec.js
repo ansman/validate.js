@@ -33,7 +33,7 @@ describe("validate.async", function() {
     expect(promise).toBeAPromise();
   });
 
-  it.promise("resolves the promise if all constraints pass", function(done) {
+  it.promise("resolves the promise if all constraints pass", function() {
     return validate.async({}, {});
   });
 
