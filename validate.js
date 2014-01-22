@@ -4,7 +4,7 @@
 //     For all details and documentation:
 //     http://validatejs.org/
 
-(function(exports, module, define) {
+(function(exports, module, define, require) {
   "use strict";
 
   // The main function that calls the validators specified by the constraints.
@@ -310,6 +310,17 @@
       }
     }),
 
+    tryRequire: function(moduleName) {
+      if (!v.require) return null;
+      try {
+        return v.require(moduleName);
+      } catch(e) {
+        return null;
+      }
+    },
+
+    require: require,
+
     exposeModule: function(validate, root, exports, module, define) {
       if (exports) {
         if (module && module.exports) exports = module.exports = validate;
@@ -523,4 +534,5 @@
 }).call(this,
         typeof exports !== 'undefined' ? exports : null,
         typeof module !== 'undefined' ? module : null,
-        typeof define !== 'undefined' ? define : null);
+        typeof define !== 'undefined' ? define : null,
+        typeof require !== 'undefined' ? require : null);
