@@ -158,16 +158,6 @@
       font-size: 18px;
     }
 
-    pre {
-      position: relative;
-    }
-
-    pre > button {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-    }
-
     pre > code {
       padding: 0;
       background-color: transparent;
@@ -601,7 +591,7 @@ validate({}, {username: {presence: {message: "^You must pick a username"}}});
               <em>Please note that jQuery's promise implementation is not A+ compatible and will not work.</em>
             </p>
             <p class="description">Example:</p>
-            <pre class="javascript"><button class="btn btn-default btn-sm" title="Run example">▶</button><code>var success = function() {
+            <pre class="javascript"><code>var success = function() {
       alert("The validations passed");
     }
   , error = function(errors) {
@@ -1311,17 +1301,5 @@ validate({}, {username: {presence: true}});
       </div>
     </div>
   </div>
-  <script>
-    (function() {
-      [].forEach.call(document.querySelectorAll("pre > button"), function(button) {
-        button.addEventListener("click", function(ev) {
-          var code = button.parentNode.querySelector("code");
-          debugger;
-          if (!code) return;
-          eval(code.innerText);
-        }, false);
-      });
-    })();
-  </script>
 </body>
 </html>
