@@ -33,9 +33,10 @@ describe("validate", function() {
     var attributes = {
       name: "Nicklas Ansman",
       email: "nicklas@ansman.se",
-      deeply: {
-        nested: {
-          variable: "hello"
+      addresses: {
+        work: {
+          street: "Drottninggatan 98",
+          city: "Stockholm"
         }
       }
     };
@@ -48,9 +49,13 @@ describe("validate", function() {
         fail: true,
         fail2: true
       },
-      "deeply.nested.variable": {
-        fail2: true
-      }
+      "addresses.work.street": {
+        pass: true,
+        fail2: true,
+      },
+      "addresses.work.city": {
+        pass: true
+      },
     };
 
     fail.andReturn("must be a valid email address");
@@ -61,15 +66,15 @@ describe("validate", function() {
         "Email must be a valid email address",
         "Email is simply not good enough"
       ],
-      "deeply.nested.variable": [
-        "Deeply.nested.variable is simply not good enough"
+      "addresses.work.street": [
+        "Addresses work street is simply not good enough"
       ]
     });
 
     expect(validate(attributes, constraints, {flatten: true})).toEqual([
       "Email must be a valid email address",
       "Email is simply not good enough",
-      "Deeply.nested.variable is simply not good enough"
+      "Addresses work street is simply not good enough"
     ]);
   });
 

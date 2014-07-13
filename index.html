@@ -273,6 +273,7 @@
         <a href="#validate">Validate function</a>
         <ul>
           <li><a href="#validate-async">Async validation</a></li>
+          <li><a href="#validate-nested">Nested validation</a></li>
         </ul>
       </li>
       <li>
@@ -611,6 +612,41 @@ validate.async({}, constraints).then(success, error);
 validate.Promise = function(callback) {
   return new Promise(callback);
 };</code></pre>
+          </div>
+          <div id="validate-nested">
+            <h3>Nested validation</h3>
+            <p class="description">
+              Validate.js also has limited support for nested objects (objects
+              within objects) using the dot notation.
+            </p>
+            <p class="description">
+              The implementation is fairly basic and doesn't do anything clever
+              with the messages. It doesn't support things like only validating a
+              sub key if the parent key is present so for more advanced validations
+              multiple validation schemas are recommended.
+            </p>
+            <pre class="javascript"><code>var constraints = {
+  "addresses.shipping": {
+    presence: true
+  },
+  "addresses.shipping.street": {
+    format: {
+      // Must be numbers followed by a name
+      pattern: "^[0-9]+ .+$",
+      message: "^The street for the shipping address must be a valid street name"
+    }
+  }
+};
+
+validate({}, constraints);
+// =&gt; {"addresses.shipping": ["Addresses shipping can't be blank"]}
+
+validate({addresses: {shipping: {street: "Foobar"}}}, constraints);
+// =&gt; {"addresses.shipping.street": ["The street for the shipping address must be a valid street name"]}
+
+validate({"foo.bar": 3}, {"foo\\.bar": {numericality: {even: true}}});
+// =&gt; {"foo\.bar": ["Foo bar must be even"]}
+            </code></pre>
           </div>
         </div>
         <div id="custom-validator">
@@ -1225,6 +1261,10 @@ validate({}, {username: {presence: true}});
             <ul>
               <li>
                 Allow upper case letters in email addresses
+              </li>
+              <li>
+                <b>Breaking:</b> Periods can now be used for validated nested objects. Thanks
+                <a href="https://github.com/wrapp/validate.js/pull/20">colinskow</a> for implementing this.
               </li>
             </ul>
           </div>

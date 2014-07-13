@@ -61,7 +61,7 @@
 
       // Loops through each constraints, finds the correct validator and run it.
       for (attr in constraints) {
-        value = v.getObjectRef(attributes, attr);
+        value = v.getDeepObjectValue(attributes, attr);
         validators = v.result(constraints[attr], value, attributes, attr);
 
         for (validatorName in validators) {
@@ -217,12 +217,16 @@
     },
 
     // "Prettifies" the given string.
-    // Prettifying means replacing - and _ with spaces as well as splitting
+    // Prettifying means replacing [.\_-] with spaces as well as splitting
     // camel case words.
     prettify: function(str) {
       return str
-        // Replaces - and _ with spaces
-        .replace(/[_\-]/g, ' ')
+        // Splits keys separated by periods
+        .replace(/([^\s])\.([^\s])/g, '$1 $2')
+        // Removes backslashes
+        .replace(/\\+/g, '')
+        // Replaces - and - with space
+        .replace(/[_-]/g, ' ')
         // Splits camel cased words
         .replace(/([a-z])([A-Z])/g, function(m0, m1, m2) {
           return "" + m1 + " " + m2.toLowerCase();
@@ -244,21 +248,50 @@
       return value in obj;
     },
 
-    // Access nested JavaScript objects with string key
-    // http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
-    getObjectRef: function(obj, str) {
-      str = str.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
-      str = str.replace(/^\./, '');           // strip a leading dot
-      var pList = str.split('.');
-      while (pList.length) {
-        var n = pList.shift();
-        if (n in obj) {
-          obj = obj[n];
-        } else {
-          return;
+    getDeepObjectValue: function(obj, keypath) {
+      if (!v.isObject(obj) || !v.isString(keypath)) {
+        return undefined;
+      }
+
+      var key = ""
+        , i
+        , escape = false;
+
+      for (i = 0; i < keypath.length; ++i) {
+        switch (keypath[i]) {
+          case '.':
+            if (escape) {
+              escape = false;
+              key += '.';
+            } else if (key in obj) {
+              obj = obj[key];
+              key = "";
+            } else {
+              return undefined;
+            }
+            break;
+
+          case '\\':
+            if (escape) {
+              escape = false;
+              key += '\\';
+            } else {
+              escape = true;
+            }
+            break;
+
+          default:
+            escape = false;
+            key += keypath[i];
+            break;
         }
       }
-      return obj;
+
+      if (key in obj) {
+        return obj[key];
+      } else {
+        return undefined;
+      }
     },
 
     capitalize: function(str) {
