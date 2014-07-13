@@ -441,4 +441,21 @@ describe("validate", function() {
       expect(validate.require).toHaveBeenCalledWith("foobar");
     });
   });
+
+  describe("getObjectRef", function() {
+    it("should retrieve a deeply nested property using a string address", function() {
+      var testObject = {
+        deeply: {
+          nested: {
+            variable: [
+              "hello",
+              "world"
+            ]
+          }
+        }
+      };
+      var result = validate.getObjectRef(testObject, "deeply.nested[variable][1]");
+      expect(result).toBe("world");
+    });
+  });
 });

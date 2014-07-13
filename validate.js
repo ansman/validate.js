@@ -61,7 +61,7 @@
 
       // Loops through each constraints, finds the correct validator and run it.
       for (attr in constraints) {
-        value = attributes[attr];
+        value = v.getObjectRef(attributes, attr);
         validators = v.result(constraints[attr], value, attributes, attr);
 
         for (validatorName in validators) {
@@ -242,6 +242,23 @@
       if (!v.isDefined(obj)) return false;
       if (v.isArray(obj)) return obj.indexOf(value) !== -1;
       return value in obj;
+    },
+
+    // Access nested JavaScript objects with string key
+    // http://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-with-string-key
+    getObjectRef: function(obj, str) {
+      str = str.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+      str = str.replace(/^\./, '');           // strip a leading dot
+      var pList = str.split('.');
+      while (pList.length) {
+        var n = pList.shift();
+        if (n in obj) {
+          obj = obj[n];
+        } else {
+          return;
+        }
+      }
+      return obj;
     },
 
     capitalize: function(str) {

@@ -32,7 +32,12 @@ describe("validate", function() {
   it("runs as expected", function() {
     var attributes = {
       name: "Nicklas Ansman",
-      email: "nicklas@ansman.se"
+      email: "nicklas@ansman.se",
+      deeply: {
+        nested: {
+          variable: "hello"
+        }
+      }
     };
     var constraints = {
       name: {
@@ -41,6 +46,9 @@ describe("validate", function() {
       email: {
         pass: true,
         fail: true,
+        fail2: true
+      },
+      "deeply.nested.variable": {
         fail2: true
       }
     };
@@ -52,12 +60,16 @@ describe("validate", function() {
       email: [
         "Email must be a valid email address",
         "Email is simply not good enough"
+      ],
+      "deeply.nested.variable": [
+        "Deeply.nested.variable is simply not good enough"
       ]
     });
 
     expect(validate(attributes, constraints, {flatten: true})).toEqual([
       "Email must be a valid email address",
-      "Email is simply not good enough"
+      "Email is simply not good enough",
+      "Deeply.nested.variable is simply not good enough"
     ]);
   });
 
@@ -98,7 +110,7 @@ describe("validate", function() {
         error: "foobar"
       }, {
         attribute: "name",
-        error: ["foo", "bar"],
+        error: ["foo", "bar"]
       }, {
         attribute: "name",
         error: null
