@@ -97,8 +97,11 @@ describe("validate.async", function() {
 
     it("tries to import the native promised polyfill", function() {
       spyOn(validate, "tryRequire").andCallFake(function(module) {
-        if (module === "es6-promise") return {Promise: store.Promise};
-        else return null;
+        if (module === "es6-promise") {
+          return {Promise: store.Promise};
+        } else {
+          return null;
+        }
       });
       expect(validate.Promise(function() {})).toBeAPromise();
     });
@@ -113,8 +116,11 @@ describe("validate.async", function() {
 
     it("tries to import the RSVP module", function() {
       spyOn(validate, "tryRequire").andCallFake(function(module) {
-        if (module === "rsvp") return store.RSVP;
-        else return null;
+        if (module === "rsvp") {
+          return store.RSVP;
+        } else {
+          return null;
+        }
       });
       expect(validate.Promise(function() {})).toBeAPromise();
     });
@@ -130,8 +136,11 @@ describe("validate.async", function() {
     it("tries to import the when.js module", function() {
       spyOn(validate, "tryRequire").andCallFake(function(module) {
         console.log(module);
-        if (module === "when") return store.when;
-        else return null;
+        if (module === "when") {
+          return store.when;
+        } else {
+          return null;
+        }
       });
       expect(validate.Promise(function() {})).toBeAPromise();
     });
@@ -146,8 +155,11 @@ describe("validate.async", function() {
 
     it("tries to import the q module", function() {
       spyOn(validate, "tryRequire").andCallFake(function(module) {
-        if (module === "q") return store.Q;
-        else return null;
+        if (module === "q") {
+          return store.Q;
+        } else {
+          return null;
+        }
       });
       expect(validate.Promise(function() {})).toBeAPromise();
     });

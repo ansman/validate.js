@@ -9,13 +9,15 @@ module.exports = function(grunt) {
         src: 'specs/**/*.js',
         options: {
           ignores: ['specs/vendor/**/*.js'],
-          laxcomma: true
+          laxcomma: true,
+          curly: true
         }
       },
       validate: {
         src: '<%= pkg.name %>',
         options: {
-          laxcomma: true
+          laxcomma: true,
+          curly: true
         }
       }
     },
