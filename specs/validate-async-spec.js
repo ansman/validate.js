@@ -85,7 +85,6 @@ describe("validate.async", function() {
       expect(validate.tryRequire).toHaveBeenCalledWith("rsvp");
       expect(validate.tryRequire).toHaveBeenCalledWith("when");
       expect(validate.tryRequire).toHaveBeenCalledWith("q");
-      console.log(validate.tryRequire.calls);
     });
 
     it("supports native promises", function() {
