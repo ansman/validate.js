@@ -45,7 +45,7 @@ describe("validate.async", function() {
     });
   });
 
-  it.promise("handles validators returning an promise", function() {
+  it.promise("handles validators returning a promise", function() {
     var c = {
       name: {
         asyncFail: true,
