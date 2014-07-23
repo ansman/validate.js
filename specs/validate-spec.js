@@ -206,4 +206,10 @@ describe("validate", function() {
       );
     });
   });
+
+  describe("works with flatten: true and fullMessages: false", function() {
+    var constraints = {foo: {presence: true}}
+      , options = {flatten: true, fullMessages: false};
+    expect(validate({}, constraints, options)).toEqual(["can't be blank"]);
+  });
 });
