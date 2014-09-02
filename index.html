@@ -948,6 +948,12 @@ validate({duration: 4711}, constraints);
                 If true, only dates (not datetimes) will be allowed.
                 The default error is <i>must be a valid date</i>
               </dd>
+              <dt>dateFormat</dt>
+              <dd>
+                The format for dates. The values for this will be different
+                depending on which date library is used. Check the XDate or
+                moment.js documentation for more information.
+              </dd>
             </dl>
             <p>
               If you want to use some other library you can override the
