@@ -31,7 +31,6 @@
 
   var v = validate
     , root = this
-    , XDate = root.XDate
     // Finds %{key} style patterns in the given string
     , FORMAT_REGEXP = /%\{([^\}]+)\}/g;
 
@@ -648,14 +647,35 @@
       // of millis since the epoch.
       // It should return NaN if it's not a valid date.
       parse: function(value, options) {
-        return new XDate(value, true).getTime();
+        if (v.isFunction(root.XDate)) {
+          return new root.XDate(value, true).getTime();
+        }
+
+        var moment = v.tryRequire("moment");
+        if (v.isDefined(moment)) {
+          return +moment.utc(value);
+        }
+
+        throw new Error("Neither XDate or moment.js was found");
       },
       // Formats the given timestamp. Uses ISO8601 to format them.
       // If options.dateOnly is true then only the year, month and day will be
       // output.
       format: function(date, options) {
-        var format = options.dateFormat || (options.dateOnly ? "yyyy-MM-dd" : "u");
-        return new XDate(date, true).toString(format);
+        var format = options.dateFormat;
+
+        if (v.isFunction(root.XDate)) {
+          format = format || (options.dateOnly ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss");
+          return new XDate(date, true).toString(format);
+        }
+
+        var moment = v.tryRequire("moment");
+        if (v.isDefined(moment)) {
+          format = format || (options.dateOnly ? "YYYY-MM-DD" : "YYYY-MM-DD HH:mm:ss");
+          return moment.utc(date).format(format);
+        }
+
+        throw new Error("Neither XDate or moment.js was found");
       }
     }),
     date: function(value, options) {

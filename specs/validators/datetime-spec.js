@@ -1,5 +1,10 @@
 describe('validators.datetime', function() {
-  var datetime = validate.validators.datetime.bind(validate.validators.datetime);
+  var datetime = validate.validators.datetime.bind(validate.validators.datetime)
+    , XDate = window.XDate;
+
+  afterEach(function() {
+    window.XDate = XDate;
+  });
 
   it("allows non defined values", function() {
     expect(datetime(null, {})).not.toBeDefined();
@@ -9,40 +14,121 @@ describe('validators.datetime', function() {
   describe("parse", function() {
     var parse = validate.validators.datetime.parse;
 
-    it("returns the millis since epoch for valid strings", function() {
-      // 2013-10-25 00:00:00 UTC
-      expect(parse("2013-10-26", {})).toEqual(1382745600000);
-
-      // 1000-01-01 00:00:00 UTC
-      expect(parse("1000-01-01", {})).toEqual(-30610224000000);
-
-      // UTC
-      expect(parse("2013-10-26T10:35:24", {})).toEqual(1382783724000);
-      // PDT
-      expect(parse("2013-10-26T10:35:24-0700", {})).toEqual(1382808924000);
+    it("throws and error if neither XDate or moment.js is found", function() {
+      expect(function() {
+        delete window.XDate;
+        spyOn(validate.tryRequire).andReturn(null);
+        parse("2014-09-02");
+      }).toThrow();
     });
 
-    it("returns NaN for invalid dates", function() {
+    function runParseTestsForValidStrings() {
+        // 2013-10-25 00:00:00 UTC
+        expect(parse("2013-10-26", {})).toEqual(1382745600000);
+
+        // 1000-01-01 00:00:00 UTC
+        expect(parse("1000-01-01", {})).toEqual(-30610224000000);
+
+        // UTC
+        expect(parse("2013-10-26T10:35:24", {})).toEqual(1382783724000);
+        // PDT
+        expect(parse("2013-10-26T10:35:24-0700", {})).toEqual(1382808924000);
+    }
+
+    function runNaNTests() {
       expect(parse("foobar", {})).toBeNaN();
+    }
+
+    describe("with XDate", function() {
+      beforeEach(function() {
+        spyOn(validate, "tryRequire").andReturn(null);
+      });
+
+      it("returns the millis since epoch for valid strings", function() {
+        runParseTestsForValidStrings();
+      });
+
+      it("returns NaN for invalid dates", function() {
+        runNaNTests();
+      });
+    });
+
+    describe("with moment.js", function() {
+      beforeEach(function() {
+        window.XDate = undefined;
+        spyOn(moment, "utc").andCallThrough();
+        spyOn(validate, "tryRequire").andReturn(moment);
+      });
+
+      it("returns the millis since epoch for valid strings", function() {
+        runParseTestsForValidStrings();
+        expect(moment.utc).toHaveBeenCalled();
+      });
+
+      it("returns NaN for invalid dates", function() {
+        runNaNTests();
+        expect(moment.utc).toHaveBeenCalled();
+      });
     });
   });
 
   describe("format", function() {
     var format = validate.validators.datetime.format;
 
-    it("formats as ISO8601 in errors", function() {
-      var expected = "2013-10-26T17:35:24Z";
+    function runDatetimeTest() {
+      var expected = "2013-10-26 17:35:24";
       expect(format(1382808924000, {})).toBe(expected);
-    });
+    }
 
-    it("only includes the date part it dateOnly is set", function() {
+    function runDateTest() {
       var expected = "2013-10-26";
       expect(format(1382745600000, {dateOnly: true})).toBe(expected);
+    }
+
+    function runOverrideTest(dateFormat) {
+      var expected = "10/26/13";
+      expect(format(1382808924000, {dateFormat: dateFormat})).toBe(expected);
+    }
+
+    describe("with XDate", function() {
+      beforeEach(function() {
+        spyOn(validate, "tryRequire").andReturn(null);
+      });
+
+      it("formats as ISO8601 in errors", function() {
+        runDatetimeTest();
+      });
+
+      it("only includes the date part it dateOnly is set", function() {
+        runDateTest();
+      });
+
+      it("allows you to override the format string", function() {
+        runOverrideTest("MM/dd/yy");
+      });
     });
 
-    it("allows you to override the format string", function() {
-      var expected = "10/26/13";
-      expect(format(1382808924000, {dateFormat: "MM/dd/yy"})).toBe(expected);
+    describe("with moment.js", function() {
+      beforeEach(function() {
+        window.XDate = undefined;
+        spyOn(moment, "utc").andCallThrough();
+        spyOn(validate, "tryRequire").andReturn(moment);
+      });
+
+      it("formats as ISO8601 in errors", function() {
+        runDatetimeTest();
+        expect(moment.utc).toHaveBeenCalled();
+      });
+
+      it("only includes the date part it dateOnly is set", function() {
+        runDateTest();
+        expect(moment.utc).toHaveBeenCalled();
+      });
+
+      it("allows you to override the format string", function() {
+        runOverrideTest("MM/DD/YY");
+        expect(moment.utc).toHaveBeenCalled();
+      });
     });
   });
 
@@ -78,7 +164,7 @@ describe('validators.datetime', function() {
     it("doesn't allow earlier dates", function() {
       var options = {earliest: '2013-10-26 00:00:00'}
         , value = "2013-10-25 23:59:59"
-        , expected = ["must be no earlier than 2013-10-26T00:00:00Z"];
+        , expected = ["must be no earlier than 2013-10-26 00:00:00"];
 
       expect(datetime(value, options)).toEqual(expected);
     });
@@ -112,7 +198,7 @@ describe('validators.datetime', function() {
     it("doesn't allow later dates", function() {
       var options = {latest: '2013-10-26 00:00:00'}
         , value = "2013-10-26 00:00:01"
-        , expected = ["must be no later than 2013-10-26T00:00:00Z"];
+        , expected = ["must be no later than 2013-10-26 00:00:00"];
 
       expect(datetime(value, options)).toEqual(expected);
     });

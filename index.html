@@ -364,7 +364,8 @@
           </div>
           <p class="dependencies">
             There are no required external dependencies but the default parser and
-            formatter for the datetime and date validator requires <a href="http://arshaw.com/xdate/">XDate</a>.
+            formatter for the datetime and date validator requires <a href="http://arshaw.com/xdate/">XDate</a> or
+            <a href="http://momentjs.com/">moment.js</a>
           </p>
         </div>
         <div id="overview">
@@ -922,9 +923,9 @@ validate({duration: 4711}, constraints);
             <div class="signature"><b>datetime</b></div>
             <p class="description">
               This datetime validator can be used to validate dates and times.
-              The default implementation depends on the
-              <a href="http://arshaw.com/xdate/" target="_blank">XDate</a> library.
-              If you want to switch to use some other library see the example below.
+              The default implementation supports <a href="http://arshaw.com/xdate/" target="_blank">XDate</a>
+              and a[href=http://momentjs.com/]{moment.js} but it's easy to use any
+              date library (see example below).
             </p>
             <p class="description">
               You can specify the follow constraints:
@@ -977,6 +978,8 @@ validate({birthday: "3013-11-14 22:34:52"}, constraints);
 validate({birthday: "3013-11-14"}, constraints);
 // =&gt; {"birthday": ["You need to be atleast 18 years old"]}
 
+
+// If you want to use another library override the two methods below:
 
 // Value will be the input (guaranteed not to be null or undefined) and options
 // are options given to the validator.
@@ -1266,6 +1269,7 @@ validate({}, {username: {presence: true}});
                 <b>Breaking:</b> Periods can now be used for validated nested objects. Thanks
                 <a href="https://github.com/wrapp/validate.js/pull/20">colinskow</a> for implementing this.
               </li>
+              <li>Support moment.js for datetime parsing and formatting</li>
             </ul>
           </div>
           <div id="changelog-0-2-0">
