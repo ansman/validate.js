@@ -273,6 +273,7 @@
         <a href="#validate">Validate function</a>
         <ul>
           <li><a href="#validate-async">Async validation</a></li>
+          <li><a href="#validate-nested">Nested validation</a></li>
         </ul>
       </li>
       <li>
@@ -306,6 +307,7 @@
       <li>
         <a href="#changelog">Changelog</a>
         <ul>
+          <li><a href="#changelog-0-3-0">0.3.0</a></li>
           <li><a href="#changelog-0-2-0">0.2.0</a></li>
           <li><a href="#changelog-0-1-3">0.1.3</a></li>
           <li><a href="#changelog-0-1-2">0.1.2</a></li>
@@ -328,7 +330,7 @@
             The project can be found on <a href="https://github.com/wrapp/validate.js">GitHub</a>
             where you can also find our <a href="https://github.com/wrapp/validate.js/issues">issue tracker</a>.
             There is also a <a href="https://travis-ci.org/wrapp/validate.js">Travis project</a>
-            used for testing and the <a href="http://htmlpreview.github.com/?https://raw.github.com/wrapp/validate.js/0.2.0/docs/validate.html">annotated source</a>.
+            used for testing and the <a href="docs/validate.html">annotated source</a>.
           </p>
           <p class="notes">
             Validate.js is an open source component of <a href="https://www.wrapp.com">Wrapp</a>
@@ -336,13 +338,13 @@
           </p>
           <h2>Downloads &amp; Dependencies</h2>
           <div class="download">
-            <a class="btn btn-default" download href="validate.js">Development version (0.2.0)</a>
+            <a class="btn btn-default" download href="validate.js">Development version (0.3.0)</a>
             <div class="info">
               <span class="details">20KB, uncompressed and plenty of comments</span>
             </div>
           </div>
           <div class="download">
-            <a class="btn btn-primary" download href="validate.min.js">Production version (0.2.0)</a>
+            <a class="btn btn-primary" download href="validate.min.js">Production version (0.3.0)</a>
             <div class="info">
               <span class="details">1.6KB, minified and gzipped</span><br>
               <a download href="validate.min.map">(Source map)</a>
@@ -362,7 +364,8 @@
           </div>
           <p class="dependencies">
             There are no required external dependencies but the default parser and
-            formatter for the datetime and date validator requires <a href="http://arshaw.com/xdate/">XDate</a>.
+            formatter for the datetime and date validator requires <a href="http://arshaw.com/xdate/">XDate</a> or
+            <a href="http://momentjs.com/">moment.js</a>
           </p>
         </div>
         <div id="overview">
@@ -610,6 +613,41 @@ validate.async({}, constraints).then(success, error);
 validate.Promise = function(callback) {
   return new Promise(callback);
 };</code></pre>
+          </div>
+          <div id="validate-nested">
+            <h3>Nested validation</h3>
+            <p class="description">
+              Validate.js also has limited support for nested objects (objects
+              within objects) using the dot notation.
+            </p>
+            <p class="description">
+              The implementation is fairly basic and doesn't do anything clever
+              with the messages. It doesn't support things like only validating a
+              sub key if the parent key is present so for more advanced validations
+              multiple validation schemas are recommended.
+            </p>
+            <pre class="javascript"><code>var constraints = {
+  "addresses.shipping": {
+    presence: true
+  },
+  "addresses.shipping.street": {
+    format: {
+      // Must be numbers followed by a name
+      pattern: "^[0-9]+ .+$",
+      message: "^The street for the shipping address must be a valid street name"
+    }
+  }
+};
+
+validate({}, constraints);
+// =&gt; {"addresses.shipping": ["Addresses shipping can't be blank"]}
+
+validate({addresses: {shipping: {street: "Foobar"}}}, constraints);
+// =&gt; {"addresses.shipping.street": ["The street for the shipping address must be a valid street name"]}
+
+validate({"foo.bar": 3}, {"foo\\.bar": {numericality: {even: true}}});
+// =&gt; {"foo\.bar": ["Foo bar must be even"]}
+            </code></pre>
           </div>
         </div>
         <div id="custom-validator">
@@ -885,9 +923,9 @@ validate({duration: 4711}, constraints);
             <div class="signature"><b>datetime</b></div>
             <p class="description">
               This datetime validator can be used to validate dates and times.
-              The default implementation depends on the
-              <a href="http://arshaw.com/xdate/" target="_blank">XDate</a> library.
-              If you want to switch to use some other library see the example below.
+              The default implementation supports <a href="http://arshaw.com/xdate/" target="_blank">XDate</a>
+              and <a href="http://momentjs.com/">moment.js</a> but it's easy to use any
+              date library (see example below).
             </p>
             <p class="description">
               You can specify the follow constraints:
@@ -909,6 +947,12 @@ validate({duration: 4711}, constraints);
               <dd>
                 If true, only dates (not datetimes) will be allowed.
                 The default error is <i>must be a valid date</i>
+              </dd>
+              <dt>dateFormat</dt>
+              <dd>
+                The format for dates. The values for this will be different
+                depending on which date library is used. Check the XDate or
+                moment.js documentation for more information.
               </dd>
             </dl>
             <p>
@@ -940,6 +984,8 @@ validate({birthday: "3013-11-14 22:34:52"}, constraints);
 validate({birthday: "3013-11-14"}, constraints);
 // =&gt; {"birthday": ["You need to be atleast 18 years old"]}
 
+
+// If you want to use another library override the two methods below:
 
 // Value will be the input (guaranteed not to be null or undefined) and options
 // are options given to the validator.
@@ -1135,9 +1181,9 @@ validate({from: "nicklas@ansman"}, constraints);
 validate({from: "nicklas@foo.faketld"}, constraints);
 // =&gt; undefined
 
-// Upper cased emails are not allowed
+// Upper cased emails are allowed
 validate({from: "NICKLAS@ANSMAN.SE"}, constraints);
-// =&gt; {"email": ["From is not a valid email"]}
+// =&gt; undefined
 
 constraints = {
   from: {
@@ -1170,7 +1216,7 @@ validate({from: "first.läst@example.com"}, constraints);
             </p>
             <pre class="json"><code>{
   "dependencies": {
-    "validate.js": "~0.2.0"
+    "validate.js": "~0.3.0"
   }
 }</code></pre>
             <p class="description">
@@ -1210,13 +1256,34 @@ validate({}, {username: {presence: true}});
               or add it to your <code>bower.json</code> file:
               <pre class="json"><code>{
   "dependencies": {
-    "validate": "0.2.0"
+    "validate": "0.3.0"
   }
 }</code></pre>
           </div>
         </div>
         <div id="changelog">
           <h2>Changelog</h2>
+          <div id="changelog-0-3-0">
+            <h3>
+              <b class="version">0.3.0</b>
+              -
+              <span class="date">Sep 5, 2014</span>
+              -
+              <a href="http://htmlpreview.github.com/?https://raw.github.com/wrapp/validate.js/0.3.0/index.html">Docs</a>
+              -
+              <a href="https://github.com/wrapp/validate.js/compare/0.2.0...0.3.0">Diff</a>
+            </h3>
+            <ul>
+              <li>
+                Allow upper case letters in email addresses
+              </li>
+              <li>
+                <b>Breaking:</b> Nested validation - periods can now be used for validated nested objects. Thanks
+                <a href="https://github.com/wrapp/validate.js/pull/20">colinskow</a> for implementing this.
+              </li>
+              <li>Support moment.js for datetime parsing and formatting</li>
+            </ul>
+          </div>
           <div id="changelog-0-2-0">
             <h3>
               <b class="version">0.2.0</b>

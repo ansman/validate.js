@@ -1,0 +1,6 @@
+1. Bump the version in package.json
+3. Bump the version bower.json
+4. Bump the version validate.js
+4. Bump the version index.html (sidebar link and all links with the old version)
+5. Compile with `grunt build`
+6. Publish with npm: `npm publish`

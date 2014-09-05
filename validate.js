@@ -1,5 +1,5 @@
-//     Validate.js 0.2.0
-//     (c) 2013 Wrapp
+//     Validate.js 0.3.0
+//     (c) 2014 Wrapp
 //     Validate.js may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://validatejs.org/
@@ -21,8 +21,9 @@
 
     for (attr in results) {
       for (validator in results[attr]) {
-        if (v.isPromise(results[attr][validator]))
+        if (v.isPromise(results[attr][validator])) {
           throw new Error("Use validate.async if you want support for promises");
+        }
       }
     }
     return validate.processValidationResults(results, options);
@@ -30,7 +31,6 @@
 
   var v = validate
     , root = this
-    , XDate = root.XDate
     // Finds %{key} style patterns in the given string
     , FORMAT_REGEXP = /%\{([^\}]+)\}/g;
 
@@ -40,7 +40,9 @@
   // used as targets.
   v.extend = function(obj) {
     [].slice.call(arguments, 1).forEach(function(source) {
-      for (var attr in source) obj[attr] = source[attr];
+      for (var attr in source) {
+        obj[attr] = source[attr];
+      }
     });
     return obj;
   };
@@ -61,7 +63,7 @@
 
       // Loops through each constraints, finds the correct validator and run it.
       for (attr in constraints) {
-        value = attributes[attr];
+        value = v.getDeepObjectValue(attributes, attr);
         validators = v.result(constraints[attr], value, attributes, attr);
 
         for (validatorName in validators) {
@@ -78,7 +80,9 @@
           // attributes. This is useful when you want to have different
           // validations depending on the attribute value.
           validatorOptions = v.result(validatorOptions, value, attributes, attr);
-          if (!validatorOptions) continue;
+          if (!validatorOptions) {
+            continue;
+          }
           results.push({
             attribute: attr,
             error: validator.call(validator, value, validatorOptions, attr,
@@ -100,16 +104,20 @@
         var error = result.error
           , attribute = result.attribute;
 
-        if (v.isString(error)) error = [error];
+        if (v.isString(error)) {
+          error = [error];
+        }
 
-        if (error)
+        if (error) {
           errors[attribute] = (errors[attribute] || []).concat(error);
+        }
       });
 
       // Semi ugly way to check if the errors are empty, try iterating over
       // them and short circuit when something is found.
-      for (var _ in errors)
+      for (var _ in errors) {
         return v.fullMessages(errors, options);
+      }
     },
 
     // Runs the validations with support for promises.
@@ -123,8 +131,11 @@
       return v.Promise(function(resolve, reject) {
         v.waitForResults(results).then(function() {
           var errors = v.processValidationResults(results);
-          if (errors) reject(errors);
-          else resolve();
+          if (errors) {
+            reject(errors);
+          } else {
+            resolve();
+          }
         }).then(undefined, v.error);
       });
     },
@@ -138,7 +149,9 @@
       // Create a sequence of all the results starting with a resolved promise.
       var promise = results.reduce(function(memo, result) {
         // If this result isn't a promise skip it in the sequence.
-        if (!v.isPromise(result.error)) return memo;
+        if (!v.isPromise(result.error)) {
+          return memo;
+        }
 
         return memo.then(function() {
           return result.error.then(
@@ -148,8 +161,9 @@
             function(error) {
               // If for some reason the validator promise was rejected but no
               // error was specified.
-              if (!error)
+              if (!error) {
                 v.warn("Validator promise was rejected but didn't return an error");
+              }
               result.error = error;
             }
           ).then(undefined, v.error);
@@ -169,7 +183,9 @@
     // ```
     result: function(value) {
       var args = [].slice.call(arguments, 1);
-      if (typeof value === 'function') value = value.apply(null, args);
+      if (typeof value === 'function') {
+        value = value.apply(null, args);
+      }
       return value;
     },
 
@@ -217,12 +233,16 @@
     },
 
     // "Prettifies" the given string.
-    // Prettifying means replacing - and _ with spaces as well as splitting
+    // Prettifying means replacing [.\_-] with spaces as well as splitting
     // camel case words.
     prettify: function(str) {
       return str
-        // Replaces - and _ with spaces
-        .replace(/[_\-]/g, ' ')
+        // Splits keys separated by periods
+        .replace(/([^\s])\.([^\s])/g, '$1 $2')
+        // Removes backslashes
+        .replace(/\\+/g, '')
+        // Replaces - and - with space
+        .replace(/[_-]/g, ' ')
         // Splits camel cased words
         .replace(/([a-z])([A-Z])/g, function(m0, m1, m2) {
           return "" + m1 + " " + m2.toLowerCase();
@@ -239,13 +259,65 @@
     },
 
     contains: function(obj, value) {
-      if (!v.isDefined(obj)) return false;
-      if (v.isArray(obj)) return obj.indexOf(value) !== -1;
+      if (!v.isDefined(obj)) {
+        return false;
+      }
+      if (v.isArray(obj)) {
+        return obj.indexOf(value) !== -1;
+      }
       return value in obj;
     },
 
+    getDeepObjectValue: function(obj, keypath) {
+      if (!v.isObject(obj) || !v.isString(keypath)) {
+        return undefined;
+      }
+
+      var key = ""
+        , i
+        , escape = false;
+
+      for (i = 0; i < keypath.length; ++i) {
+        switch (keypath[i]) {
+          case '.':
+            if (escape) {
+              escape = false;
+              key += '.';
+            } else if (key in obj) {
+              obj = obj[key];
+              key = "";
+            } else {
+              return undefined;
+            }
+            break;
+
+          case '\\':
+            if (escape) {
+              escape = false;
+              key += '\\';
+            } else {
+              escape = true;
+            }
+            break;
+
+          default:
+            escape = false;
+            key += keypath[i];
+            break;
+        }
+      }
+
+      if (key in obj) {
+        return obj[key];
+      } else {
+        return undefined;
+      }
+    },
+
     capitalize: function(str) {
-      if (!v.isString(str)) return str;
+      if (!v.isString(str)) {
+        return str;
+      }
       return str[0].toUpperCase() + str.slice(1);
     },
 
@@ -255,12 +327,15 @@
       var ret = options.flatten ? [] : {}
         , attr;
 
-      if (!errors) return ret;
+      if (!errors) {
+        return ret;
+      }
 
       function processErrors(attr, errors) {
         errors.forEach(function(error) {
-          if (error[0] === '^') error = error.slice(1);
-          else if (options.fullMessages !== false) {
+          if (error[0] === '^') {
+            error = error.slice(1);
+          } else if (options.fullMessages !== false) {
             error = v.format("%{attr} %{message}", {
               attr: v.capitalize(v.prettify(attr)),
               message: error
@@ -268,14 +343,20 @@
           }
           error = error.replace(/\\\^/g, "^");
           // If flatten is true a flat array is returned.
-          if (options.flatten) ret.push(error);
-          else (ret[attr] || (ret[attr] = [])).push(error);
+          if (options.flatten) {
+            ret.push(error);
+          }
+          else {
+            (ret[attr] || (ret[attr] = [])).push(error);
+          }
         });
       }
 
       // Converts the errors of object of the format
       // {attr: [<error>, <error>, ...]} to contain the attribute name.
-      for (attr in errors) processErrors(attr, errors[attr]);
+      for (attr in errors) {
+        processErrors(attr, errors[attr]);
+      }
       return ret;
     },
 
@@ -297,54 +378,74 @@
                     v.Promise.whenPromise(callback) ||
                     v.Promise.QPromise(callback);
 
-      if (!promise) throw new Error("No promises could be detected");
+      if (!promise) {
+        throw new Error("No promises could be detected");
+      }
 
       return promise;
     }, {
       nativePromise: function(callback) {
         var Promise_, module;
-        if (typeof Promise !== "undefined")
+        if (typeof Promise !== "undefined") {
           Promise_ = Promise;
-        else {
+        } else {
           module = v.tryRequire("es6-promise");
-          if (module) Promise_ = module.Promise;
+          if (module) {
+            Promise_ = module.Promise;
+          }
         }
-        if (Promise_) return new Promise_(callback);
+        if (Promise_) {
+          return new Promise_(callback);
+        }
       },
       RSVPPromise: function(callback) {
         var Promise, module;
-        if (typeof RSVP !== "undefined")
+        if (typeof RSVP !== "undefined") {
           Promise = RSVP.Promise;
-        else {
+        } else {
           module = v.tryRequire("rsvp");
-          if (module) Promise = module.Promise;
+          if (module) {
+            Promise = module.Promise;
+          }
         }
-        if (Promise) return new Promise(callback);
+        if (Promise) {
+          return new Promise(callback);
+        }
       },
       whenPromise: function(callback) {
         var promise, module;
-        if (typeof when !== "undefined")
+        if (typeof when !== "undefined") {
           promise = when.promise;
-        else {
+        } else {
           module = v.tryRequire("when");
-          if (module) promise = module.promise;
+          if (module) {
+            promise = module.promise;
+          }
         }
-        if (promise) return promise(callback);
+        if (promise) {
+          return promise(callback);
+        }
       },
       QPromise: function(callback) {
         var promise, module;
-        if (typeof Q !== "undefined")
+        if (typeof Q !== "undefined") {
           promise = Q.promise;
-        else {
+        } else {
           module = v.tryRequire("q");
-          if (module) promise = module.promise;
+          if (module) {
+            promise = module.promise;
+          }
         }
-        if (promise) return promise(callback);
+        if (promise) {
+          return promise(callback);
+        }
       }
     }),
 
     tryRequire: function(moduleName) {
-      if (!v.require) return null;
+      if (!v.require) {
+        return null;
+      }
       try {
         return v.require(moduleName);
       } catch(e) {
@@ -356,23 +457,29 @@
 
     exposeModule: function(validate, root, exports, module, define) {
       if (exports) {
-        if (module && module.exports) exports = module.exports = validate;
+        if (module && module.exports) {
+          exports = module.exports = validate;
+        }
         exports.validate = validate;
       }
       else {
         root.validate = validate;
-
-        if (validate.isFunction(define) && define.amd)
+        if (validate.isFunction(define) && define.amd) {
           define("validate", [], function () { return validate; });
+        }
       }
     },
 
     warn: function(msg) {
-      if (typeof console !== "undefined" && console.warn) console.warn(msg);
+      if (typeof console !== "undefined" && console.warn) {
+        console.warn(msg);
+      }
     },
 
     error: function(msg) {
-      if (typeof console !== "undefined" && console.error) console.error(msg);
+      if (typeof console !== "undefined" && console.error) {
+        console.error(msg);
+      }
     }
   });
 
@@ -383,28 +490,40 @@
         , attr;
 
       // Null and undefined aren't allowed
-      if (!v.isDefined(value)) return message;
+      if (!v.isDefined(value)) {
+        return message;
+      }
 
       // functions are ok
-      if (v.isFunction(value)) return;
+      if (v.isFunction(value)) {
+        return;
+      }
 
       if (typeof value === 'string') {
         // Tests if the string contains only whitespace (tab, newline, space etc)
-        if ((/^\s*$/).test(value)) return message;
+        if ((/^\s*$/).test(value)) {
+          return message;
+        }
       }
       else if (v.isArray(value)) {
         // For arrays we use the length property
-        if (value.length === 0) return message;
+        if (value.length === 0) {
+          return message;
+        }
       }
       else if (v.isObject(value)) {
         // If we find at least one property we consider it non empty
-        for (attr in value) return;
+        for (attr in value) {
+          return;
+        }
         return message;
       }
     },
     length: function(value, options) {
       // Null and undefined are fine
-      if (!v.isDefined(value)) return;
+      if (!v.isDefined(value)) {
+        return;
+      }
 
       var is = options.is
         , maximum = options.maximum
@@ -434,10 +553,14 @@
         errors.push(v.format(err, {count: maximum}));
       }
 
-      if (errors.length > 0) return options.message || errors;
+      if (errors.length > 0) {
+        return options.message || errors;
+      }
     },
     numericality: function(value, options) {
-      if (!v.isDefined(value)) return;
+      if (!v.isDefined(value)) {
+        return;
+      }
 
       var errors = []
         , name
@@ -451,15 +574,20 @@
           };
 
       // Coerce the value to a number unless we're being strict.
-      if (options.noStrings !== true && v.isString(value)) value = +value;
+      if (options.noStrings !== true && v.isString(value)) {
+        value = +value;
+      }
 
       // If it's not a number we shouldn't continue since it will compare it.
-      if (!v.isNumber(value)) return options.message || "is not a number";
+      if (!v.isNumber(value)) {
+        return options.message || "is not a number";
+      }
 
       // Same logic as above, sort of. Don't bother with comparisons if this
       // doesn't pass.
-      if (options.onlyInteger && !v.isInteger(value))
+      if (options.onlyInteger && !v.isInteger(value)) {
         return options.message || "must be an integer";
+      }
 
       for (name in checks) {
         count = options[name];
@@ -471,13 +599,21 @@
         }
       }
 
-      if (options.odd && value % 2 !== 1) errors.push("must be odd");
-      if (options.even && value % 2 !== 0) errors.push("must be even");
+      if (options.odd && value % 2 !== 1) {
+        errors.push("must be odd");
+      }
+      if (options.even && value % 2 !== 0) {
+        errors.push("must be even");
+      }
 
-      if (errors.length) return options.message || errors;
+      if (errors.length) {
+        return options.message || errors;
+      }
     },
     datetime: v.extend(function(value, options) {
-      if (!v.isDefined(value)) return;
+      if (!v.isDefined(value)) {
+        return;
+      }
 
       var err
         , errors = []
@@ -487,8 +623,9 @@
 
       value = this.parse(value, options);
 
-      if (isNaN(value) || options.dateOnly && value % 86400000 !== 0)
+      if (isNaN(value) || options.dateOnly && value % 86400000 !== 0) {
         return message || "must be a valid date";
+      }
 
       if (!isNaN(earliest) && value < earliest) {
         err = "must be no earlier than %{date}";
@@ -502,20 +639,43 @@
         errors.push(err);
       }
 
-      if (errors.length) return options.message || errors;
+      if (errors.length) {
+        return options.message || errors;
+      }
     }, {
       // This is the function that will be used to convert input to the number
       // of millis since the epoch.
       // It should return NaN if it's not a valid date.
       parse: function(value, options) {
-        return new XDate(value, true).getTime();
+        if (v.isFunction(root.XDate)) {
+          return new root.XDate(value, true).getTime();
+        }
+
+        var moment = v.tryRequire("moment");
+        if (v.isDefined(moment)) {
+          return +moment.utc(value);
+        }
+
+        throw new Error("Neither XDate or moment.js was found");
       },
       // Formats the given timestamp. Uses ISO8601 to format them.
       // If options.dateOnly is true then only the year, month and day will be
       // output.
       format: function(date, options) {
-        var format = options.dateFormat || (options.dateOnly ? "yyyy-MM-dd" : "u");
-        return new XDate(date, true).toString(format);
+        var format = options.dateFormat;
+
+        if (v.isFunction(root.XDate)) {
+          format = format || (options.dateOnly ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss");
+          return new XDate(date, true).toString(format);
+        }
+
+        var moment = v.tryRequire("moment");
+        if (v.isDefined(moment)) {
+          format = format || (options.dateOnly ? "YYYY-MM-DD" : "YYYY-MM-DD HH:mm:ss");
+          return moment.utc(date).format(format);
+        }
+
+        throw new Error("Neither XDate or moment.js was found");
       }
     }),
     date: function(value, options) {
@@ -523,47 +683,72 @@
       return v.validators.datetime(value, options);
     },
     format: function(value, options) {
-      if (v.isString(options) || (options instanceof RegExp))
+      if (v.isString(options) || (options instanceof RegExp)) {
         options = {pattern: options};
+      }
 
       var message = options.message || "is invalid"
         , pattern = options.pattern
         , match;
 
-      if (!v.isDefined(value)) return;
-      if (!v.isString(value)) return message;
+      if (!v.isDefined(value)) {
+        return;
+      }
+      if (!v.isString(value)) {
+        return message;
+      }
 
-      if (v.isString(pattern))
+      if (v.isString(pattern)) {
         pattern = new RegExp(options.pattern, options.flags);
+      }
       match = pattern.exec(value);
-      if (!match || match[0].length != value.length) return message;
+      if (!match || match[0].length != value.length) {
+        return message;
+      }
     },
     inclusion: function(value, options) {
-      if (v.isArray(options)) options = {within: options};
-      if (!v.isDefined(value)) return;
-      if (v.contains(options.within, value)) return;
+      if (v.isArray(options)) {
+        options = {within: options};
+      }
+      if (!v.isDefined(value)) {
+        return;
+      }
+      if (v.contains(options.within, value)) {
+        return;
+      }
       var message = options.message || "^%{value} is not included in the list";
       return v.format(message, {value: value});
     },
     exclusion: function(value, options) {
-      if (v.isArray(options)) options = {within: options};
-      if (!v.isDefined(value)) return;
-      if (!v.contains(options.within, value)) return;
+      if (v.isArray(options)) {
+        options = {within: options};
+      }
+      if (!v.isDefined(value)) {
+        return;
+      }
+      if (!v.contains(options.within, value)) {
+        return;
+      }
       var message = options.message || "^%{value} is restricted";
       return v.format(message, {value: value});
     },
     email: v.extend(function(value, options) {
       var message = options.message || "is not a valid email";
-      if (!v.isDefined(value)) return;
-      if (!v.isString(value)) return message;
-      if (!this.PATTERN.exec(value)) return message;
+      if (!v.isDefined(value)) {
+        return;
+      }
+      if (!v.isString(value)) {
+        return message;
+      }
+      if (!this.PATTERN.exec(value)) {
+        return message;
+      }
     }, {
-      PATTERN: /^[a-z0-9\u007F-\uffff!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9\u007F-\uffff!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/
+      PATTERN: /^[a-z0-9\u007F-\uffff!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9\u007F-\uffff!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/i
     })
   };
 
   validate.exposeModule(validate, root, exports, module, define);
-
 }).call(this,
         typeof exports !== 'undefined' ? exports : null,
         typeof module !== 'undefined' ? module : null,

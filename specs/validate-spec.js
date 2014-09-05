@@ -32,7 +32,13 @@ describe("validate", function() {
   it("runs as expected", function() {
     var attributes = {
       name: "Nicklas Ansman",
-      email: "nicklas@ansman.se"
+      email: "nicklas@ansman.se",
+      addresses: {
+        work: {
+          street: "Drottninggatan 98",
+          city: "Stockholm"
+        }
+      }
     };
     var constraints = {
       name: {
@@ -42,7 +48,14 @@ describe("validate", function() {
         pass: true,
         fail: true,
         fail2: true
-      }
+      },
+      "addresses.work.street": {
+        pass: true,
+        fail2: true,
+      },
+      "addresses.work.city": {
+        pass: true
+      },
     };
 
     fail.andReturn("must be a valid email address");
@@ -52,12 +65,16 @@ describe("validate", function() {
       email: [
         "Email must be a valid email address",
         "Email is simply not good enough"
+      ],
+      "addresses.work.street": [
+        "Addresses work street is simply not good enough"
       ]
     });
 
     expect(validate(attributes, constraints, {flatten: true})).toEqual([
       "Email must be a valid email address",
-      "Email is simply not good enough"
+      "Email is simply not good enough",
+      "Addresses work street is simply not good enough"
     ]);
   });
 
@@ -98,7 +115,7 @@ describe("validate", function() {
         error: "foobar"
       }, {
         attribute: "name",
-        error: ["foo", "bar"],
+        error: ["foo", "bar"]
       }, {
         attribute: "name",
         error: null
@@ -188,5 +205,11 @@ describe("validate", function() {
         options
       );
     });
+  });
+
+  describe("works with flatten: true and fullMessages: false", function() {
+    var constraints = {foo: {presence: true}}
+      , options = {flatten: true, fullMessages: false};
+    expect(validate({}, constraints, options)).toEqual(["can't be blank"]);
   });
 });

@@ -138,6 +138,18 @@ describe("validate", function() {
     it("splits camel cased words", function() {
       expect(validate.prettify("fooBar")).toEqual("foo bar");
     });
+
+    it("replaces periods with spaces if no space follows", function() {
+      expect(validate.prettify("foo.bar.baz")).toEqual("foo bar baz");
+      expect(validate.prettify("foo. bar")).toEqual("foo. bar");
+      expect(validate.prettify("foo .bar")).toEqual("foo .bar");
+      expect(validate.prettify("foo.bar.")).toEqual("foo bar.");
+    });
+
+    it("replaces backslashes with nothing", function() {
+      expect(validate.prettify("foo\\.bar\\.baz")).toEqual("foo bar baz");
+      expect(validate.prettify("foo\\\\.bar")).toEqual("foo bar");
+    });
   });
 
   describe('isString', function() {
@@ -439,6 +451,74 @@ describe("validate", function() {
       spyOn(validate, "require").andThrow(new Error("Not found"));
       expect(validate.tryRequire("foobar")).toBe(null);
       expect(validate.require).toHaveBeenCalledWith("foobar");
+    });
+  });
+
+  describe("getDeepObjectValue", function() {
+    it("supports multiple keys separated using a period", function() {
+      var attributes = {
+        foo: {
+          bar: {
+            baz: 3
+          }
+        }
+      };
+
+      expect(validate.getDeepObjectValue(attributes, "foo.bar.baz")).toBe(3);
+    });
+
+    it("returns undefined if any key is not found", function() {
+      var attributes = {
+        foo: {
+          bar: {
+            baz: 3
+          }
+        }
+      };
+
+      expect(validate.getDeepObjectValue(attributes, "bar.foo")).toBe(undefined);
+      expect(validate.getDeepObjectValue(attributes, "foo.baz")).toBe(undefined);
+    });
+
+    it("handles the object being non objects", function() {
+      expect(validate.getDeepObjectValue(null, "foo")).toBe(undefined);
+      expect(validate.getDeepObjectValue("foo", "foo")).toBe(undefined);
+      expect(validate.getDeepObjectValue(3, "foo")).toBe(undefined);
+      expect(validate.getDeepObjectValue([], "foo")).toBe(undefined);
+      expect(validate.getDeepObjectValue(true, "foo")).toBe(undefined);
+    });
+
+    it("handles the keypath being non strings", function() {
+      expect(validate.getDeepObjectValue({}, null)).toBe(undefined);
+      expect(validate.getDeepObjectValue({}, 3)).toBe(undefined);
+      expect(validate.getDeepObjectValue({}, {})).toBe(undefined);
+      expect(validate.getDeepObjectValue({}, [])).toBe(undefined);
+      expect(validate.getDeepObjectValue({}, true)).toBe(undefined);
+    });
+
+    it("handles escapes properly", function() {
+      var attributes = {
+        "foo.bar": {
+          baz: 3
+        },
+        "foo\\": {
+          bar: {
+            baz: 5
+          }
+        }
+      };
+
+      expect(validate.getDeepObjectValue(attributes, "foo.bar.baz"))
+        .toBe(undefined);
+
+      expect(validate.getDeepObjectValue(attributes, "foo\\.bar.baz"))
+        .toBe(3);
+
+      expect(validate.getDeepObjectValue(attributes, "foo\\\\.bar.baz"))
+        .toBe(5);
+
+      expect(validate.getDeepObjectValue(attributes, "\\foo\\\\.bar.baz"))
+        .toBe(5);
     });
   });
 });

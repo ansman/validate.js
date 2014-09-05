@@ -9,7 +9,9 @@ beforeEach(function() {
       });
     },
     toHaveItems: function(items) {
-      if (this.actual.length != items.length) return false;
+      if (this.actual.length != items.length) {
+        return false;
+      }
       return this.actual.every(function(a) {
         return items.some(function(item) {
           return JSON.stringify(item) === JSON.stringify(a);

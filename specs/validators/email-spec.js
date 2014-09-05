@@ -14,6 +14,7 @@ describe('validators.email', function() {
 
   it("allows valid emails", function() {
     expect(email('nicklas@ansman.se', {})).not.toBeDefined();
+    expect(email('NiCkLaS@AnSmAn.Se', {})).not.toBeDefined();
     // Source: https://en.wikipedia.org/wiki/Email_address#Valid_email_addresses
     expect(email('niceandsimple@example.com', {})).not.toBeDefined();
     expect(email('very.common@example.com', {})).not.toBeDefined();
