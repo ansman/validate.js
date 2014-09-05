@@ -15,9 +15,9 @@ describe('validators.datetime', function() {
     var parse = validate.validators.datetime.parse;
 
     it("throws and error if neither XDate or moment.js is found", function() {
+      window.XDate = null;
+      spyOn(validate, 'tryRequire').andReturn(null);
       expect(function() {
-        delete window.XDate;
-        spyOn(validate.tryRequire).andReturn(null);
         parse("2014-09-02");
       }).toThrow();
     });
@@ -74,6 +74,14 @@ describe('validators.datetime', function() {
 
   describe("format", function() {
     var format = validate.validators.datetime.format;
+
+    it("throws and error if neither XDate or moment.js is found", function() {
+      window.XDate = null;
+      spyOn(validate, 'tryRequire').andReturn(null);
+      expect(function() {
+        format(1382808924000, {});
+      }).toThrow();
+    });
 
     function runDatetimeTest() {
       var expected = "2013-10-26 17:35:24";
