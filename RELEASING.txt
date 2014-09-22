@@ -4,5 +4,6 @@
 4. Bump the version index.html (sidebar link and all links with the old version, search for the old version)
 5. Compile with `grunt build`
 6. Commit with message "Release version X.X.X"
-7. Tag using `git tag -a` with message "X.X.X"
+7. Tag using `git tag -a X.X.X` with message "X.X.X"
 8. Publish with npm using `npm publish`
+9. Update validatejs.org using `git checkout gh-pages && git merge master`
