@@ -680,7 +680,7 @@
     }),
     date: function(value, options) {
       options = v.extend({}, options, {onlyDate: true});
-      return v.validators.datetime(value, options);
+      return v.validators.datetime.call(v.validators.datetime, value, options);
     },
     format: function(value, options) {
       if (v.isString(options) || (options instanceof RegExp)) {

@@ -272,4 +272,10 @@ describe('validators.date', function() {
     validate.validators.date("value", options);
     expect(options).toEqual({});
   });
+
+  it("calls the datetime validator with the right context", function() {
+    spyOn(validate.validators, 'datetime');
+    validate.validators.date("foo", {});
+    expect(validate.validators.datetime).toHaveBeenCalledWithContext(validate.validators.datetime);
+  });
 });
