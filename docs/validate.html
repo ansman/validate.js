@@ -27,8 +27,8 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>Validate.js <span class="hljs-number">0.3</span><span class="hljs-number">.0</span>
-(c) <span class="hljs-number">2014</span> Wrapp
+              <pre><code>Validate.js <span class="hljs-number">0.3</span><span class="hljs-number">.1</span>
+(c) <span class="hljs-number">2013</span>-<span class="hljs-number">2014</span> Nicklas Ansman, Wrapp
 Validate.js may be freely distributed under the MIT license.
 For all details and documentation:
 http:<span class="hljs-comment">//validatejs.org/</span>
@@ -1244,7 +1244,7 @@ output.</p>
     }),
     date: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> {</span>
       options = v.extend({}, options, {onlyDate: <span class="hljs-literal">true</span>});
-      <span class="hljs-keyword">return</span> v.validators.datetime(value, options);
+      <span class="hljs-keyword">return</span> v.validators.datetime.call(v.validators.datetime, value, options);
     },
     format: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> {</span>
       <span class="hljs-keyword">if</span> (v.isString(options) || (options <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">RegExp</span>)) {
