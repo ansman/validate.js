@@ -34,7 +34,11 @@ describe("validate.async", function() {
   });
 
   it.promise("resolves the promise if all constraints pass", function() {
-    return validate.async({}, {});
+    var attrs = {foo: "bar"};
+    return validate.async(attrs, {}).then(success, error).then(function() {
+      expect(error).not.toHaveBeenCalled();
+      expect(success).toHaveBeenCalledWith(attrs);
+    });
   });
 
   it.promise("rejects the promise if any constraint fails", function() {

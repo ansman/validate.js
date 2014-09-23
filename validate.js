@@ -134,7 +134,7 @@
           if (errors) {
             reject(errors);
           } else {
-            resolve();
+            resolve(attributes);
           }
         }).then(undefined, v.error);
       });
