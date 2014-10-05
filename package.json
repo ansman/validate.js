@@ -7,7 +7,7 @@
   "homepage": "http://validatejs.org",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wrapp/validate.js.git"
+    "url": "https://github.com/ansman/validate.js.git"
   },
   "scripts": {
     "test": "grunt test",
@@ -34,6 +34,6 @@
   },
   "licenses": [{
     "type": "MIT",
-    "url": "https://github.com/wrapp/validate.js/tree/master/LICENSE.txt"
+    "url": "https://github.com/ansman/validate.js/tree/master/LICENSE.txt"
   }]
 }
