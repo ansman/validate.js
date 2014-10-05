@@ -27,7 +27,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>Validate.js <span class="hljs-number">0.3</span><span class="hljs-number">.1</span>
+              <pre><code>Validate.js <span class="hljs-number">0.3</span><span class="hljs-number">.2</span>
 (c) <span class="hljs-number">2013</span>-<span class="hljs-number">2014</span> Nicklas Ansman, Wrapp
 Validate.js may be freely distributed under the MIT license.
 For all details and documentation:
@@ -36,7 +36,7 @@ http:<span class="hljs-comment">//validatejs.org/</span>
             </div>
             
             <div class="content"><div class='highlight'><pre>
-(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(exports, module, define, require)</span> {</span>
+(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(exports, module, define, require)</span> </span>{
 <span class="hljs-pi">  "use strict"</span>;</pre></div></div>
             
         </li>
@@ -58,7 +58,7 @@ The options are the following:</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> validate = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(attributes, constraints, options)</span> {</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">var</span> validate = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(attributes, constraints, options)</span> </span>{
     options = options || {};
     <span class="hljs-keyword">var</span> results = v.runValidations(attributes, constraints, options)
       , attr
@@ -108,8 +108,8 @@ used as targets.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  v.extend = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span> {</span>
-    [].slice.call(<span class="hljs-built_in">arguments</span>, <span class="hljs-number">1</span>).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(source)</span> {</span>
+            <div class="content"><div class='highlight'><pre>  v.extend = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span> </span>{
+    [].slice.call(<span class="hljs-built_in">arguments</span>, <span class="hljs-number">1</span>).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(source)</span> </span>{
       <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> attr <span class="hljs-keyword">in</span> source) {
         obj[attr] = source[attr];
       }
@@ -134,7 +134,7 @@ Will return an array of the format:
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    runValidations: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(attributes, constraints, options)</span> {</span>
+            <div class="content"><div class='highlight'><pre>    runValidations: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(attributes, constraints, options)</span> </span>{
       <span class="hljs-keyword">var</span> results = []
         , attr
         , validatorName
@@ -216,7 +216,7 @@ output format.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    processValidationResults: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(results, options)</span> {</span>
+            <div class="content"><div class='highlight'><pre>    processValidationResults: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(results, options)</span> </span>{
       <span class="hljs-keyword">var</span> errors = {};</pre></div></div>
             
         </li>
@@ -232,7 +232,7 @@ output format.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      results.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(result)</span> {</span>
+            <div class="content"><div class='highlight'><pre>      results.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(result)</span> </span>{
         <span class="hljs-keyword">var</span> error = result.error
           , attribute = result.attribute;
 
@@ -280,17 +280,17 @@ It can be called even if no validations returned a promise.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    async: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(attributes, constraints, options)</span> {</span>
+            <div class="content"><div class='highlight'><pre>    async: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(attributes, constraints, options)</span> </span>{
       options = options || {};
       <span class="hljs-keyword">var</span> results = v.runValidations(attributes, constraints, options);
 
-      <span class="hljs-keyword">return</span> v.Promise(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(resolve, reject)</span> {</span>
-        v.waitForResults(results).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+      <span class="hljs-keyword">return</span> v.Promise(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(resolve, reject)</span> </span>{
+        v.waitForResults(results).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
           <span class="hljs-keyword">var</span> errors = v.processValidationResults(results);
           <span class="hljs-keyword">if</span> (errors) {
             reject(errors);
           } <span class="hljs-keyword">else</span> {
-            resolve();
+            resolve(attributes);
           }
         }).then(<span class="hljs-literal">undefined</span>, v.error);
       });
@@ -313,7 +313,7 @@ with the value returned from the promise.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    waitForResults: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(results)</span> {</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    waitForResults: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(results)</span> </span>{</pre></div></div>
             
         </li>
         
@@ -328,7 +328,7 @@ with the value returned from the promise.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> promise = results.reduce(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(memo, result)</span> {</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">var</span> promise = results.reduce(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(memo, result)</span> </span>{</pre></div></div>
             
         </li>
         
@@ -347,12 +347,12 @@ with the value returned from the promise.</p>
           <span class="hljs-keyword">return</span> memo;
         }
 
-        <span class="hljs-keyword">return</span> memo.then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+        <span class="hljs-keyword">return</span> memo.then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
           <span class="hljs-keyword">return</span> result.error.then(
-            <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> {</span>
+            <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
               result.error = <span class="hljs-literal">null</span>;
             },
-            <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error)</span> {</span></pre></div></div>
+            <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error)</span> </span>{</pre></div></div>
             
         </li>
         
@@ -375,7 +375,7 @@ error was specified.</p>
             }
           ).then(<span class="hljs-literal">undefined</span>, v.error);
         }).then(<span class="hljs-literal">undefined</span>, v.error);
-      }, v.Promise(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(r)</span> {</span> r(); })); <span class="hljs-comment">// A resolved promise</span>
+      }, v.Promise(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(r)</span> </span>{ r(); })); <span class="hljs-comment">// A resolved promise</span>
 
       <span class="hljs-keyword">return</span> promise.then(<span class="hljs-literal">undefined</span>, v.error);
     },</pre></div></div>
@@ -398,7 +398,7 @@ result(<span class="hljs-built_in">Math</span>.max, <span class="hljs-number">1<
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>    result: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> {</span>
+            <div class="content"><div class='highlight'><pre>    result: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
       <span class="hljs-keyword">var</span> args = [].slice.call(<span class="hljs-built_in">arguments</span>, <span class="hljs-number">1</span>);
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> value === <span class="hljs-string">'function'</span>) {
         value = value.apply(<span class="hljs-literal">null</span>, args);
@@ -420,7 +420,7 @@ number like many other <code>isNumber</code> functions do.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    isNumber: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> {</span>
+            <div class="content"><div class='highlight'><pre>    isNumber: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> value === <span class="hljs-string">'number'</span> &amp;&amp; !<span class="hljs-built_in">isNaN</span>(value);
     },</pre></div></div>
             
@@ -437,7 +437,7 @@ number like many other <code>isNumber</code> functions do.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    isFunction: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> {</span>
+            <div class="content"><div class='highlight'><pre>    isFunction: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> value === <span class="hljs-string">'function'</span>;
     },</pre></div></div>
             
@@ -455,7 +455,7 @@ and a simple modulo check.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    isInteger: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> {</span>
+            <div class="content"><div class='highlight'><pre>    isInteger: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
       <span class="hljs-keyword">return</span> v.isNumber(value) &amp;&amp; value % <span class="hljs-number">1</span> === <span class="hljs-number">0</span>;
     },</pre></div></div>
             
@@ -472,7 +472,7 @@ and a simple modulo check.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    isObject: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span> {</span>
+            <div class="content"><div class='highlight'><pre>    isObject: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span> </span>{
       <span class="hljs-keyword">return</span> obj === <span class="hljs-built_in">Object</span>(obj);
     },</pre></div></div>
             
@@ -489,7 +489,7 @@ and a simple modulo check.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    isDefined: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span> {</span>
+            <div class="content"><div class='highlight'><pre>    isDefined: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj)</span> </span>{
       <span class="hljs-keyword">return</span> obj !== <span class="hljs-literal">null</span> &amp;&amp; obj !== <span class="hljs-literal">undefined</span>;
     },</pre></div></div>
             
@@ -507,7 +507,7 @@ function is considered a promise.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    isPromise: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p)</span> {</span>
+            <div class="content"><div class='highlight'><pre>    isPromise: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p)</span> </span>{
       <span class="hljs-keyword">return</span> !!p &amp;&amp; <span class="hljs-keyword">typeof</span> p.then === <span class="hljs-string">'function'</span>;
     },</pre></div></div>
             
@@ -525,8 +525,8 @@ function is considered a promise.</p>
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>    format: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(str, vals)</span> {</span>
-      <span class="hljs-keyword">return</span> str.replace(FORMAT_REGEXP, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(m0, m1)</span> {</span>
+            <div class="content"><div class='highlight'><pre>    format: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(str, vals)</span> </span>{
+      <span class="hljs-keyword">return</span> str.replace(FORMAT_REGEXP, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(m0, m1)</span> </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-built_in">String</span>(vals[m1]);
       });
     },</pre></div></div>
@@ -546,7 +546,7 @@ camel case words.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    prettify: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(str)</span> {</span>
+            <div class="content"><div class='highlight'><pre>    prettify: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(str)</span> </span>{
       <span class="hljs-keyword">return</span> str</pre></div></div>
             
         </li>
@@ -607,21 +607,21 @@ camel case words.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        .replace(<span class="hljs-regexp">/([a-z])([A-Z])/g</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(m0, m1, m2)</span> {</span>
+            <div class="content"><div class='highlight'><pre>        .replace(<span class="hljs-regexp">/([a-z])([A-Z])/g</span>, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(m0, m1, m2)</span> </span>{
           <span class="hljs-keyword">return</span> <span class="hljs-string">""</span> + m1 + <span class="hljs-string">" "</span> + m2.toLowerCase();
         })
         .toLowerCase();
     },
 
-    isString: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> {</span>
+    isString: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> value === <span class="hljs-string">'string'</span>;
     },
 
-    isArray: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> {</span>
+    isArray: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value)</span> </span>{
       <span class="hljs-keyword">return</span> {}.toString.call(value) === <span class="hljs-string">'[object Array]'</span>;
     },
 
-    contains: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj, value)</span> {</span>
+    contains: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj, value)</span> </span>{
       <span class="hljs-keyword">if</span> (!v.isDefined(obj)) {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
       }
@@ -631,7 +631,7 @@ camel case words.</p>
       <span class="hljs-keyword">return</span> value <span class="hljs-keyword">in</span> obj;
     },
 
-    getDeepObjectValue: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj, keypath)</span> {</span>
+    getDeepObjectValue: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj, keypath)</span> </span>{
       <span class="hljs-keyword">if</span> (!v.isObject(obj) || !v.isString(keypath)) {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
       }
@@ -677,14 +677,14 @@ camel case words.</p>
       }
     },
 
-    capitalize: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(str)</span> {</span>
+    capitalize: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(str)</span> </span>{
       <span class="hljs-keyword">if</span> (!v.isString(str)) {
         <span class="hljs-keyword">return</span> str;
       }
       <span class="hljs-keyword">return</span> str[<span class="hljs-number">0</span>].toUpperCase() + str.slice(<span class="hljs-number">1</span>);
     },
 
-    fullMessages: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(errors, options)</span> {</span>
+    fullMessages: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(errors, options)</span> </span>{
       options = options || {};
 
       <span class="hljs-keyword">var</span> ret = options.flatten ? [] : {}
@@ -694,8 +694,8 @@ camel case words.</p>
         <span class="hljs-keyword">return</span> ret;
       }
 
-      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">processErrors</span><span class="hljs-params">(attr, errors)</span> {</span>
-        errors.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error)</span> {</span>
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">processErrors</span><span class="hljs-params">(attr, errors)</span> </span>{
+        errors.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error)</span> </span>{
           <span class="hljs-keyword">if</span> (error[<span class="hljs-number">0</span>] === <span class="hljs-string">'^'</span>) {
             error = error.slice(<span class="hljs-number">1</span>);
           } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (options.fullMessages !== <span class="hljs-literal">false</span>) {
@@ -773,7 +773,7 @@ are NOT supported.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    Promise: v.extend(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span> {</span>
+            <div class="content"><div class='highlight'><pre>    Promise: v.extend(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span> </span>{
       <span class="hljs-keyword">var</span> promise = v.Promise.nativePromise(callback) ||
                     v.Promise.RSVPPromise(callback) ||
                     v.Promise.whenPromise(callback) ||
@@ -785,56 +785,56 @@ are NOT supported.</p>
 
       <span class="hljs-keyword">return</span> promise;
     }, {
-      nativePromise: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span> {</span>
-        <span class="hljs-keyword">var</span> Promise_, module;
+      nativePromise: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span> </span>{
+        <span class="hljs-keyword">var</span> Promise_, <span class="hljs-built_in">module</span>;
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> Promise !== <span class="hljs-string">"undefined"</span>) {
           Promise_ = Promise;
         } <span class="hljs-keyword">else</span> {
-          module = v.tryRequire(<span class="hljs-string">"es6-promise"</span>);
-          <span class="hljs-keyword">if</span> (module) {
-            Promise_ = module.Promise;
+          <span class="hljs-built_in">module</span> = v.tryRequire(<span class="hljs-string">"es6-promise"</span>);
+          <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>) {
+            Promise_ = <span class="hljs-built_in">module</span>.Promise;
           }
         }
         <span class="hljs-keyword">if</span> (Promise_) {
           <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise_(callback);
         }
       },
-      RSVPPromise: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span> {</span>
-        <span class="hljs-keyword">var</span> Promise, module;
+      RSVPPromise: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span> </span>{
+        <span class="hljs-keyword">var</span> Promise, <span class="hljs-built_in">module</span>;
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> RSVP !== <span class="hljs-string">"undefined"</span>) {
           Promise = RSVP.Promise;
         } <span class="hljs-keyword">else</span> {
-          module = v.tryRequire(<span class="hljs-string">"rsvp"</span>);
-          <span class="hljs-keyword">if</span> (module) {
-            Promise = module.Promise;
+          <span class="hljs-built_in">module</span> = v.tryRequire(<span class="hljs-string">"rsvp"</span>);
+          <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>) {
+            Promise = <span class="hljs-built_in">module</span>.Promise;
           }
         }
         <span class="hljs-keyword">if</span> (Promise) {
           <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise(callback);
         }
       },
-      whenPromise: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span> {</span>
-        <span class="hljs-keyword">var</span> promise, module;
+      whenPromise: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span> </span>{
+        <span class="hljs-keyword">var</span> promise, <span class="hljs-built_in">module</span>;
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> when !== <span class="hljs-string">"undefined"</span>) {
           promise = when.promise;
         } <span class="hljs-keyword">else</span> {
-          module = v.tryRequire(<span class="hljs-string">"when"</span>);
-          <span class="hljs-keyword">if</span> (module) {
-            promise = module.promise;
+          <span class="hljs-built_in">module</span> = v.tryRequire(<span class="hljs-string">"when"</span>);
+          <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>) {
+            promise = <span class="hljs-built_in">module</span>.promise;
           }
         }
         <span class="hljs-keyword">if</span> (promise) {
           <span class="hljs-keyword">return</span> promise(callback);
         }
       },
-      QPromise: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span> {</span>
-        <span class="hljs-keyword">var</span> promise, module;
+      QPromise: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span> </span>{
+        <span class="hljs-keyword">var</span> promise, <span class="hljs-built_in">module</span>;
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> Q !== <span class="hljs-string">"undefined"</span>) {
           promise = Q.promise;
         } <span class="hljs-keyword">else</span> {
-          module = v.tryRequire(<span class="hljs-string">"q"</span>);
-          <span class="hljs-keyword">if</span> (module) {
-            promise = module.promise;
+          <span class="hljs-built_in">module</span> = v.tryRequire(<span class="hljs-string">"q"</span>);
+          <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>) {
+            promise = <span class="hljs-built_in">module</span>.promise;
           }
         }
         <span class="hljs-keyword">if</span> (promise) {
@@ -843,7 +843,7 @@ are NOT supported.</p>
       }
     }),
 
-    tryRequire: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(moduleName)</span> {</span>
+    tryRequire: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(moduleName)</span> </span>{
       <span class="hljs-keyword">if</span> (!v.require) {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
       }
@@ -856,30 +856,30 @@ are NOT supported.</p>
 
     <span class="hljs-built_in">require</span>: <span class="hljs-built_in">require</span>,
 
-    exposeModule: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(validate, root, exports, module, define)</span> {</span>
+    exposeModule: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(validate, root, exports, module, define)</span> </span>{
       <span class="hljs-keyword">if</span> (exports) {
-        <span class="hljs-keyword">if</span> (module &amp;&amp; module.exports) {
-          exports = module.exports = validate;
+        <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span> &amp;&amp; <span class="hljs-built_in">module</span>.exports) {
+          exports = <span class="hljs-built_in">module</span>.exports = validate;
         }
         exports.validate = validate;
       }
       <span class="hljs-keyword">else</span> {
         root.validate = validate;
         <span class="hljs-keyword">if</span> (validate.isFunction(define) &amp;&amp; define.amd) {
-          define(<span class="hljs-string">"validate"</span>, [], <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span> <span class="hljs-keyword">return</span> validate; });
+          define(<span class="hljs-string">"validate"</span>, [], <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{ <span class="hljs-keyword">return</span> validate; });
         }
       }
     },
 
-    warn: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(msg)</span> {</span>
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> console !== <span class="hljs-string">"undefined"</span> &amp;&amp; console.warn) {
-        console.warn(msg);
+    warn: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(msg)</span> </span>{
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> <span class="hljs-built_in">console</span> !== <span class="hljs-string">"undefined"</span> &amp;&amp; <span class="hljs-built_in">console</span>.warn) {
+        <span class="hljs-built_in">console</span>.warn(msg);
       }
     },
 
-    error: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(msg)</span> {</span>
-      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> console !== <span class="hljs-string">"undefined"</span> &amp;&amp; console.error) {
-        console.error(msg);
+    error: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(msg)</span> </span>{
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> <span class="hljs-built_in">console</span> !== <span class="hljs-string">"undefined"</span> &amp;&amp; <span class="hljs-built_in">console</span>.error) {
+        <span class="hljs-built_in">console</span>.error(msg);
       }
     }
   });
@@ -899,7 +899,7 @@ are NOT supported.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    presence: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> {</span>
+            <div class="content"><div class='highlight'><pre>    presence: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> </span>{
       <span class="hljs-keyword">var</span> message = options.message || <span class="hljs-string">"can't be blank"</span>
         , attr;</pre></div></div>
             
@@ -996,7 +996,7 @@ are NOT supported.</p>
         <span class="hljs-keyword">return</span> message;
       }
     },
-    length: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> {</span></pre></div></div>
+    length: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> </span>{</pre></div></div>
             
         </li>
         
@@ -1018,7 +1018,7 @@ are NOT supported.</p>
       <span class="hljs-keyword">var</span> is = options.is
         , maximum = options.maximum
         , minimum = options.minimum
-        , tokenizer = options.tokenizer || <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(val)</span> {</span> <span class="hljs-keyword">return</span> val; }
+        , tokenizer = options.tokenizer || <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(val)</span> </span>{ <span class="hljs-keyword">return</span> val; }
         , err
         , errors = [];
 
@@ -1059,7 +1059,7 @@ are NOT supported.</p>
         <span class="hljs-keyword">return</span> options.message || errors;
       }
     },
-    numericality: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> {</span>
+    numericality: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> </span>{
       <span class="hljs-keyword">if</span> (!v.isDefined(value)) {
         <span class="hljs-keyword">return</span>;
       }
@@ -1068,11 +1068,11 @@ are NOT supported.</p>
         , name
         , count
         , checks = {
-            greaterThan:          <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, c)</span> {</span> <span class="hljs-keyword">return</span> v &gt; c; },
-            greaterThanOrEqualTo: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, c)</span> {</span> <span class="hljs-keyword">return</span> v &gt;= c; },
-            equalTo:              <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, c)</span> {</span> <span class="hljs-keyword">return</span> v === c; },
-            lessThan:             <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, c)</span> {</span> <span class="hljs-keyword">return</span> v &lt; c; },
-            lessThanOrEqualTo:    <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, c)</span> {</span> <span class="hljs-keyword">return</span> v &lt;= c; }
+            greaterThan:          <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, c)</span> </span>{ <span class="hljs-keyword">return</span> v &gt; c; },
+            greaterThanOrEqualTo: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, c)</span> </span>{ <span class="hljs-keyword">return</span> v &gt;= c; },
+            equalTo:              <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, c)</span> </span>{ <span class="hljs-keyword">return</span> v === c; },
+            lessThan:             <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, c)</span> </span>{ <span class="hljs-keyword">return</span> v &lt; c; },
+            lessThanOrEqualTo:    <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(v, c)</span> </span>{ <span class="hljs-keyword">return</span> v &lt;= c; }
           };</pre></div></div>
             
         </li>
@@ -1148,7 +1148,7 @@ doesn’t pass.</p>
         <span class="hljs-keyword">return</span> options.message || errors;
       }
     },
-    datetime: v.extend(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> {</span>
+    datetime: v.extend(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> </span>{
       <span class="hljs-keyword">if</span> (!v.isDefined(value)) {
         <span class="hljs-keyword">return</span>;
       }
@@ -1197,7 +1197,7 @@ It should return NaN if it’s not a valid date.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      parse: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> {</span>
+            <div class="content"><div class='highlight'><pre>      parse: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> </span>{
         <span class="hljs-keyword">if</span> (v.isFunction(root.XDate)) {
           <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> root.XDate(value, <span class="hljs-literal">true</span>).getTime();
         }
@@ -1225,7 +1225,7 @@ output.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      format: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(date, options)</span> {</span>
+            <div class="content"><div class='highlight'><pre>      format: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(date, options)</span> </span>{
         <span class="hljs-keyword">var</span> format = options.dateFormat;
 
         <span class="hljs-keyword">if</span> (v.isFunction(root.XDate)) {
@@ -1242,11 +1242,11 @@ output.</p>
         <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Neither XDate or moment.js was found"</span>);
       }
     }),
-    date: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> {</span>
+    date: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> </span>{
       options = v.extend({}, options, {onlyDate: <span class="hljs-literal">true</span>});
       <span class="hljs-keyword">return</span> v.validators.datetime.call(v.validators.datetime, value, options);
     },
-    format: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> {</span>
+    format: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> </span>{
       <span class="hljs-keyword">if</span> (v.isString(options) || (options <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">RegExp</span>)) {
         options = {pattern: options};
       }
@@ -1270,7 +1270,7 @@ output.</p>
         <span class="hljs-keyword">return</span> message;
       }
     },
-    inclusion: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> {</span>
+    inclusion: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> </span>{
       <span class="hljs-keyword">if</span> (v.isArray(options)) {
         options = {within: options};
       }
@@ -1283,7 +1283,7 @@ output.</p>
       <span class="hljs-keyword">var</span> message = options.message || <span class="hljs-string">"^%{value} is not included in the list"</span>;
       <span class="hljs-keyword">return</span> v.format(message, {value: value});
     },
-    exclusion: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> {</span>
+    exclusion: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> </span>{
       <span class="hljs-keyword">if</span> (v.isArray(options)) {
         options = {within: options};
       }
@@ -1296,7 +1296,7 @@ output.</p>
       <span class="hljs-keyword">var</span> message = options.message || <span class="hljs-string">"^%{value} is restricted"</span>;
       <span class="hljs-keyword">return</span> v.format(message, {value: value});
     },
-    email: v.extend(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> {</span>
+    email: v.extend(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> </span>{
       <span class="hljs-keyword">var</span> message = options.message || <span class="hljs-string">"is not a valid email"</span>;
       <span class="hljs-keyword">if</span> (!v.isDefined(value)) {
         <span class="hljs-keyword">return</span>;
@@ -1312,10 +1312,10 @@ output.</p>
     })
   };
 
-  validate.exposeModule(validate, root, exports, module, define);
+  validate.exposeModule(validate, root, exports, <span class="hljs-built_in">module</span>, define);
 }).call(<span class="hljs-keyword">this</span>,
         <span class="hljs-keyword">typeof</span> exports !== <span class="hljs-string">'undefined'</span> ? exports : <span class="hljs-literal">null</span>,
-        <span class="hljs-keyword">typeof</span> module !== <span class="hljs-string">'undefined'</span> ? module : <span class="hljs-literal">null</span>,
+        <span class="hljs-keyword">typeof</span> <span class="hljs-built_in">module</span> !== <span class="hljs-string">'undefined'</span> ? <span class="hljs-built_in">module</span> : <span class="hljs-literal">null</span>,
         <span class="hljs-keyword">typeof</span> define !== <span class="hljs-string">'undefined'</span> ? define : <span class="hljs-literal">null</span>,
         <span class="hljs-keyword">typeof</span> <span class="hljs-built_in">require</span> !== <span class="hljs-string">'undefined'</span> ? <span class="hljs-built_in">require</span> : <span class="hljs-literal">null</span>);</pre></div></div>
             
