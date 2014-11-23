@@ -70,6 +70,16 @@ describe('validator.length', function() {
     expect(length(undefined, options)).not.toBeDefined();
   });
 
+  it("refuses value without length property", function() {
+    var options = {is: 10, minimum: 20, maximum: 5};
+    expect(length(3.1415, options)).toBeDefined();
+    expect(length(-3.1415, options)).toBeDefined();
+    expect(length(0, options)).toBeDefined();
+    expect(length({}, options)).toBeDefined();
+    expect(length({lengthi: 10}, options)).toBeDefined();
+    expect(length(3, {})).toBeDefined();
+  });
+
   // This test is not a real life example, specifying is with anything else
   // is just weird but hey.
   it("allows you to specify is, minimum and maximum", function() {
