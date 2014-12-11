@@ -519,7 +519,7 @@
         return message;
       }
     },
-    length: function(value, options) {
+    length: function(value, options, attribute) {
       // Null and undefined are fine
       if (!v.isDefined(value)) {
         return;
@@ -534,10 +534,9 @@
 
       value = tokenizer(value);
       var length = value.length;
-      if(!v.isDefined(length)) {
-        length = 0;
-        // make sure at least minimum fails if `is` is not defined
-        minimum = minimum || (!v.isNumber(is) && 1);
+      if(!v.isNumber(length)) {
+        v.error(v.format("Attribute %{attr} has a non numeric value for `length`", {attr: attribute}));
+        return options.message || "has an incorrect length";
       }
 
       // Is checks

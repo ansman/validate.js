@@ -70,14 +70,17 @@ describe('validator.length', function() {
     expect(length(undefined, options)).not.toBeDefined();
   });
 
-  it("refuses value without length property", function() {
-    var options = {is: 10, minimum: 20, maximum: 5};
+  it("refuses values without a numeric length property", function() {
+    spyOn(validate, "error");
+    var options = {is: 10, minimum: 10, maximum: 20};
     expect(length(3.1415, options)).toBeDefined();
     expect(length(-3.1415, options)).toBeDefined();
     expect(length(0, options)).toBeDefined();
     expect(length({}, options)).toBeDefined();
     expect(length({lengthi: 10}, options)).toBeDefined();
+    expect(length({length: "foo"}, options)).toBeDefined();
     expect(length(3, {})).toBeDefined();
+    expect(validate.error).toHaveBeenCalled();
   });
 
   // This test is not a real life example, specifying is with anything else

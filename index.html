@@ -819,6 +819,13 @@ validate({}, {username: {presence: {message: "is required"}}})
               The tokenizer will never be called with <code>nil</code> or <code>undefined</code>
               as an argument.
             </p>
+            <p class="description">
+              Once important thing to note is that the value needs to have a numeric
+              value for the <code>length</code> property or the message <i>has an incorrect length</i>
+              is returned.<br>
+              An error is also logged to the console since this is considered a
+              coding error.
+            </p>
             <pre class="javascript"><code>var constraints = {
   key1: {length: {is: 3}},
   key2: {length: {minimum: 20}},
@@ -1273,6 +1280,7 @@ validate({}, {username: {presence: true}});
             </h3>
             <ul>
               <li>Fixed a bug where <code>fullMessages</code> didn't work in <code>validate.async</code>. Thanks <a href="https://github.com/ansman/validate.js/pull/9" target="_blank">sebastianseilund</a> for fixing this!</li>
+              <li>Fixed an issue where values without the <code>length</code> attribtue passed the <code>length</code> validator. Thanks <a href="https://github.com/ansman/validate.js/pull/13" target="_blank">Cellule</a> for fixing this!</li>
             </ul>
           </div>
           <div id="changelog-0-3-2">
