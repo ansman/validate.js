@@ -533,21 +533,27 @@
         , errors = [];
 
       value = tokenizer(value);
+      var length = value.length;
+      if(!v.isDefined(length)) {
+        length = 0;
+        // make sure at least minimum fails if `is` is not defined
+        minimum = minimum || (!v.isNumber(is) && 1);
+      }
 
       // Is checks
-      if (v.isNumber(is) && value.length !== is) {
+      if (v.isNumber(is) && length !== is) {
         err = options.wrongLength ||
           "is the wrong length (should be %{count} characters)";
         errors.push(v.format(err, {count: is}));
       }
 
-      if (v.isNumber(minimum) && value.length < minimum) {
+      if (v.isNumber(minimum) && length < minimum) {
         err = options.tooShort ||
           "is too short (minimum is %{count} characters)";
         errors.push(v.format(err, {count: minimum}));
       }
 
-      if (v.isNumber(maximum) && value.length > maximum) {
+      if (v.isNumber(maximum) && length > maximum) {
         err = options.tooLong ||
           "is too long (maximum is %{count} characters)";
         errors.push(v.format(err, {count: maximum}));
