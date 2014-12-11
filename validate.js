@@ -130,7 +130,7 @@
 
       return v.Promise(function(resolve, reject) {
         v.waitForResults(results).then(function() {
-          var errors = v.processValidationResults(results);
+          var errors = v.processValidationResults(results, options);
           if (errors) {
             reject(errors);
           } else {

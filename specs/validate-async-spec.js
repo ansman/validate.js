@@ -64,6 +64,16 @@ describe("validate.async", function() {
     });
   });
 
+  it.promise("supports fullMessages: false", function() {
+    var c = {name: {presence: true}};
+    return validate.async({}, c, {fullMessages: false}).then(success, error).then(function() {
+      expect(success).not.toHaveBeenCalled();
+      expect(error).toHaveBeenCalledWith({
+        name: ["can't be blank"]
+      });
+    });
+  });
+
   describe("Promise", function() {
     var globals = ["Promise", "Q", "when", "RSVP"]
       , store = {};
