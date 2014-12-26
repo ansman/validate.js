@@ -1176,6 +1176,9 @@ validate({subdomain: "com"}, constraints);
               The default message is <i>is not a valid email</i> and as usual you
               can override it using the <b>message</b> option.
             </p>
+            <p class="description">
+              <b>Important!</b> Besides <code>null</code> and <code>undefined</code> being valid empty strings and whitespace only strings are also valid.
+            </p>
             <pre class="javascript"><code>var constraints = {
   from: {
     email: true
@@ -1183,6 +1186,9 @@ validate({subdomain: "com"}, constraints);
 };
 
 validate({from: null}, constraints);
+// =&gt; undefined
+
+validate({from: "   "}, constraints);
 // =&gt; undefined
 
 validate({from: "nicklas@ansman"}, constraints);
@@ -1279,6 +1285,7 @@ validate({}, {username: {presence: true}});
               <b class="version">WIP</b>
             </h3>
             <ul>
+              <li><b>Breaking:</b> Empty and whitespace only strings are now valid emails.</li>
               <li>Fixed a bug where <code>fullMessages</code> didn't work in <code>validate.async</code>. Thanks <a href="https://github.com/ansman/validate.js/pull/9" target="_blank">sebastianseilund</a> for fixing this!</li>
               <li>Fixed an issue where values without the <code>length</code> attribtue passed the <code>length</code> validator. Thanks <a href="https://github.com/ansman/validate.js/pull/13" target="_blank">Cellule</a> for fixing this!</li>
             </ul>

@@ -2,9 +2,11 @@ describe('validators.email', function() {
   var email = validate.validators.email;
   email = email.bind(email);
 
-  it("allows non defined values", function() {
+  it("allows non defined values and whitespace only strings", function() {
     expect(email(null, {})).not.toBeDefined();
     expect(email(undefined, {})).not.toBeDefined();
+    expect(email("", {})).not.toBeDefined();
+    expect(email(" ", {})).not.toBeDefined();
   });
 
   it("doesn't allow non strings", function() {
