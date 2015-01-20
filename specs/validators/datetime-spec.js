@@ -1,9 +1,11 @@
 describe('validators.datetime', function() {
   var datetime = validate.validators.datetime.bind(validate.validators.datetime)
-    , XDate = window.XDate;
+    , XDate = window.XDate
+    , moment = window.moment;
 
   afterEach(function() {
     window.XDate = XDate;
+    window.moment = undefined;
   });
 
   it("allows non defined values", function() {
@@ -67,6 +69,13 @@ describe('validators.datetime', function() {
 
       it("returns NaN for invalid dates", function() {
         runNaNTests();
+        expect(moment.utc).toHaveBeenCalled();
+      });
+
+      it("works with global scope too", function() {
+        window.moment = moment;
+        validate.tryRequire.andReturn(null);
+        runParseTestsForValidStrings();
         expect(moment.utc).toHaveBeenCalled();
       });
     });
@@ -135,6 +144,13 @@ describe('validators.datetime', function() {
 
       it("allows you to override the format string", function() {
         runOverrideTest("MM/DD/YY");
+        expect(moment.utc).toHaveBeenCalled();
+      });
+
+      it("works with global scope too", function() {
+        window.moment = moment;
+        validate.tryRequire.andReturn(null);
+        runDatetimeTest();
         expect(moment.utc).toHaveBeenCalled();
       });
     });

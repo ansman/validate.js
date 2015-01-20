@@ -663,7 +663,7 @@
           return new root.XDate(value, true).getTime();
         }
 
-        var moment = v.tryRequire("moment");
+        var moment = v.tryRequire("moment") || root.moment;
         if (v.isDefined(moment)) {
           return +moment.utc(value);
         }
@@ -681,7 +681,7 @@
           return new XDate(date, true).toString(format);
         }
 
-        var moment = v.tryRequire("moment");
+        var moment = v.tryRequire("moment") || root.moment;
         if (v.isDefined(moment)) {
           format = format || (options.dateOnly ? "YYYY-MM-DD" : "YYYY-MM-DD HH:mm:ss");
           return moment.utc(date).format(format);
