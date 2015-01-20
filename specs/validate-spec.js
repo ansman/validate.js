@@ -175,7 +175,7 @@ describe("validate", function() {
       expect(pvr(results, {})).toEqual({name: ["Name foo", "Name bar"]});
     });
 
-    it("supports muliple entries for the same attribue", function() {
+    it("supports multiple entries for the same attribue", function() {
       var results = [
         {attribute: "name", error: ["foo", "bar"]},
         {attribute: "name", error: "baz"}
@@ -183,6 +183,11 @@ describe("validate", function() {
       expect(pvr(results, {})).toEqual({
         name: ["Name foo", "Name bar", "Name baz"]
       });
+    });
+
+    it("returns an instance of ValidationErrors", function() {
+      var results = [{attribute: "name", error: "foobar"}];
+      expect(pvr(results, {})).toBeInstanceOf(validate.ValidationErrors);
     });
   });
 

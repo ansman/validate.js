@@ -570,6 +570,11 @@ validate({}, {username: {presence: {message: "^You must pick a username"}}});
               The errors has the same format as the errors from the regular validation function.
             </p>
             <p class="description">
+              The errors object will be an instance of <b>validate.ValidationErrors</b>
+              to be able to differentiate between coding errors and validation
+              errors.
+            </p>
+            <p class="description">
                You can use the async validate function even if no validations
                are async, it still returns a promise. You can not, however, use
                the regular function with async validations.
@@ -1286,8 +1291,20 @@ validate({}, {username: {presence: true}});
             </h3>
             <ul>
               <li><b>Breaking:</b> Empty and whitespace only strings are now valid emails.</li>
-              <li>Fixed a bug where <code>fullMessages</code> didn't work in <code>validate.async</code>. Thanks <a href="https://github.com/ansman/validate.js/pull/9" target="_blank">sebastianseilund</a> for fixing this!</li>
-              <li>Fixed an issue where values without the <code>length</code> attribtue passed the <code>length</code> validator. Thanks <a href="https://github.com/ansman/validate.js/pull/13" target="_blank">Cellule</a> for fixing this!</li>
+              <li>
+                Fixed a bug where <code>fullMessages</code> didn't work in <code>validate.async</code>.
+                Thanks <a href="https://github.com/ansman/validate.js/pull/9" target="_blank">sebastianseilund</a> for fixing this!
+              </li>
+              <li>
+                Fixed an issue where values without the <code>length</code>
+                attribute passed the <code>length</code> validator.
+                Thanks <a href="https://github.com/ansman/validate.js/pull/13" target="_blank">Cellule</a> for fixing this!
+              </li>
+              <li>
+                Make errors an instance of <code>validate.ValidationErrors</code>.
+                Thanks <a href="https://github.com/ansman/validate.js/issues/10" target="_blank">sebastianseilund, Jokero and dkushner</a>
+                for helping with the details.
+              </li>
             </ul>
           </div>
           <div id="changelog-0-3-2">

@@ -49,6 +49,23 @@ describe("validate.async", function() {
     });
   });
 
+  it.promise("rejects the promise with an errors object when failing", function() {
+    var c = {name: {presence: true}};
+    var called = false;
+    return validate.async({}, c)
+      .then(success, function(err) {
+        called = true;
+        expect(err).toBeInstanceOf(validate.ValidationErrors);
+        expect(err).toEqual({
+          name: ["Name can't be blank"]
+        });
+      })
+      .then(function() {
+        expect(success).not.toHaveBeenCalled();
+        expect(called).toBe(true);
+      });
+  });
+
   it.promise("handles validators returning a promise", function() {
     var c = {
       name: {

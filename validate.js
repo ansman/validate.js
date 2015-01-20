@@ -48,6 +48,13 @@
   };
 
   v.extend(validate, {
+    // This "class" is just a wrapper around a dictionary and is here to allow
+    // you to differentiate between library errors and validation errors
+    // when using promises.
+    ValidationErrors: function(errors) {
+      v.extend(this, errors);
+    },
+
     // Runs the validators specified by the constraints object.
     // Will return an array of the format:
     //     [{attribute: "<attribute name>", error: "<validation result>"}, ...]
@@ -116,7 +123,7 @@
       // Semi ugly way to check if the errors are empty, try iterating over
       // them and short circuit when something is found.
       for (var _ in errors) {
-        return v.fullMessages(errors, options);
+        return new v.ValidationErrors(v.fullMessages(errors, options));
       }
     },
 
