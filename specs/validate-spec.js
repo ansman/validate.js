@@ -78,6 +78,15 @@ describe("validate", function() {
     ]);
   });
 
+  it("works with nested objects set to null", function() {
+    var constraints = {
+      "foo.bar": {
+        presence: true
+      }
+    };
+    expect(validate({foo: null}, constraints)).toBeDefined();
+  });
+
   describe("runValidations", function() {
     it("throws an error when the validator is not found", function() {
       expect(function() {

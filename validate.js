@@ -314,7 +314,7 @@
         }
       }
 
-      if (key in obj) {
+      if (v.isDefined(obj) && key in obj) {
         return obj[key];
       } else {
         return undefined;
