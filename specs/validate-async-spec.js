@@ -66,6 +66,21 @@ describe("validate.async", function() {
       });
   });
 
+  it.promise("doesn't wrap flat errors in an object", function() {
+    var c = {name: {presence: true}};
+    var called = false;
+    return validate.async({}, c, {flatten: true})
+      .then(success, function(err) {
+        called = true;
+        expect(err).not.toBeInstanceOf(validate.ValidationErrors);
+        expect(err).toEqual(["Name can't be blank"]);
+      })
+      .then(function() {
+        expect(success).not.toHaveBeenCalled();
+        expect(called).toBe(true);
+      });
+  });
+
   it.promise("handles validators returning a promise", function() {
     var c = {
       name: {

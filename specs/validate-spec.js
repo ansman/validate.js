@@ -193,11 +193,6 @@ describe("validate", function() {
         name: ["Name foo", "Name bar", "Name baz"]
       });
     });
-
-    it("returns an instance of ValidationErrors", function() {
-      var results = [{attribute: "name", error: "foobar"}];
-      expect(pvr(results, {})).toBeInstanceOf(validate.ValidationErrors);
-    });
   });
 
   describe("fullMessages", function() {

@@ -123,7 +123,7 @@
       // Semi ugly way to check if the errors are empty, try iterating over
       // them and short circuit when something is found.
       for (var _ in errors) {
-        return new v.ValidationErrors(v.fullMessages(errors, options));
+        return v.fullMessages(errors, options);
       }
     },
 
@@ -139,6 +139,9 @@
         v.waitForResults(results).then(function() {
           var errors = v.processValidationResults(results, options);
           if (errors) {
+            if (!options.flatten) {
+              errors = new v.ValidationErrors(errors);
+            }
             reject(errors);
           } else {
             resolve(attributes);
