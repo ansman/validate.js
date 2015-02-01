@@ -745,7 +745,8 @@ validate.async({name: "bar"}, constraints).then(success, error);</code></pre>
               This validator will probably the most used one, it corresponds to
               HTML5's required attribute.<br>
               You can use the <b>message</b> option to customize the message. The
-              default message is <i>can't be blank</i>.
+              default message is <i>can't be blank</i> and can be changed by
+              setting <code>validate.validators.presence.message</code>.
             </p>
             <p class="description">
               These are the values that are considered empty:
@@ -769,7 +770,12 @@ validate({username: "ansman"}, {username: {presence: true}})
 // =&gt; undefined
 
 validate({}, {username: {presence: {message: "is required"}}})
-// =&gt; {"username": ["Username is required"]}</code></pre>
+// =&gt; {"username": ["Username is required"]}
+
+validate.validators.presence.message = "is required";
+validate({}, {username: {presence: true}});
+// =&gt; {"username": ["Username is required"]}
+</code></pre>
           </div>
 
           <div id="validators-length">
@@ -810,6 +816,15 @@ validate({}, {username: {presence: {message: "is required"}}})
               As you may have noticed you can use <code>%{count}</code> as a placeholder
               for the actual constraint and it will be replaced for you.
             </p>
+            <p class="description">
+              The default messages can also be changed by setting:
+            </p>
+            <ul>
+              <li><code>validate.validators.length.notValid</code></li>
+              <li><code>validate.validators.length.tooLong</code></li>
+              <li><code>validate.validators.length.tooShort</code></li>
+              <li><code>validate.validators.length.wrongLength</code></li>
+            </ul>
             <p class="description">
               You can also use the <b>message</b> as the message for all errors
               (this overrides any other custom errors).
@@ -871,11 +886,11 @@ validate(values, constraints);
             <p class="description">
               The numericality validator will only allow numbers.
               Per default strings are coerced to numbers using the <code>+</code>
-              operator If this is not desirable you can set the <b>noStrings</b>
+              operator. If this is not desirable you can set the <b>noStrings</b>
               option to <code>false</code> to disable this behaviour.
             </p>
             <p class="description">
-              The following rescriptions can be applied:
+              The following constraints can be applied:
             </p>
             <dl class="dl-horizontal">
               <dt>onlyInteger</dt>
@@ -897,8 +912,20 @@ validate(values, constraints);
             </dl>
             <p class="description">
               If you want a custom error message you may specify it using the
-              <b>message</b> option.
+              <b>message</b> option or by settings one of the following default
+              messages:
             </p>
+            <ul>
+              <li><code>validate.validators.numericality.notValid</code></li>
+              <li><code>validate.validators.numericality.notInteger</code></li>
+              <li><code>validate.validators.numericality.notGreaterThan</code></li>
+              <li><code>validate.validators.numericality.notGreaterThanOrEqualTo</code></li>
+              <li><code>validate.validators.numericality.notEqualTo</code></li>
+              <li><code>validate.validators.numericality.notLessThan</code></li>
+              <li><code>validate.validators.numericality.notLessThanOrEqualTo</code></li>
+              <li><code>validate.validators.numericality.notOdd</code></li>
+              <li><code>validate.validators.numericality.notEven</code></li>
+            </ul>
             <pre class="javascript"><code>// null and undefined are valid values regardless of the options
 validate({}, {duration: {numericality: true}});
 //= &gt; undefined
@@ -971,7 +998,15 @@ validate({duration: 4711}, constraints);
                 moment.js documentation for more information.
               </dd>
             </dl>
-            <p>
+            <p class="description">
+              You can change the default message by setting any of these settings:
+            </p>
+            <ul>
+              <li><code>validate.validators.datetime.notValid</code></li>
+              <li><code>validate.validators.datetime.tooEarly</code></li>
+              <li><code>validate.validators.datetime.tooLate</code></li>
+            </ul>
+            <p class="description">
               If you want to use some other library you can override the
               <code>parse</code> and <code>format</code> functions:
             </p>
@@ -1041,7 +1076,9 @@ validate.validators.datetime.format = function(value, options) {
               The format validator will validate a value against a regular expression
               of your chosing.
               The default message if the value doesn't match is <i>is invalid</i>
-              so you'll likely want to customize it.
+              so you'll likely want to customize it by settings <b>message</b>
+              to something in the options or by setting a new global default
+              message using <code>validate.validators.format.message</code>
             </p>
             <p class="description">
               The <b>pattern</b> option can either be a javascript regexp or
@@ -1093,6 +1130,8 @@ validate({username: "Nicklas"}, constraints);
               You can specify <b>within</b> as a list or as an object (in which
               case the keys of the object are used).<br>
               The default message is <i>^%{value} is not included in the list</i>
+              and can be changed by setting
+              <code>validate.validators.inclusion.message</code>
             </p>
             <pre class="javascript"><code>var sizes = ["small", "medium", "large"];
 
@@ -1128,6 +1167,8 @@ validate({size: "Medium"}, constraints);
               You can specify <b>within</b> as a list or as an object (in which
               case the keys of the object are used).<br>
               The default message is <i>^%{value} is restricted</i>
+              and can be changed by setting
+              <code>validate.validators.exclusion.message</code>
             </p>
             <pre class="javascript"><code>var restrictedDomains = ["jp", "ch"];
 
@@ -1179,7 +1220,8 @@ validate({subdomain: "com"}, constraints);
             </p>
             <p class="description">
               The default message is <i>is not a valid email</i> and as usual you
-              can override it using the <b>message</b> option.
+              can override it using the <b>message</b> option or by setting
+              <code>validate.validators.email.message</code>
             </p>
             <p class="description">
               <b>Important!</b> Besides <code>null</code> and <code>undefined</code> being valid empty strings and whitespace only strings are also valid.
@@ -1312,6 +1354,10 @@ validate({}, {username: {presence: true}});
               <li>
                 Support fetching moment from the global scope and not just using <code>require</code>.
                 Thanks <a href="https://github.com/ansman/validate.js/issues/18" target="_blank">alvipeo</a> for suggesting this.
+              </li>
+              <li>
+                Support for default error messages. Thanks <a href="https://github.com/ansman/validate.js/issues/16" target="_blank">tamtakoe</a>
+                for suggesting this.
               </li>
             </ul>
           </div>

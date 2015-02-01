@@ -1,7 +1,11 @@
 describe("validators.format", function() {
-  var format = validate.validators.format
+  var format = validate.validators.format.bind(validate.validators.format)
     , options1 = {pattern: /^foobar$/i}
     , options2 = {pattern: "^foobar$", flags: "i"};
+
+  afterEach(function() {
+    delete validate.validators.format.message;
+  });
 
   it("allows non defined values", function() {
     expect(format(null, options1)).not.toBeDefined();
@@ -41,7 +45,12 @@ describe("validators.format", function() {
   });
 
   it("allows a custom message", function() {
-    var options = {pattern: /^[a-z]+$/g, message: "must only contain a-z"};
+    validate.validators.format.message = "is using a default message";
+
+    var options = {pattern: /^[a-z]+$/g};
+    expect(format("4711", options)).toEqual("is using a default message");
+
+    options.message = "must only contain a-z";
     expect(format("4711", options)).toEqual("must only contain a-z");
   });
 

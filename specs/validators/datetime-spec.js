@@ -6,6 +6,9 @@ describe('validators.datetime', function() {
   afterEach(function() {
     window.XDate = XDate;
     window.moment = undefined;
+    delete validate.validators.datetime.notValid;
+    delete validate.validators.datetime.tooEarly;
+    delete validate.validators.datetime.tooLate;
   });
 
   it("allows non defined values", function() {
@@ -180,8 +183,11 @@ describe('validators.datetime', function() {
   });
 
   it("returns the message if specified for invalid dates", function() {
-    var opts = {message: "my message"};
-    expect(datetime("foobar", opts)).toEqual("my message");
+    validate.validators.datetime.notValid = "notValid";
+    expect(datetime("foobar", {})).toEqual("notValid");
+
+    var opts = {message: "my other message"};
+    expect(datetime("foobar", opts)).toEqual("my other message");
   });
 
   describe("earliest", function() {
@@ -216,6 +222,17 @@ describe('validators.datetime', function() {
       datetime(value, options);
       expect(spy).toHaveBeenCalledWith('foobar', options);
     });
+
+    it("uses the default message if available", function() {
+      var options = {earliest: '2013-10-26 00:00:00'}
+        , value = "2013-10-25 23:59:59";
+
+      validate.validators.datetime.tooEarly = "default message";
+      expect(datetime(value, options)).toEqual(["default message"]);
+
+      options.message = "overridden";
+      expect(datetime(value, options)).toEqual("overridden");
+    });
   });
 
   describe("latest", function() {
@@ -249,6 +266,17 @@ describe('validators.datetime', function() {
         , spy = spyOn(validate.validators.datetime, 'parse').andReturn(value);
       datetime(value, options);
       expect(spy).toHaveBeenCalledWith('foobar', options);
+    });
+
+    it("uses the default message if available", function() {
+      var options = {latest: '2013-10-26 00:00:00'}
+        , value = "2013-10-26 00:00:01";
+
+      validate.validators.datetime.tooLate = "default message";
+      expect(datetime(value, options)).toEqual(["default message"]);
+
+      options.message = "overridden";
+      expect(datetime(value, options)).toEqual("overridden");
     });
   });
 

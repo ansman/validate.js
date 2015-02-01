@@ -496,7 +496,7 @@
   validate.validators = {
     // Presence validates that the value isn't empty
     presence: function(value, options) {
-      var message = options.message || "can't be blank"
+      var message = options.message || this.message || "can't be blank"
         , attr;
 
       // Null and undefined aren't allowed
@@ -546,24 +546,27 @@
       var length = value.length;
       if(!v.isNumber(length)) {
         v.error(v.format("Attribute %{attr} has a non numeric value for `length`", {attr: attribute}));
-        return options.message || "has an incorrect length";
+        return options.message || this.notValid || "has an incorrect length";
       }
 
       // Is checks
       if (v.isNumber(is) && length !== is) {
         err = options.wrongLength ||
+          this.wrongLength ||
           "is the wrong length (should be %{count} characters)";
         errors.push(v.format(err, {count: is}));
       }
 
       if (v.isNumber(minimum) && length < minimum) {
         err = options.tooShort ||
+          this.tooShort ||
           "is too short (minimum is %{count} characters)";
         errors.push(v.format(err, {count: minimum}));
       }
 
       if (v.isNumber(maximum) && length > maximum) {
         err = options.tooLong ||
+          this.tooLong ||
           "is too long (maximum is %{count} characters)";
         errors.push(v.format(err, {count: maximum}));
       }
@@ -595,19 +598,25 @@
 
       // If it's not a number we shouldn't continue since it will compare it.
       if (!v.isNumber(value)) {
-        return options.message || "is not a number";
+        return options.message || this.notValid || "is not a number";
       }
 
       // Same logic as above, sort of. Don't bother with comparisons if this
       // doesn't pass.
       if (options.onlyInteger && !v.isInteger(value)) {
-        return options.message || "must be an integer";
+        return options.message || this.notInteger  || "must be an integer";
       }
 
       for (name in checks) {
         count = options[name];
         if (v.isNumber(count) && !checks[name](value, count)) {
-          errors.push(v.format("must be %{type} %{count}", {
+          // This picks the default message if specified
+          // For example the greaterThan check uses the message from
+          // this.notGreaterThan so we capitalize the name and prepend "not"
+          var msg = this["not" + v.capitalize(name)] ||
+            "must be %{type} %{count}";
+
+          errors.push(v.format(msg, {
             count: count,
             type: v.prettify(name)
           }));
@@ -615,10 +624,10 @@
       }
 
       if (options.odd && value % 2 !== 1) {
-        errors.push("must be odd");
+        errors.push(this.notOdd || "must be odd");
       }
       if (options.even && value % 2 !== 0) {
-        errors.push("must be even");
+        errors.push(this.notEven || "must be even");
       }
 
       if (errors.length) {
@@ -632,24 +641,23 @@
 
       var err
         , errors = []
-        , message = options.message
         , earliest = options.earliest ? this.parse(options.earliest, options) : NaN
         , latest = options.latest ? this.parse(options.latest, options) : NaN;
 
       value = this.parse(value, options);
 
       if (isNaN(value) || options.dateOnly && value % 86400000 !== 0) {
-        return message || "must be a valid date";
+        return options.message || this.notValid || "must be a valid date";
       }
 
       if (!isNaN(earliest) && value < earliest) {
-        err = "must be no earlier than %{date}";
+        err = this.tooEarly || "must be no earlier than %{date}";
         err = v.format(err, {date: this.format(earliest, options)});
         errors.push(err);
       }
 
       if (!isNaN(latest) && value > latest) {
-        err = "must be no later than %{date}";
+        err = this.tooLate || "must be no later than %{date}";
         err = v.format(err, {date: this.format(latest, options)});
         errors.push(err);
       }
@@ -702,7 +710,7 @@
         options = {pattern: options};
       }
 
-      var message = options.message || "is invalid"
+      var message = options.message || this.message || "is invalid"
         , pattern = options.pattern
         , match;
 
@@ -731,7 +739,9 @@
       if (v.contains(options.within, value)) {
         return;
       }
-      var message = options.message || "^%{value} is not included in the list";
+      var message = options.message ||
+        this.message ||
+        "^%{value} is not included in the list";
       return v.format(message, {value: value});
     },
     exclusion: function(value, options) {
@@ -744,11 +754,11 @@
       if (!v.contains(options.within, value)) {
         return;
       }
-      var message = options.message || "^%{value} is restricted";
+      var message = options.message || this.message || "^%{value} is restricted";
       return v.format(message, {value: value});
     },
     email: v.extend(function(value, options) {
-      var message = options.message || "is not a valid email";
+      var message = options.message || this.message || "is not a valid email";
       if (!v.isDefined(value)) {
         return;
       }

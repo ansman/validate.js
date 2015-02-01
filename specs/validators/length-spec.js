@@ -1,5 +1,12 @@
 describe('validator.length', function() {
-  var length = validate.validators.length;
+  var length = validate.validators.length.bind(validate.validators.length);
+
+  afterEach(function() {
+    delete validate.validators.length.notValid;
+    delete validate.validators.length.tooLong;
+    delete validate.validators.length.tooShort;
+    delete validate.validators.length.wrongLength;
+  });
 
   describe("is", function() {
     it("allows you to specify a fixed length the object has to be", function() {
@@ -14,10 +21,12 @@ describe('validator.length', function() {
 
     it("allows a custom message", function() {
       var value = {length: 10}
-        , options = {
-            is: 11,
-            wrongLength: "wrongLength %{count}"
-        };
+        , options = {is: 11};
+
+      validate.validators.length.wrongLength = "default %{count}";
+      expect(length(value, options)).toEqual(["default 11"]);
+
+      options.wrongLength = "wrongLength %{count}";
       expect(length(value, options)).toEqual(["wrongLength 11"]);
     });
   });
@@ -35,10 +44,13 @@ describe('validator.length', function() {
 
     it("allows a custom message", function() {
       var value = {length: 10}
-        , options = {
-            minimum: 11,
-            tooShort: "tooShort %{count}"
-        };
+        , options = {minimum: 11};
+
+      validate.validators.length.tooShort = "default %{count}";
+
+      expect(length(value, options)).toEqual(["default 11"]);
+
+      options.tooShort = "tooShort %{count}";
       expect(length(value, options)).toEqual(["tooShort 11"]);
     });
   });
@@ -56,10 +68,12 @@ describe('validator.length', function() {
 
     it("allows a custom message", function() {
       var value = {length: 11}
-        , options = {
-            maximum: 10,
-            tooLong: "tooLong %{count}"
-        };
+        , options = {maximum: 10};
+
+      validate.validators.length.tooLong = "default %{count}";
+      expect(length(value, options)).toEqual(["default 10"]);
+
+      options.tooLong = "tooLong %{count}";
       expect(length(value, options)).toEqual(["tooLong 10"]);
     });
   });
@@ -104,6 +118,25 @@ describe('validator.length', function() {
           maximum: 5
         };
       expect(length(value, options)).toBe("my message");
+  });
+
+  it("doesn't override specific messages with the default one", function() {
+    var value = {length: 3}
+      , options = {
+        is: 2,
+        minimum: 4,
+        maximum: 2,
+        wrongLength: "wrongLength",
+        tooLong: "tooLong",
+        tooShort: "tooShort"
+      };
+
+      validate.validators.length.notValid = "default message";
+      expect(length(value, options)).toHaveItems([
+        "wrongLength",
+        "tooLong",
+        "tooShort"
+      ]);
   });
 
   describe("tokenizer", function() {

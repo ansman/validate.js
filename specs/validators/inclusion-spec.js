@@ -1,6 +1,10 @@
 describe("validators.inclusion", function() {
-  var inclusion = validate.validators.inclusion
+  var inclusion = validate.validators.inclusion.bind(validate.validators.inclusion)
     , within = ["foo", "bar", "baz"];
+
+  afterEach(function() {
+    delete validate.validators.inclusion.message;
+  });
 
   it("returns nothing if the value is not defined", function() {
     expect(inclusion(null, {})).not.toBeDefined();
@@ -22,7 +26,11 @@ describe("validators.inclusion", function() {
   });
 
   it("allows you to customize the message", function() {
-    var opts = {within: within, message: "^%{value} is not a valid choice"};
+    validate.validators.inclusion.message = "^Default message: %{value}";
+    var opts = {within: within};
+    expect(inclusion("quux", opts)).toEqual("^Default message: quux");
+
+    opts.message = "^%{value} is not a valid choice";
     expect(inclusion("quux", opts)).toEqual("^quux is not a valid choice");
   });
 

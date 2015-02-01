@@ -2,6 +2,10 @@ describe('validators.email', function() {
   var email = validate.validators.email;
   email = email.bind(email);
 
+  afterEach(function() {
+    delete validate.validators.email.message;
+  });
+
   it("allows non defined values and whitespace only strings", function() {
     expect(email(null, {})).not.toBeDefined();
     expect(email(undefined, {})).not.toBeDefined();
@@ -42,7 +46,9 @@ describe('validators.email', function() {
   });
 
   it("allows you to customize the error message", function() {
-    var options = {message: "is totally not an email"};
-    expect(email("foobar", options)).toEqual("is totally not an email");
+    validate.validators.email.message = "is totally not an email";
+    expect(email("foobar", {})).toEqual("is totally not an email");
+    var options = {message: "some other message"};
+    expect(email("foobar", options)).toEqual("some other message");
   });
 });

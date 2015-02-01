@@ -1,6 +1,10 @@
 describe("validators.exclusion", function() {
-  var exclusion = validate.validators.exclusion
+  var exclusion = validate.validators.exclusion.bind(validate.validators.exclusion)
     , within = ["foo", "bar", "baz"];
+
+  afterEach(function() {
+    delete validate.validators.exclusion.message;
+  });
 
   it("returns nothing if the value is not defined", function() {
     expect(exclusion(null, {})).not.toBeDefined();
@@ -22,7 +26,11 @@ describe("validators.exclusion", function() {
   });
 
   it("allows you to customize the message", function() {
-    var opts = {within: within, message: "^The value %{value} is not valid"};
+    validate.validators.exclusion.message = "^%{value} isn't great";
+    var opts = {within: within};
+    expect(exclusion("foo", opts)).toEqual("^foo isn't great");
+
+    opts.message = "^The value %{value} is not valid";
     expect(exclusion("foo", opts)).toEqual("^The value foo is not valid");
   });
 

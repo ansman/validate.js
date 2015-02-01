@@ -1,5 +1,9 @@
 describe('validator.presence', function() {
-  var presence = validate.validators.presence;
+  var presence = validate.validators.presence.bind(validate.validators.presence);
+
+  afterEach(function() {
+    delete validate.validators.presence.message;
+  });
 
   it("doesn't allow empty values", function() {
     expect(presence('', {})).toBeDefined();
@@ -25,8 +29,8 @@ describe('validator.presence', function() {
   });
 
   it("also allows to specify your own nice message", function() {
-    var options = {message: "my message"};
-    var msg = presence(null, options);
-    expect(msg).toEqual(options.message);
+    validate.validators.presence.message = "default message";
+    expect(presence(null, {})).toEqual("default message");
+    expect(presence(null, {message: "my message"})).toEqual("my message");
   });
 });
