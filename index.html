@@ -275,6 +275,7 @@
         <ul>
           <li><a href="#validate-async">Async validation</a></li>
           <li><a href="#validate-nested">Nested validation</a></li>
+          <li><a href="#validate-default-options">Default options</a></li>
         </ul>
       </li>
       <li>
@@ -657,6 +658,38 @@ validate({addresses: {shipping: {street: "Foobar"}}}, constraints);
 validate({"foo.bar": 3}, {"foo\\.bar": {numericality: {even: true}}});
 // =&gt; {"foo\.bar": ["Foo bar must be even"]}
             </code></pre>
+          </div>
+          <div id="validate-default-options">
+            <h3>Default options</h3>
+            <p class="description">
+              Both the <code>validate</code>, <code>validate.async</code> as well
+              as all validators support specifying default options by setting
+              the <code>options</code> property on the respective function or
+              validator.
+            </p>
+            <p class="description">
+              Most validators allow you to specify default messages in addition
+              to default options, refer to the documentation for the individual
+              validators for information on how to do this.
+            </p>
+            <pre class="javascript"><code>var constraints = {
+  name: {
+    presence: true
+  }
+};
+
+validate.options = {flatten: true};
+validate.async.options = {flatten: true};
+validate.validators.presence.options = {message: "can't be empty"};
+
+// The default options will be used for both the
+// validator and the validate function
+validate({}, constraints);
+// =&gt; ["Name can't be empty"]
+
+// The default options are not used if the constraints options are falsy
+validate({flatten: false}, {});
+// =&gt; undefined</code></pre>
           </div>
         </div>
         <div id="custom-validator">
@@ -1356,7 +1389,7 @@ validate({}, {username: {presence: true}});
                 Thanks <a href="https://github.com/ansman/validate.js/issues/18" target="_blank">alvipeo</a> for suggesting this.
               </li>
               <li>
-                Support for default error messages. Thanks <a href="https://github.com/ansman/validate.js/issues/16" target="_blank">tamtakoe</a>
+                Support for default options and messages. Thanks <a href="https://github.com/ansman/validate.js/issues/16" target="_blank">tamtakoe</a>
                 for suggesting this.
               </li>
             </ul>

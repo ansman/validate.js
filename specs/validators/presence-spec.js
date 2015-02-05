@@ -3,6 +3,7 @@ describe('validator.presence', function() {
 
   afterEach(function() {
     delete validate.validators.presence.message;
+    delete validate.validators.presence.options;
   });
 
   it("doesn't allow empty values", function() {
@@ -32,5 +33,14 @@ describe('validator.presence', function() {
     validate.validators.presence.message = "default message";
     expect(presence(null, {})).toEqual("default message");
     expect(presence(null, {message: "my message"})).toEqual("my message");
+  });
+
+  it("supports default options", function() {
+    validate.validators.presence.options = {message: "barfoo"};
+    var options = {message: 'foobar'};
+    expect(presence(null, options)).toEqual('foobar');
+    expect(presence(null, {})).toEqual('barfoo');
+    expect(validate.validators.presence.options).toEqual({message: "barfoo"});
+    expect(options).toEqual({message: "foobar"});
   });
 });

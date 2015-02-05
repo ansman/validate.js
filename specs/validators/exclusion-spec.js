@@ -4,6 +4,7 @@ describe("validators.exclusion", function() {
 
   afterEach(function() {
     delete validate.validators.exclusion.message;
+    delete validate.validators.exclusion.options;
   });
 
   it("returns nothing if the value is not defined", function() {
@@ -42,5 +43,20 @@ describe("validators.exclusion", function() {
   it("uses the options as the within list if the options is an array", function() {
     expect(exclusion("foo", ["foo", "bar"])).toBeDefined();
     expect(exclusion("baz", ["foo", "bar"])).not.toBeDefined();
+  });
+
+  it("supports default options", function() {
+    validate.validators.exclusion.options = {
+      message: "barfoo",
+      within: [1, 2, 3]
+    };
+    var options = {message: 'foobar'};
+    expect(exclusion(2, options)).toEqual('foobar');
+    expect(exclusion(2, {})).toEqual('barfoo');
+    expect(validate.validators.exclusion.options).toEqual({
+      message: "barfoo",
+      within: [1, 2, 3]
+    });
+    expect(options).toEqual({message: "foobar"});
   });
 });

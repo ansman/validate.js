@@ -4,6 +4,7 @@ describe('validators.email', function() {
 
   afterEach(function() {
     delete validate.validators.email.message;
+    delete validate.validators.email.options;
   });
 
   it("allows non defined values and whitespace only strings", function() {
@@ -50,5 +51,14 @@ describe('validators.email', function() {
     expect(email("foobar", {})).toEqual("is totally not an email");
     var options = {message: "some other message"};
     expect(email("foobar", options)).toEqual("some other message");
+  });
+
+  it("supports default options", function() {
+    validate.validators.email.options = {message: "barfoo"};
+    var options = {message: 'foobar'};
+    expect(email("foo", options)).toEqual('foobar');
+    expect(email("foo", {})).toEqual('barfoo');
+    expect(validate.validators.email.options).toEqual({message: "barfoo"});
+    expect(options).toEqual({message: "foobar"});
   });
 });

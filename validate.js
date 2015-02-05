@@ -14,7 +14,8 @@
   //
   // Please note that the options are also passed to each validator.
   var validate = function(attributes, constraints, options) {
-    options = options || {};
+    options = v.extend({}, v.options, options);
+
     var results = v.runValidations(attributes, constraints, options)
       , attr
       , validator;
@@ -132,7 +133,7 @@
     // validation promises have been completed.
     // It can be called even if no validations returned a promise.
     async: function(attributes, constraints, options) {
-      options = options || {};
+      options = v.extend({}, v.async.options, options);
       var results = v.runValidations(attributes, constraints, options);
 
       return v.Promise(function(resolve, reject) {
@@ -496,6 +497,8 @@
   validate.validators = {
     // Presence validates that the value isn't empty
     presence: function(value, options) {
+      options = v.extend({}, this.options, options);
+
       var message = options.message || this.message || "can't be blank"
         , attr;
 
@@ -534,6 +537,8 @@
       if (!v.isDefined(value)) {
         return;
       }
+
+      options = v.extend({}, this.options, options);
 
       var is = options.is
         , maximum = options.maximum
@@ -579,6 +584,8 @@
       if (!v.isDefined(value)) {
         return;
       }
+
+      options = v.extend({}, this.options, options);
 
       var errors = []
         , name
@@ -638,6 +645,8 @@
       if (!v.isDefined(value)) {
         return;
       }
+
+      options = v.extend({}, this.options, options);
 
       var err
         , errors = []
@@ -710,6 +719,8 @@
         options = {pattern: options};
       }
 
+      options = v.extend({}, this.options, options);
+
       var message = options.message || this.message || "is invalid"
         , pattern = options.pattern
         , match;
@@ -730,12 +741,13 @@
       }
     },
     inclusion: function(value, options) {
-      if (v.isArray(options)) {
-        options = {within: options};
-      }
       if (!v.isDefined(value)) {
         return;
       }
+      if (v.isArray(options)) {
+        options = {within: options};
+      }
+      options = v.extend({}, this.options, options);
       if (v.contains(options.within, value)) {
         return;
       }
@@ -745,12 +757,13 @@
       return v.format(message, {value: value});
     },
     exclusion: function(value, options) {
-      if (v.isArray(options)) {
-        options = {within: options};
-      }
       if (!v.isDefined(value)) {
         return;
       }
+      if (v.isArray(options)) {
+        options = {within: options};
+      }
+      options = v.extend({}, this.options, options);
       if (!v.contains(options.within, value)) {
         return;
       }
@@ -758,6 +771,7 @@
       return v.format(message, {value: value});
     },
     email: v.extend(function(value, options) {
+      options = v.extend({}, this.options, options);
       var message = options.message || this.message || "is not a valid email";
       if (!v.isDefined(value)) {
         return;

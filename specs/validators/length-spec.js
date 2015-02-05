@@ -6,6 +6,7 @@ describe('validator.length', function() {
     delete validate.validators.length.tooLong;
     delete validate.validators.length.tooShort;
     delete validate.validators.length.wrongLength;
+    delete validate.validators.length.options;
   });
 
   describe("is", function() {
@@ -149,5 +150,24 @@ describe('validator.length', function() {
       expect(length("foo bar", options)).not.toBeDefined();
       expect(length("foo bar baz", options)).toBeDefined();
     });
+  });
+
+  it("supports default options", function() {
+    var tokenizer = jasmine.createSpy("tokenizer").andReturn({length: 3});
+    validate.validators.length.options = {
+      minimum: 10,
+      tokenizer: tokenizer,
+      message: "barfoo"
+    };
+    var options = {message: 'foobar'};
+    expect(length(4, options)).toEqual('foobar');
+    expect(length(4, {})).toEqual('barfoo');
+    expect(tokenizer).toHaveBeenCalled();
+    expect(validate.validators.length.options).toEqual({
+      minimum: 10,
+      tokenizer: tokenizer,
+      message: "barfoo"
+    });
+    expect(options).toEqual({message: "foobar"});
   });
 });

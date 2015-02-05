@@ -9,6 +9,7 @@ describe('validators.datetime', function() {
     delete validate.validators.datetime.notValid;
     delete validate.validators.datetime.tooEarly;
     delete validate.validators.datetime.tooLate;
+    delete validate.validators.datetime.options;
   });
 
   it("allows non defined values", function() {
@@ -297,6 +298,17 @@ describe('validators.datetime', function() {
         }
       , value = "2013-10-25 00:00:00";
     expect(datetime(value, options)).toEqual('foobar');
+  });
+
+  it("supports default options", function() {
+    validate.validators.datetime.options =
+      {message: "barfoo", earliest: "2013-10-26 00:00:00"};
+    var options = {message: 'foobar'}
+      , value = "2013-10-25 00:00:00";
+    expect(datetime(value, options)).toEqual('foobar');
+    expect(validate.validators.datetime.options)
+      .toEqual({message: "barfoo", earliest: "2013-10-26 00:00:00"});
+    expect(options).toEqual({message: "foobar"});
   });
 });
 

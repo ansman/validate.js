@@ -13,6 +13,7 @@ describe("validators.numericality", function() {
     delete n.notEqualTo;
     delete n.notLessThan;
     delete n.notLessThanOrEqualTo;
+    delete n.options;
   });
 
   it("allows non defined values", function() {
@@ -221,5 +222,20 @@ describe("validators.numericality", function() {
       message: 'my message'
     };
     expect(numericality(7.2, options)).toEqual("my message");
+  });
+
+  it("supports default options", function() {
+    validate.validators.numericality.options = {
+      greaterThan: 10,
+      message: "barfoo"
+    };
+    var options = {message: 'foobar'};
+    expect(numericality(4, options)).toEqual('foobar');
+    expect(numericality(4, {})).toEqual('barfoo');
+    expect(validate.validators.numericality.options).toEqual({
+      greaterThan: 10,
+      message: "barfoo"
+    });
+    expect(options).toEqual({message: "foobar"});
   });
 });

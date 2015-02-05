@@ -26,6 +26,7 @@ describe("validate.async", function() {
   afterEach(function() {
     delete validate.validators.asyncFail;
     delete validate.validators.asyncSuccess;
+    delete validate.async.options;
   });
 
   it("makes validate return a promise", function() {
@@ -275,6 +276,18 @@ describe("validate.async", function() {
         }]);
         expect(validate.warn).toHaveBeenCalled();
       });
+    });
+  });
+
+  it.promise("allows default options", function() {
+    validate.async.options = {flatten: true};
+    var c = {name: {presence: true}}
+      , options = {foo: "bar"};
+    return validate.async({}, c, options).then(success, error).then(function() {
+      expect(success).not.toHaveBeenCalled();
+      expect(error).toHaveBeenCalledWith(["Name can't be blank"]);
+      expect(options).toEqual({foo: "bar"});
+      expect(validate.async.options).toEqual({flatten: true});
     });
   });
 });

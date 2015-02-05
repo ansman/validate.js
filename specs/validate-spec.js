@@ -21,6 +21,7 @@ describe("validate", function() {
     delete validators.fail2;
     delete validators.pass;
     delete validators.pass2;
+    delete validate.options;
   });
 
   it("raises an error if a promise is returned", function() {
@@ -220,5 +221,14 @@ describe("validate", function() {
     var constraints = {foo: {presence: true}}
       , options = {flatten: true, fullMessages: false};
     expect(validate({}, constraints, options)).toEqual(["can't be blank"]);
+  });
+
+  it("allows default options", function() {
+    var constraints = {foo: {presence: true}}
+      , options = {foo: "bar"};
+    validate.options = {flatten: true};
+    expect(validate({}, constraints, options)).toEqual(["Foo can't be blank"]);
+    expect(options).toEqual({foo: "bar"});
+    expect(validate.options).toEqual({flatten: true});
   });
 });

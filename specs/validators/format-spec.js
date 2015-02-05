@@ -5,6 +5,7 @@ describe("validators.format", function() {
 
   afterEach(function() {
     delete validate.validators.format.message;
+    delete validate.validators.format.options;
   });
 
   it("allows non defined values", function() {
@@ -57,5 +58,20 @@ describe("validators.format", function() {
   it("supports the options being the pattern", function() {
     expect(format("barfoo", options1.pattern)).toBeDefined();
     expect(format("barfoo", options2.pattern)).toBeDefined();
+  });
+
+  it("supports default options", function() {
+    validate.validators.format.options = {
+      message: "barfoo",
+      pattern: "abc"
+    };
+    var options = {message: 'foobar'};
+    expect(format("cba", options)).toEqual('foobar');
+    expect(format("cba", {})).toEqual('barfoo');
+    expect(validate.validators.format.options).toEqual({
+      message: "barfoo",
+      pattern: "abc"
+    });
+    expect(options).toEqual({message: "foobar"});
   });
 });
