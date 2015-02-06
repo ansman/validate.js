@@ -711,7 +711,7 @@
       }
     }),
     date: function(value, options) {
-      options = v.extend({}, options, {onlyDate: true});
+      options = v.extend({}, options, {dateOnly: true});
       return v.validators.datetime.call(v.validators.datetime, value, options);
     },
     format: function(value, options) {
