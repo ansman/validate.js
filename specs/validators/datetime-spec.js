@@ -314,13 +314,13 @@ describe('validators.datetime', function() {
 });
 
 describe('validators.date', function() {
-  it("calls the datetime validator with onlyDate set to true", function() {
+  it("calls the datetime validator with dateOnly set to true", function() {
     var errors = ["my error"]
       , value = "my value"
       , options = {foo: "bar"}
       , spy = spyOn(validate.validators, 'datetime').andReturn(errors);
     expect(validate.validators.date(value, options)).toBe(errors);
-    expect(spy).toHaveBeenCalledWith(value, {foo: "bar", onlyDate: true});
+    expect(spy).toHaveBeenCalledWith(value, {foo: "bar", dateOnly: true});
   });
 
   it("doesn't modify the options argument", function() {
