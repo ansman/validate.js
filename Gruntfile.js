@@ -95,7 +95,7 @@ module.exports = function(grunt) {
         report: 'gzip',
         banner: '// <%= pkg.name %> <%= pkg.version %>\n' +
                 '// http://validatejs.org/\n' +
-                '// (c) 2013-2014 Nicklas Ansman, 2013 Wrapp\n' +
+                '// (c) 2013-2015 Nicklas Ansman, 2013 Wrapp\n' +
                 '// <%= pkg.name %> may be freely distributed under the MIT license.\n'
       },
       dist: {

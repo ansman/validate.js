@@ -1,5 +1,5 @@
 //     jasmine-promise 0.1.0
-//     (c) 2014 Nicklas Ansman
+//     (c) 2014-2015 Nicklas Ansman
 //     jasmine-promise may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     https://github.com/ansman/jasmine-promise
