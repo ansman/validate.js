@@ -306,6 +306,7 @@ describe('validators.datetime', function() {
     var options = {message: 'foobar'}
       , value = "2013-10-25 00:00:00";
     expect(datetime(value, options)).toEqual('foobar');
+    expect(datetime(value, {})).toEqual('barfoo');
     expect(validate.validators.datetime.options)
       .toEqual({message: "barfoo", earliest: "2013-10-26 00:00:00"});
     expect(options).toEqual({message: "foobar"});
