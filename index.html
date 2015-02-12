@@ -850,13 +850,14 @@ validate({}, {username: {presence: true}});
               for the actual constraint and it will be replaced for you.
             </p>
             <p class="description">
-              The default messages can also be changed by setting:
+              The default messages can also be changed by setting the following
+              attributes on <code>validate.validators.length</code>:
             </p>
             <ul>
-              <li><code>validate.validators.length.notValid</code></li>
-              <li><code>validate.validators.length.tooLong</code></li>
-              <li><code>validate.validators.length.tooShort</code></li>
-              <li><code>validate.validators.length.wrongLength</code></li>
+              <li><code>notValid</code></li>
+              <li><code>tooLong</code></li>
+              <li><code>tooShort</code></li>
+              <li><code>wrongLength</code></li>
             </ul>
             <p class="description">
               You can also use the <b>message</b> as the message for all errors
@@ -946,18 +947,18 @@ validate(values, constraints);
             <p class="description">
               If you want a custom error message you may specify it using the
               <b>message</b> option or by settings one of the following default
-              messages:
+              messages on the <code>validate.validators.numericality</code> object:
             </p>
             <ul>
-              <li><code>validate.validators.numericality.notValid</code></li>
-              <li><code>validate.validators.numericality.notInteger</code></li>
-              <li><code>validate.validators.numericality.notGreaterThan</code></li>
-              <li><code>validate.validators.numericality.notGreaterThanOrEqualTo</code></li>
-              <li><code>validate.validators.numericality.notEqualTo</code></li>
-              <li><code>validate.validators.numericality.notLessThan</code></li>
-              <li><code>validate.validators.numericality.notLessThanOrEqualTo</code></li>
-              <li><code>validate.validators.numericality.notOdd</code></li>
-              <li><code>validate.validators.numericality.notEven</code></li>
+              <li><code>notValid</code></li>
+              <li><code>notInteger</code></li>
+              <li><code>notGreaterThan</code></li>
+              <li><code>notGreaterThanOrEqualTo</code></li>
+              <li><code>notEqualTo</code></li>
+              <li><code>notLessThan</code></li>
+              <li><code>notLessThanOrEqualTo</code></li>
+              <li><code>notOdd</code></li>
+              <li><code>notEven</code></li>
             </ul>
             <pre class="javascript"><code>// null and undefined are valid values regardless of the options
 validate({}, {duration: {numericality: true}});
@@ -1032,12 +1033,13 @@ validate({duration: 4711}, constraints);
               </dd>
             </dl>
             <p class="description">
-              You can change the default message by setting any of these settings:
+              You can change the default message by setting any of these settings
+              on the <code>validate.validators.datetime</code> object:
             </p>
             <ul>
-              <li><code>validate.validators.datetime.notValid</code></li>
-              <li><code>validate.validators.datetime.tooEarly</code></li>
-              <li><code>validate.validators.datetime.tooLate</code></li>
+              <li><code>notValid</code></li>
+              <li><code>tooEarly</code></li>
+              <li><code>tooLate</code></li>
             </ul>
             <p class="description">
               If you want to use some other library you can override the
