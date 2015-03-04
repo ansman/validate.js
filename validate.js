@@ -49,6 +49,8 @@
   };
 
   v.extend(validate, {
+    EMPTY_STRING_REGEXP: /^\s*$/,
+
     // This "class" is just a wrapper around a dictionary and is here to allow
     // you to differentiate between library errors and validation errors
     // when using promises.
@@ -231,6 +233,40 @@
     // function is considered a promise.
     isPromise: function(p) {
       return !!p && typeof p.then === 'function';
+    },
+
+    isEmpty: function(value) {
+      var attr;
+
+      // Null and undefined are empty
+      if (!v.isDefined(value)) {
+        return true;
+      }
+
+      // functions are non empty
+      if (v.isFunction(value)) {
+        return false;
+      }
+
+      // Whitespace only strings are empty
+      if (v.isString(value)) {
+        return v.EMPTY_STRING_REGEXP.test(value);
+      }
+
+      // For arrays we use the length property
+      if (v.isArray(value)) {
+        return value.length === 0;
+      }
+
+      // If we find at least one property we consider it non empty
+      if (v.isObject(value)) {
+        for (attr in value) {
+          return false;
+        }
+        return true;
+      }
+
+      return false;
     },
 
     // Formats the specified strings with the given values like so:
@@ -498,43 +534,13 @@
     // Presence validates that the value isn't empty
     presence: function(value, options) {
       options = v.extend({}, this.options, options);
-
-      var message = options.message || this.message || "can't be blank"
-        , attr;
-
-      // Null and undefined aren't allowed
-      if (!v.isDefined(value)) {
-        return message;
-      }
-
-      // functions are ok
-      if (v.isFunction(value)) {
-        return;
-      }
-
-      if (typeof value === 'string') {
-        // Tests if the string contains only whitespace (tab, newline, space etc)
-        if ((/^\s*$/).test(value)) {
-          return message;
-        }
-      }
-      else if (v.isArray(value)) {
-        // For arrays we use the length property
-        if (value.length === 0) {
-          return message;
-        }
-      }
-      else if (v.isObject(value)) {
-        // If we find at least one property we consider it non empty
-        for (attr in value) {
-          return;
-        }
-        return message;
+      if (v.isEmpty(value)) {
+        return options.message || this.message || "can't be blank";
       }
     },
     length: function(value, options, attribute) {
-      // Null and undefined are fine
-      if (!v.isDefined(value)) {
+      // Empty values are allowed
+      if (v.isEmpty(value)) {
         return;
       }
 
@@ -581,7 +587,8 @@
       }
     },
     numericality: function(value, options) {
-      if (!v.isDefined(value)) {
+      // Empty values are fine
+      if (v.isEmpty(value)) {
         return;
       }
 
@@ -642,7 +649,8 @@
       }
     },
     datetime: v.extend(function(value, options) {
-      if (!v.isDefined(value)) {
+      // Empty values are fine
+      if (v.isEmpty(value)) {
         return;
       }
 
@@ -655,6 +663,8 @@
 
       value = this.parse(value, options);
 
+      // 86400000 is the number of seconds in a day, this is used to remove
+      // the time from the date
       if (isNaN(value) || options.dateOnly && value % 86400000 !== 0) {
         return options.message || this.notValid || "must be a valid date";
       }
@@ -725,7 +735,8 @@
         , pattern = options.pattern
         , match;
 
-      if (!v.isDefined(value)) {
+      // Empty values are allowed
+      if (v.isEmpty(value)) {
         return;
       }
       if (!v.isString(value)) {
@@ -741,7 +752,8 @@
       }
     },
     inclusion: function(value, options) {
-      if (!v.isDefined(value)) {
+      // Empty values are fine
+      if (v.isEmpty(value)) {
         return;
       }
       if (v.isArray(options)) {
@@ -757,7 +769,8 @@
       return v.format(message, {value: value});
     },
     exclusion: function(value, options) {
-      if (!v.isDefined(value)) {
+      // Empty values are fine
+      if (v.isEmpty(value)) {
         return;
       }
       if (v.isArray(options)) {
@@ -773,7 +786,8 @@
     email: v.extend(function(value, options) {
       options = v.extend({}, this.options, options);
       var message = options.message || this.message || "is not a valid email";
-      if (!v.isDefined(value)) {
+      // Empty values are fine
+      if (v.isEmpty(value)) {
         return;
       }
       if (!v.isString(value)) {

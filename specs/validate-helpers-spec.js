@@ -521,4 +521,37 @@ describe("validate", function() {
         .toBe(5);
     });
   });
+
+  describe("isEmpty", function() {
+    it("considers null and undefined values empty", function() {
+      expect(validate.isEmpty(null)).toBe(true);
+      expect(validate.isEmpty(undefined)).toBe(true);
+    });
+
+    it("considers functions non empty", function() {
+      expect(validate.isEmpty(function(){})).toBe(false);
+    });
+
+    it("considers whitespace only strings empty", function() {
+      expect(validate.isEmpty("")).toBe(true);
+      expect(validate.isEmpty(" ")).toBe(true);
+      expect(validate.isEmpty("         ")).toBe(true);
+      expect(validate.isEmpty("foo")).toBe(false);
+    });
+
+    it("considers empty arrays empty", function() {
+      expect(validate.isEmpty([])).toBe(true);
+      expect(validate.isEmpty([1])).toBe(false);
+    });
+
+    it("considers empty objects empty", function() {
+      expect(validate.isEmpty({})).toBe(true);
+      expect(validate.isEmpty({foo: "bar"})).toBe(false);
+    });
+
+    it("considers false and 0 non empty", function() {
+      expect(validate.isEmpty(false)).toBe(false);
+      expect(validate.isEmpty(0)).toBe(false);
+    });
+  });
 });

@@ -7,9 +7,11 @@ describe("validators.exclusion", function() {
     delete validate.validators.exclusion.options;
   });
 
-  it("returns nothing if the value is not defined", function() {
+  it("allows empty values", function() {
     expect(exclusion(null, {})).not.toBeDefined();
     expect(exclusion(undefined, {})).not.toBeDefined();
+    expect(exclusion("", {})).not.toBeDefined();
+    expect(exclusion(" ", {})).not.toBeDefined();
   });
 
   it("returns nothing if the value is allowed", function() {

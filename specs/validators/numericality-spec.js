@@ -16,9 +16,11 @@ describe("validators.numericality", function() {
     delete n.options;
   });
 
-  it("allows non defined values", function() {
+  it("allows empty values", function() {
     expect(numericality(null, {})).not.toBeDefined();
     expect(numericality(undefined, {})).not.toBeDefined();
+    expect(numericality("", {})).not.toBeDefined();
+    expect(numericality(" ", {})).not.toBeDefined();
   });
 
   it("allows numbers", function() {
@@ -31,8 +33,8 @@ describe("validators.numericality", function() {
     expect(numericality("foo", {})).toEqual(e);
     expect(numericality(NaN, {})).toEqual(e);
     expect(numericality(false, {})).toEqual(e);
-    expect(numericality([], {})).toEqual(e);
-    expect(numericality({}, {})).toEqual(e);
+    expect(numericality([1], {})).toEqual(e);
+    expect(numericality({foo: "bar"}, {})).toEqual(e);
   });
 
   it("doesn't allow strings if noStrings is true", function() {

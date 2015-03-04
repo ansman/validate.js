@@ -79,10 +79,12 @@ describe('validator.length', function() {
     });
   });
 
-  it("allows non defined values", function() {
+  it("allows empty values", function() {
     var options = {is: 10, minimum: 20, maximum: 5};
     expect(length(null, options)).not.toBeDefined();
     expect(length(undefined, options)).not.toBeDefined();
+    expect(length("", options)).not.toBeDefined();
+    expect(length(" ", options)).not.toBeDefined();
   });
 
   it("refuses values without a numeric length property", function() {
@@ -91,7 +93,7 @@ describe('validator.length', function() {
     expect(length(3.1415, options)).toBeDefined();
     expect(length(-3.1415, options)).toBeDefined();
     expect(length(0, options)).toBeDefined();
-    expect(length({}, options)).toBeDefined();
+    expect(length({foo: "bar"}, options)).toBeDefined();
     expect(length({lengthi: 10}, options)).toBeDefined();
     expect(length({length: "foo"}, options)).toBeDefined();
     expect(length(3, {})).toBeDefined();

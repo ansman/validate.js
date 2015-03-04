@@ -12,9 +12,11 @@ describe('validators.datetime', function() {
     delete validate.validators.datetime.options;
   });
 
-  it("allows non defined values", function() {
+  it("allows empty values", function() {
     expect(datetime(null, {})).not.toBeDefined();
     expect(datetime(undefined, {})).not.toBeDefined();
+    expect(datetime("", {})).not.toBeDefined();
+    expect(datetime("  ", {})).not.toBeDefined();
   });
 
   describe("parse", function() {

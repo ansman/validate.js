@@ -8,11 +8,15 @@ describe("validators.format", function() {
     delete validate.validators.format.options;
   });
 
-  it("allows non defined values", function() {
+  it("allows empty values", function() {
     expect(format(null, options1)).not.toBeDefined();
     expect(format(null, options2)).not.toBeDefined();
     expect(format(undefined, options1)).not.toBeDefined();
     expect(format(undefined, options2)).not.toBeDefined();
+    expect(format("", options1)).not.toBeDefined();
+    expect(format("", options2)).not.toBeDefined();
+    expect(format(" ", options1)).not.toBeDefined();
+    expect(format(" ", options2)).not.toBeDefined();
   });
 
   it("allows values that matches the pattern", function() {
