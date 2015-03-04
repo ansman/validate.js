@@ -447,7 +447,7 @@
       pattern: /^(34|37|4|5[1-5]).*$/,
       message: "must be a valid Amex, Visa or Mastercard number"
     },
-    length: function(value, attributes, attributeName) {
+    length: function(value, attributes, attributeName, options, constraints) {
       if (value) {
         // Amex
         if ((/^(34|37).*$/).test(value)) return {is: 15};
@@ -458,7 +458,7 @@
       return false;
     }
   },
-  creditCardZip: function(value, attributes, attributeName) {
+  creditCardZip: function(value, attributes, attributeName, options, constraints) {
     if (!(/^(34|37).*$/).test(attributes.creditCardNumber)) return null;
     return {
       presence: true,

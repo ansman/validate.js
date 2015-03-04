@@ -150,9 +150,10 @@ describe("validate", function() {
       var options = {pass: {option1: "value1"}}
         , attrs = {name: "Nicklas"}
         , spy = jasmine.createSpy("options").andReturn(options)
-        , constraints = {name: spy};
-      validate.runValidations(attrs, constraints, {});
-      expect(spy).toHaveBeenCalledWith("Nicklas", attrs, "name");
+        , constraints = {name: spy}
+        , globalOptions = {foo: "bar"};
+      validate.runValidations(attrs, constraints, globalOptions);
+      expect(spy).toHaveBeenCalledWith("Nicklas", attrs, "name", globalOptions, constraints);
       expect(pass).toHaveBeenCalledWith("Nicklas", options.pass, "name", attrs);
     });
 
@@ -160,9 +161,10 @@ describe("validate", function() {
       var options = {option1: "value1"}
         , attrs = {name: "Nicklas"}
         , spy = jasmine.createSpy("options").andReturn(options)
-        , constraints = {name: {pass: spy}};
-      validate.runValidations(attrs, constraints, {});
-      expect(spy).toHaveBeenCalledWith("Nicklas", attrs, "name");
+        , constraints = {name: {pass: spy}}
+        , globalOptions = {foo: "bar"};
+      validate.runValidations(attrs, constraints, globalOptions);
+      expect(spy).toHaveBeenCalledWith("Nicklas", attrs, "name", globalOptions, constraints);
       expect(pass).toHaveBeenCalledWith("Nicklas", options, "name", attrs);
     });
 

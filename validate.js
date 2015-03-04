@@ -74,7 +74,12 @@
       // Loops through each constraints, finds the correct validator and run it.
       for (attr in constraints) {
         value = v.getDeepObjectValue(attributes, attr);
-        validators = v.result(constraints[attr], value, attributes, attr);
+        // This allows the constraints for an attribute to be a function.
+        // The function will be called with the value, attribute name, the complete dict of
+        // attributes as well as the options and constraints passed in.
+        // This is useful when you want to have different
+        // validations depending on the attribute value.
+        validators = v.result(constraints[attr], value, attributes, attr, options, constraints);
 
         for (validatorName in validators) {
           validator = v.validators[validatorName];
@@ -86,10 +91,11 @@
 
           validatorOptions = validators[validatorName];
           // This allows the options to be a function. The function will be
-          // called with the value, attribute name and the complete dict of
-          // attributes. This is useful when you want to have different
+          // called with the value, attribute name, the complete dict of
+          // attributes as well as the options and constraints passed in.
+          // This is useful when you want to have different
           // validations depending on the attribute value.
-          validatorOptions = v.result(validatorOptions, value, attributes, attr);
+          validatorOptions = v.result(validatorOptions, value, attributes, attr, options, constraints);
           if (!validatorOptions) {
             continue;
           }
