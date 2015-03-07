@@ -71,6 +71,10 @@
         , validatorOptions
         , error;
 
+      if (v.isDomElement(attributes)) {
+        attributes = v.collectFormValues(attributes);
+      }
+
       // Loops through each constraints, finds the correct validator and run it.
       for (attr in constraints) {
         value = v.getDeepObjectValue(attributes, attr);
@@ -239,6 +243,32 @@
     // function is considered a promise.
     isPromise: function(p) {
       return !!p && typeof p.then === 'function';
+    },
+
+    isDomElement: function(o) {
+      if (!o) {
+        return false;
+      }
+
+      if (!v.isFunction(o.querySelectorAll) || !v.isFunction(o.querySelector)) {
+        return false;
+      }
+
+      if (v.isObject(document) && o === document) {
+        return true;
+      }
+
+      // http://stackoverflow.com/a/384380/699304
+      /* istanbul ignore else */
+      if (typeof HTMLElement === "object") {
+        return o instanceof HTMLElement;
+      } else {
+        return o &&
+          typeof o === "object" &&
+          o !== null &&
+          o.nodeType === 1 &&
+          typeof o.nodeName === "string";
+      }
     },
 
     isEmpty: function(value) {

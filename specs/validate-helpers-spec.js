@@ -667,4 +667,26 @@ describe("validate", function() {
       });
     });
   });
+
+  describe("isDomElement", function() {
+    it("returns true of DOM elements", function() {
+      var form = document.createElement("form")
+        , div = document.createElement("div")
+        , a = document.createElement("a");
+
+      expect(validate.isDomElement(form)).toBe(true);
+      expect(validate.isDomElement(div)).toBe(true);
+      expect(validate.isDomElement(a)).toBe(true);
+      expect(validate.isDomElement(document)).toBe(true);
+    });
+
+    it("returns false for other objects", function() {
+      expect(validate.isDomElement({})).toBe(false);
+      expect(validate.isDomElement(0)).toBe(false);
+      expect(validate.isDomElement(true)).toBe(false);
+      expect(validate.isDomElement("foo")).toBe(false);
+      expect(validate.isDomElement("")).toBe(false);
+      expect(validate.isDomElement([])).toBe(false);
+    });
+  });
 });

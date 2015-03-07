@@ -172,6 +172,23 @@ describe("validate", function() {
       validate.runValidations({}, {name: {pass: false}, email: {pass: null}}, {});
       expect(pass).not.toHaveBeenCalled();
     });
+
+    it("calls collectFormValues if the attributes is a DOM element", function() {
+      var form = document.createElement("div");
+      form.innerHTML = '<input type="text" name="foo" value="bar">';
+      spyOn(validate, "collectFormValues").andCallThrough();
+      spyOn(validate.validators, "presence").andCallThrough();
+      var constraints = {foo: {presence: true}};
+      validate(form, constraints);
+
+      expect(validate.collectFormValues).toHaveBeenCalledWith(form);
+      expect(validate.validators.presence).toHaveBeenCalledWith(
+        "bar",
+        true,
+        "foo",
+        {foo: "bar"}
+      );
+    });
   });
 
   describe("processValidationResults", function() {

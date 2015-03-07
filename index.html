@@ -519,9 +519,14 @@ validate({creditCardNumber: "340000000000000"}, constraints);
           </div>
           <p class="description">
             Validates the <b>attributes</b> object against the <b>constraints</b>.<br>
-            The <b>attributes</b> must be a plain object, things like backbone models
-            etc are not supported.<br>
+            The <b>attributes</b> must be a plain object or a form element,
+            things like backbone models etc are not supported.<br>
             For the format of the <b>constraints</b> see the <a href="#constraints">constraints section</a>.
+          </p>
+          <p class="description">
+            If the <b>attributes</b> objects is an HTML/DOM element
+            <a href="#utilities-collect-form-values"><code>collectFormValues</code></a>
+            is called before validating.
           </p>
           <p class="description">
             If there are no errors nothing is returned. Otherwise an object in this
@@ -1384,7 +1389,7 @@ validate({complexAttribute: [1,2,3], otherComplexAttribute: [3,2,1]}, constraint
           <div id="utilities-collect-form-values">
             <div class="signature">
               <b>collectFormValues</b>
-              <code>validate.collectFormValues(form, [options])</code>
+              <code>validate.collectFormValues(rootElement, [options])</code>
             </div>
             <p class="description">
               One of the most common tasks is collecting the values and it was
@@ -1513,6 +1518,10 @@ validate({}, {username: {presence: true}});
               <li>
                 Added an equality validator. Thanks
                 <a href="https://github.com/ansman/validate.js/issues/29" target="_blank">Gutsulyak Dmitry</a> for suggesting this.
+              </li>
+              <li>
+                Added support for validating HTML forms element by simply passing
+                them instead of an attributes object.
               </li>
             </ul>
           </div>
