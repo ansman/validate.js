@@ -812,7 +812,7 @@
 
   validate.exposeModule(validate, root, exports, module, define);
 }).call(this,
-        typeof exports !== 'undefined' ? exports : null,
-        typeof module !== 'undefined' ? module : null,
-        typeof define !== 'undefined' ? define : null,
-        typeof require !== 'undefined' ? require : null);
+        typeof exports !== 'undefined' ? /* istanbul ignore next */ exports : null,
+        typeof module !== 'undefined' ? /* istanbul ignore next */ module : null,
+        typeof define !== 'undefined' ? /* istanbul ignore next */ define : null,
+        typeof require !== 'undefined' ? /* istanbul ignore next */ require : null);
