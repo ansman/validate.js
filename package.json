@@ -30,7 +30,7 @@
     "grunt-contrib-jasmine": "0.8.2",
     "grunt-docco": "0.3.3",
     "grunt-template-jasmine-istanbul": "0.3.3",
-    "coveralls": "1.0.0"
+    "coveralls": "2.11.2"
   },
   "licenses": [{
     "type": "MIT",
