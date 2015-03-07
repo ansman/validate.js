@@ -554,4 +554,117 @@ describe("validate", function() {
       expect(validate.isEmpty(0)).toBe(false);
     });
   });
+
+  describe("collectFormValues", function() {
+    it("handles empty input", function() {
+      expect(validate.collectFormValues()).toEqual({});
+    });
+
+    it("handles simple forms", function() {
+      var form = document.createElement("form");
+      form.innerHTML = '' +
+        '<input type="text" name="text" value="example text">' +
+        '<input type="text" name="empty-text">' +
+        '<input type="email" name="email" value="example@email.com">' +
+        '<input type="password" name="password" value="password!">' +
+        '<input type="checkbox" name="selected-checkbox" value="checkbox" checked>' +
+        '<input type="checkbox" name="deselected-checkbox" value="checkbox">' +
+        '<input type="date" name="date" value="2015-03-08">' +
+        '<input type="hidden" name="hidden" value="hidden">' +
+        '<input type="number" name="number" value="4711">' +
+        '<input type="url" name="url" value="http://validatejs.org">' +
+        '<input type="radio" name="single-checked-radio" value="radio" checked>' +
+        '<input type="radio" name="single-unchecked-radio" value="radio">' +
+        '<radiogroup>' +
+        '  <input type="radio" name="checked-radio" value="radio1">' +
+        '  <input type="radio" name="checked-radio" value="radio2" checked>' +
+        '  <input type="radio" name="checked-radio" value="radio3">' +
+        '</radiogroup>' +
+        '<radiogroup>' +
+        '  <input type="radio" name="unchecked-radio" value="radio1">' +
+        '  <input type="radio" name="unchecked-radio" value="radio2">' +
+        '  <input type="radio" name="unchecked-radio" value="radio3">' +
+        '</radiogroup>' +
+        '<select name="selected-dropdown">' +
+        '  <option>' +
+        '  <option value="option1">' +
+        '  <option value="option2" selected>' +
+        '</select>' +
+        '<select name="unselected-dropdown">' +
+        '  <option>' +
+        '  <option value="option1">' +
+        '  <option value="option2">' +
+        '</select>';
+
+      expect(validate.collectFormValues(form)).toEqual({
+        text: "example text",
+        "empty-text": null,
+        email: "example@email.com",
+        password: "password!",
+        "selected-checkbox": "checkbox",
+        "deselected-checkbox": null,
+        date: "2015-03-08",
+        hidden: "hidden",
+        number: 4711,
+        url: "http://validatejs.org",
+        "single-checked-radio": "radio",
+        "single-unchecked-radio": null,
+        "checked-radio": "radio2",
+        "unchecked-radio": null,
+        "selected-dropdown": "option2",
+        "unselected-dropdown": null
+      });
+    });
+
+    it("has an option to nullify empty and trim strings", function() {
+      var form = document.createElement("form");
+      form.innerHTML = '' +
+        '<input type="text" name="normal" value="normal">' +
+        '<input type="text" name="empty">' +
+        '<input type="text" name="whitespace" value=" ">' +
+        '<input type="text" name="trimmed" value=" foo ">';
+
+      var options = {nullify: false};
+      expect(validate.collectFormValues(form, options)).toEqual({
+        normal: "normal",
+        empty: "",
+        whitespace: " ",
+        trimmed: " foo "
+      });
+
+      options = {nullify: true};
+      expect(validate.collectFormValues(form, options)).toEqual({
+        normal: "normal",
+        empty: null,
+        whitespace: " ",
+        trimmed: " foo "
+      });
+
+      options = {trim: true};
+      expect(validate.collectFormValues(form, options)).toEqual({
+        normal: "normal",
+        empty: null,
+        whitespace: null,
+        trimmed: "foo"
+      });
+    });
+
+    it("has a way to ignore elements", function() {
+      var form = document.createElement("form");
+      form.innerHTML = '<input type="text" name="ignored" value="ignored" data-ignored>';
+      expect(validate.collectFormValues(form)).toEqual({});
+    });
+
+    it("uses true/false for checkboxes without a value", function() {
+      var form = document.createElement("form");
+      form.innerHTML = '' +
+        '<input type="checkbox" name="checked" checked>' +
+        '<input type="checkbox" name="unchecked">';
+
+      expect(validate.collectFormValues(form)).toEqual({
+        checked: true,
+        unchecked: false
+      });
+    });
+  });
 });

@@ -300,6 +300,12 @@
         </ul>
       </li>
       <li>
+        <a href="#utilities">Utilities</a>
+        <ul>
+          <li><a href="#utilities-collect-form-values">collectFormValues</a></li>
+        </ul>
+      </li>
+      <li>
         <a href="#installing">Installing</a>
         <ul>
           <li><a href="#installing-node">node.js</a></li>
@@ -410,6 +416,7 @@
             </p>
             <ul>
               <li><code>Array.prototype.indexOf</code></li>
+              <li><code>String.prototype.trim</code></li>
             </ul>
           </div>
           <div id="examples">
@@ -1317,6 +1324,56 @@ validate({from: "first.läst@example.com"}, constraints);
 // =&gt; undefined</code></pre>
           </div>
         </div>
+        <div id="utilities">
+          <h2>Utilities</h2>
+          <div id="utilities-collect-form-values">
+            <div class="signature">
+              <b>collectFormValues</b>
+              <code>validate.collectFormValues(form, [options])</code>
+            </div>
+            <p class="description">
+              One of the most common tasks is collecting the values and it was
+              only recently this was possible in a native way
+              (<a href="https://developer.mozilla.org/en-US/docs/Web/API/FormData" target="_blank">FormData</a>)
+              so as a convenience a function for doing this has been added to
+              validate.js
+            </p>
+            <p>
+              This function will find all named inputs (inputs that specify the
+              name attribute) and collect their values.
+            </p>
+            <p>
+              The following options exists:
+            </p>
+            <dl class="dl-horizontal">
+              <dt>nullify</dt>
+              <dd>Converts empty strings to <code>null</code> (default is true)</dd>
+              <dt>trim</dt>
+              <dd>Trims whitespace from the start and end of the value</dd>
+            </dl>
+            <p>
+              You can ignore inputs by adding the <code>data-ignored</code>
+              attribute.
+            </p>
+            <form id="login" action="/" style="display: none;">
+              <input type="text" name="username" value="ansman">
+              <input type="password" name="password" value="correcthorsebatterystaple">
+              <input type="checkbox" name="remember-me">
+              <input type="hidden" name="some-hidden-value" data-ignored>
+            </form>
+            <pre class="html"><code>&lt;form id=&quot;login&quot;&gt;
+  &lt;input type=&quot;text&quot; name=&quot;username&quot; value=&quot;ansman&quot;&gt;
+  &lt;input type=&quot;password&quot; name=&quot;password&quot; value=&quot;correcthorsebatterystaple&quot;&gt;
+  &lt;input type=&quot;checkbox&quot; name=&quot;remember-me&quot;&gt;
+  &lt;input type=&quot;hidden&quot; name=&quot;some-hidden-value&quot; data-ignored&gt;
+&lt;/form&gt;
+&lt;script&gt;
+var form = document.querySelector(&quot;form#login&quot;);
+validate.collectFormValues(form);
+// =&gt; {username: &quot;ansman&quot;, password: &quot;correcthorsebatterystaple&quot;, remember-me: true}
+&lt;/script&gt;</code></pre>
+          </div>
+        </div>
         <div id="installing">
           <h2>Installing</h2>
           <div id="installing-node">
@@ -1394,6 +1451,9 @@ validate({}, {username: {presence: true}});
               <li>
                 Examples have now been added and can be found <a href="examples.html">here</a>.<br>
                 Thanks <a href="https://github.com/ansman/validate.js/issues/11" target="_blank">Alexander Sergéev</a> for suggesting this.
+              </li>
+              <li>
+                Added a function to collect form values from a HTML form.
               </li>
             </ul>
           </div>

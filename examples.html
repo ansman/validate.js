@@ -406,7 +406,7 @@
 
       function handleFormSubmit(form) {
         // First we gather the values from the form
-        var values = collectFormValues(form);
+        var values = validate.collectFormValues(form);
         // then we validate them against the constraints
         var errors = validate(values, constraints);
         // then we update the form to reflect the results
@@ -415,25 +415,6 @@
         if (!errors) {
           showSuccess();
         }
-      }
-
-      // This returns an object with all the values of the form.
-      // It uses the input name as key and the value as value
-      // So for example this:
-      // <input type="text" name="email" value="foo@bar.com" />
-      // would return:
-      // {email: "foo@bar.com"}
-      function collectFormValues(form) {
-        var values = {};
-        // Collect all inputs
-        _.each(form.querySelectorAll("input[name]"), function(el) {
-          values[el.name] = el.value;
-        });
-        // Collect all drop downs
-        _.each(form.querySelectorAll("select[name]"), function(el) {
-          values[el.name] = el.options[el.selectedIndex].value;
-        });
-        return values;
       }
 
       // Updates the inputs with the validation errors
