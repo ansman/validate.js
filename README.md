@@ -15,3 +15,9 @@ Contributing
 ---
 Before opening a pull request please make sure your changes follow the
 [contribution guidelines](https://github.com/ansman/validate.js/blob/master/CONTRIBUTING.md).
+
+Users of validate.js
+---
+If your site, library or application uses validate.js and would like to be shown
+here please feel free to email <a href="mailto:validate@ansman.se">validate@ansman.se</a>
+with the name and optionally a URL to the project and it will be added here.
