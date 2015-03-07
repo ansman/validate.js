@@ -266,6 +266,7 @@
         <a href="#overview">Overview</a>
         <ul>
           <li><a href="#supported-runtimes">Supported runtimes</a></li>
+          <li><a href="#examples">Examples</a></li>
           <li><a href="#acknowledgements">Acknowledgements</a></li>
         </ul>
       </li>
@@ -410,6 +411,21 @@
             <ul>
               <li><code>Array.prototype.indexOf</code></li>
             </ul>
+          </div>
+          <div id="examples">
+            <h3>Examples</h3>
+            <p>
+              You can find some basic examples <a href="examples.html">included in the project</a>.
+            </p>
+            <p>
+              They are meant to give a feeling for how to use the library and are
+              in no way a good example of how to write HTML forms.<br>
+              Normally you would also validate your form using the
+              <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#Attributes" target="_blank">built in form attributes</a>
+              such as <code>required</code>, <code>pattern</code> etc
+              but for the purpose of this example I've not added these to show
+              how validate.js works instead.
+            </p>
           </div>
           <div id="acknowledgements">
             <h3>Acknowledgements</h3>
@@ -1375,6 +1391,10 @@ validate({}, {username: {presence: true}});
                 Mostly this means that empty and whitespace only strings are
                 now allowed by all validators except <code>presence</code>.
                 Thanks <a href="https://github.com/ansman/validate.js/issues/31" target="_blank">droganov</a> for reporting this!
+              </li>
+              <li>
+                Examples have now been added and can be found <a href="examples.html">here</a>.<br>
+                Thanks <a href="https://github.com/ansman/validate.js/issues/11" target="_blank">Alexander Sergéev</a> for suggesting this.
               </li>
             </ul>
           </div>
