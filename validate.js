@@ -51,13 +51,6 @@
   v.extend(validate, {
     EMPTY_STRING_REGEXP: /^\s*$/,
 
-    // This "class" is just a wrapper around a dictionary and is here to allow
-    // you to differentiate between library errors and validation errors
-    // when using promises.
-    ValidationErrors: function(errors) {
-      v.extend(this, errors);
-    },
-
     // Runs the validators specified by the constraints object.
     // Will return an array of the format:
     //     [{attribute: "<attribute name>", error: "<validation result>"}, ...]
@@ -152,9 +145,6 @@
         v.waitForResults(results).then(function() {
           var errors = v.processValidationResults(results, options);
           if (errors) {
-            if (!options.flatten) {
-              errors = new v.ValidationErrors(errors);
-            }
             reject(errors);
           } else {
             resolve(attributes);
