@@ -1075,10 +1075,10 @@ validate({duration: 4711}, constraints);
               If you want to use some other library you can override the
               <code>parse</code> and <code>format</code> functions:
             </p>
-            <pre class="javascript"><code>validate({}, {depature: {datetime: true}});
+            <pre class="javascript"><code>validate({}, {departure: {datetime: true}});
 // =&gt; undefined
 
-validate({departure: "foobar"}, {depature: {datetime: true}});
+validate({departure: "foobar"}, {departure: {datetime: true}});
 // =&gt; {"departure": ["Departure must be a valid date"]}
 
 validate({departure: "2013-12-11 10:09:08", {departure: {datetime: true}}});
