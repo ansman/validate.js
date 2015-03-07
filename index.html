@@ -297,6 +297,7 @@
           <li><a href="#validators-inclusion">Inclusion</a></li>
           <li><a href="#validators-exclusion">Exclusion</a></li>
           <li><a href="#validators-email">Email</a></li>
+          <li><a href="#validators-equality">Equality</a></li>
         </ul>
       </li>
       <li>
@@ -1323,6 +1324,60 @@ validate({from: "foobar"}, constraints);
 validate({from: "first.läst@example.com"}, constraints);
 // =&gt; undefined</code></pre>
           </div>
+          <div id="validators-equality">
+            <div class="signature"><b>equality</b></div>
+            <p class="description">
+              The equality validator can be used to verify that one attribute
+              is always equal to another. <br>
+              This is useful when having a "confirm password" input for
+              example.
+            </p>
+            <p class="description">
+              You specify which attribute by simply using the name of it
+              as the options for the validator or by giving the option
+              <b>attribute</b>.
+            </p>
+            <p class="description">
+              By default <code>===</code> is used to check the quality, it you
+              need to validate more complex objects you can give a function
+              using the <b>comparator</b> option which should be a function
+              that accepts two arguments and returns <code>true</code> if they
+              objects are equal and <code>false</code> if they are not.
+            </p>
+            <p class="description">
+              The default message is <i>is not equal to %{attribute}</i>
+              <code>validate.validators.equality.message</code>
+            </p>
+            <pre class="javascript"><code>var constraints = {
+  confirmPassword: {
+    equality: "password"
+  }
+};
+
+validate({password: "foo", confirmPassword: "foo"}, constraints);
+// =&gt; undefined
+
+validate({password: "foo", confirmPassword: "bar"}, constraints);
+// =&gt; {confirmPassword: ["Confirm password is not equal to password"]}
+
+constraints = {
+  complexAttribute: {
+    equality: {
+      attribute: "otherComplexAttribute",
+      message: "is not complex enough",
+      comparator: function(v1, v2) {
+        return JSON.stringify(v1) === JSON.stringify(v2);
+      }
+    }
+  }
+};
+
+validate({complexAttribute: [1,2,3], otherComplexAttribute: [1,2,3]}, constraints);
+// =&gt; undefined
+
+validate({complexAttribute: [1,2,3], otherComplexAttribute: [3,2,1]}, constraints);
+// =&gt; {complexAttribute: ["Complex attribute is not complex enough"]}</code></pre>
+          </div>
         </div>
         <div id="utilities">
           <h2>Utilities</h2>
@@ -1449,11 +1504,15 @@ validate({}, {username: {presence: true}});
                 Thanks <a href="https://github.com/ansman/validate.js/issues/31" target="_blank">droganov</a> for reporting this!
               </li>
               <li>
-                Examples have now been added and can be found <a href="examples.html">here</a>.<br>
+                Examples have now been added and can be found <a href="examples.html">here</a>.
                 Thanks <a href="https://github.com/ansman/validate.js/issues/11" target="_blank">Alexander Sergéev</a> for suggesting this.
               </li>
               <li>
                 Added a function to collect form values from a HTML form.
+              </li>
+              <li>
+                Added an equality validator. Thanks
+                <a href="https://github.com/ansman/validate.js/issues/29" target="_blank">Gutsulyak Dmitry</a> for suggesting this.
               </li>
             </ul>
           </div>
