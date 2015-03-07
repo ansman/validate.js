@@ -1,7 +1,7 @@
 {
   "name": "validate.js",
   "main": ["validate.js", "validate.min.js"],
-  "version": "0.4.0",
+  "version": "0.5.0",
   "ignore": [
     "**/.*",
     "CNAME",
