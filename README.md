@@ -9,7 +9,7 @@ For issues and feature requests visit the [issue tracker](https://github.com/ans
 Build status
 ---
 [![Build Status](https://travis-ci.org/ansman/validate.js.png?branch=master)](https://travis-ci.org/ansman/validate.js)
-[![Coverage Status](https://coveralls.io/repos/ansman/validate.js/badge.png?branch=master)](https://coveralls.io/r/ansman/validate.js?branch=master)
+[![Coverage Status](https://coveralls.io/repos/ansman/validate.js/badge.svg?branch=master)](https://coveralls.io/r/ansman/validate.js?branch=master)
 
 Contributing
 ---
