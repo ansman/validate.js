@@ -21,15 +21,14 @@
     This is an example form that shows some common input types and how to
     validate them.
 
-    Usually you would probably have type="email" on email and do more validation
-    using HTML but for this example I haven't used any native form validation
-    for demo purposes.
+    The native HTML form validate has been disabled to show how validate.js works
+    in action.
     -->
-    <form id="main" class="form-horizontal" action="/example" method="post">
+    <form id="main" class="form-horizontal" action="/example" method="post" novalidate>
       <div class="form-group">
         <label class="col-sm-2 control-label" for="email">Email</label>
         <div class="col-sm-5">
-          <input id="email" class="form-control" type="text" placeholder="Email" name="email">
+          <input id="email" class="form-control" type="email" placeholder="Email" name="email">
         </div>
         <div class="col-sm-5 messages"></div>
       </div>
@@ -51,7 +50,7 @@
       <div class="form-group">
         <label class="col-sm-2 control-label" for="birthdate">Birthdate</label>
         <div class="col-sm-5">
-          <input id="birthdate" class="form-control" type="birthdate" placeholder="YYYY-MM-DD" name="birthdate">
+          <input id="birthdate" class="form-control" type="date" placeholder="YYYY-MM-DD" name="birthdate">
         </div>
         <div class="col-sm-5 messages"></div>
       </div>
@@ -318,7 +317,7 @@
       <div class="form-group">
         <label class="col-sm-2 control-label" for="number-of-children">Number of children</label>
         <div class="col-sm-5">
-          <input id="number-of-children" class="form-control" type="text" placeholder="Number of children" name="number-of-children">
+          <input id="number-of-children" class="form-control" type="number" placeholder="Number of children" name="number-of-children">
         </div>
         <div class="col-sm-5 messages"></div>
       </div>
