@@ -1,28 +1,58 @@
 beforeEach(function() {
-  this.addMatchers({
-    toHaveLength: function(expected) {
-      return this.actual.length === expected;
+  jasmine.addMatchers({
+    toHaveLength: function(util, customEqualityTesters) {
+      return {
+        compare: function(actual, expected) {
+          return {
+            pass: actual.length === expected
+          };
+        }
+      };
     },
-    toHaveBeenCalledWithContext: function(context) {
-      return this.actual.calls.some(function(call) {
-        return call.object === context;
-      });
+    toHaveBeenCalledWithContext: function(util, customEqualityTesters) {
+      return {
+        compare: function(actual, expected) {
+          return {
+            pass: actual.calls.any(function(call) {
+              return call.object === expected;
+            })
+          };
+        }
+      };
     },
-    toHaveItems: function(items) {
-      if (this.actual.length != items.length) {
-        return false;
-      }
-      return this.actual.every(function(a) {
-        return items.some(function(item) {
-          return JSON.stringify(item) === JSON.stringify(a);
-        });
-      });
+    toHaveItems: function(util, customEqualityTesters) {
+      return {
+        compare: function(actual, expected) {
+          if (actual.length != expected.length) {
+            return {pass: false};
+          }
+          return {
+            pass: actual.every(function(a) {
+              return expected.some(function(item) {
+                return JSON.stringify(item) === JSON.stringify(a);
+              });
+            })
+          };
+        }
+      };
     },
-    toBeInstanceOf: function(constructor) {
-      return this.actual instanceof constructor;
+    toBeInstanceOf: function(util, customEqualityTesters) {
+      return {
+        compare: function(actual, expected) {
+          return {
+            pass: actual instanceof expected
+          };
+        }
+      };
     },
-    toBeAPromise: function() {
-      return this.actual && typeof this.actual.then === "function";
+    toBeAPromise: function(util, customEqualityTesters) {
+      return {
+        compare: function(actual, expected) {
+          return {
+            pass: actual && typeof actual.then === "function"
+          };
+        }
+      };
     }
   });
 });

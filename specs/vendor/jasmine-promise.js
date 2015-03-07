@@ -1,4 +1,4 @@
-//     jasmine-promise 0.1.0
+//     jasmine-promise 0.2.0
 //     (c) 2014-2015 Nicklas Ansman
 //     jasmine-promise may be freely distributed under the MIT license.
 //     For all details and documentation:
@@ -8,18 +8,19 @@
     it(desc, function(done) {
       var promise = func.call(this);
 
-      if (!promise || typeof promise.then !== "function")
+      if (!promise || typeof promise.then !== "function") {
         throw new Error("Got non promise back");
-
-      if (!done) {
-        var complete = false;
-        done = function() { complete = true; };
-        waitsFor(function() { return complete; });
       }
 
-      promise.then(undefined, function(error) {
-        expect(error || "Unknown error").not.toBeDefined();
-      }).then(done);
+      var error = jasmine.createSpy("errorHandler").and.callFake(function(msg) {
+        expect(msg || "Unknown error").not.toBeDefined();
+      });
+
+      function success() {
+        expect(error).not.toHaveBeenCalled();
+      }
+
+      promise.then(undefined, error).then(success).then(done);
     });
   };
 })();

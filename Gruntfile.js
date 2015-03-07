@@ -45,7 +45,7 @@ module.exports = function(grunt) {
       },
       specs: {
         files: ['specs/**/*.js', '<%= pkg.name %>'],
-        tasks: ['jasmine'],
+        tasks: ['jasmine:coverage', 'jasmine:specs'],
         options: {
           atBegin: true
         }
@@ -59,6 +59,7 @@ module.exports = function(grunt) {
           vendor: "specs/vendor/**/*.js",
           specs: "specs/**/*-spec.js",
           helpers: "specs/helpers.js",
+          display: "short"
         }
       },
       coverage: {
@@ -67,6 +68,7 @@ module.exports = function(grunt) {
           vendor: "<%= jasmine.specs.options.vendor %>",
           specs: "<%= jasmine.specs.options.specs %>",
           helpers: "<%= jasmine.specs.options.helpers %>",
+          display: "none",
           template: require('grunt-template-jasmine-istanbul'),
           templateOptions: {
             coverage: 'coverage.json',
@@ -102,7 +104,8 @@ module.exports = function(grunt) {
         src: "<%= pkg.name %>",
         dest: "validate.min.js",
         options: {
-          sourceMap: 'validate.min.map'
+          sourceMap: true,
+          sourceMapName: 'validate.min.map'
         }
       }
     }

@@ -155,7 +155,7 @@ describe('validator.length', function() {
   });
 
   it("supports default options", function() {
-    var tokenizer = jasmine.createSpy("tokenizer").andReturn({length: 3});
+    var tokenizer = jasmine.createSpy("tokenizer").and.returnValue({length: 3});
     validate.validators.length.options = {
       minimum: 10,
       tokenizer: tokenizer,

@@ -22,9 +22,9 @@ describe('validators.datetime', function() {
   describe("parse", function() {
     var parse = validate.validators.datetime.parse;
 
-    it("throws and error if neither XDate or moment.js is found", function() {
+    it("throws an error if neither XDate or moment.js is found", function() {
       window.XDate = null;
-      spyOn(validate, 'tryRequire').andReturn(null);
+      spyOn(validate, 'tryRequire').and.returnValue(null);
       expect(function() {
         parse("2014-09-02");
       }).toThrow();
@@ -49,7 +49,7 @@ describe('validators.datetime', function() {
 
     describe("with XDate", function() {
       beforeEach(function() {
-        spyOn(validate, "tryRequire").andReturn(null);
+        spyOn(validate, "tryRequire").and.returnValue(null);
       });
 
       it("returns the millis since epoch for valid strings", function() {
@@ -64,8 +64,8 @@ describe('validators.datetime', function() {
     describe("with moment.js", function() {
       beforeEach(function() {
         window.XDate = undefined;
-        spyOn(moment, "utc").andCallThrough();
-        spyOn(validate, "tryRequire").andReturn(moment);
+        spyOn(moment, "utc").and.callThrough();
+        spyOn(validate, "tryRequire").and.returnValue(moment);
       });
 
       it("returns the millis since epoch for valid strings", function() {
@@ -80,7 +80,7 @@ describe('validators.datetime', function() {
 
       it("works with global scope too", function() {
         window.moment = moment;
-        validate.tryRequire.andReturn(null);
+        validate.tryRequire.and.returnValue(null);
         runParseTestsForValidStrings();
         expect(moment.utc).toHaveBeenCalled();
       });
@@ -92,7 +92,7 @@ describe('validators.datetime', function() {
 
     it("throws and error if neither XDate or moment.js is found", function() {
       window.XDate = null;
-      spyOn(validate, 'tryRequire').andReturn(null);
+      spyOn(validate, 'tryRequire').and.returnValue(null);
       expect(function() {
         format(1382808924000, {});
       }).toThrow();
@@ -115,7 +115,7 @@ describe('validators.datetime', function() {
 
     describe("with XDate", function() {
       beforeEach(function() {
-        spyOn(validate, "tryRequire").andReturn(null);
+        spyOn(validate, "tryRequire").and.returnValue(null);
       });
 
       it("formats as ISO8601 in errors", function() {
@@ -134,8 +134,8 @@ describe('validators.datetime', function() {
     describe("with moment.js", function() {
       beforeEach(function() {
         window.XDate = undefined;
-        spyOn(moment, "utc").andCallThrough();
-        spyOn(validate, "tryRequire").andReturn(moment);
+        spyOn(moment, "utc").and.callThrough();
+        spyOn(validate, "tryRequire").and.returnValue(moment);
       });
 
       it("formats as ISO8601 in errors", function() {
@@ -155,7 +155,7 @@ describe('validators.datetime', function() {
 
       it("works with global scope too", function() {
         window.moment = moment;
-        validate.tryRequire.andReturn(null);
+        validate.tryRequire.and.returnValue(null);
         runDatetimeTest();
         expect(moment.utc).toHaveBeenCalled();
       });
@@ -172,7 +172,7 @@ describe('validators.datetime', function() {
   });
 
   it("uses the parse function to validate dates", function() {
-    var spy = spyOn(validate.validators.datetime, 'parse').andReturn(NaN)
+    var spy = spyOn(validate.validators.datetime, 'parse').and.returnValue(NaN)
       , options = {foo: "bar"};
     expect(datetime("2013-06-27", options)).toBeDefined();
     expect(spy).toHaveBeenCalledWith("2013-06-27", options);
@@ -213,7 +213,7 @@ describe('validators.datetime', function() {
     it("formats the error using the format function", function() {
       var options = {earliest: '2013-10-26 00:00:00'}
         , value = "2013-10-25 00:00:00"
-        , spy = spyOn(validate.validators.datetime, 'format').andReturn("foobar")
+        , spy = spyOn(validate.validators.datetime, 'format').and.returnValue("foobar")
         , expected = ["must be no earlier than foobar"];
       expect(datetime(value, options)).toEqual(expected);
     });
@@ -221,7 +221,7 @@ describe('validators.datetime', function() {
     it("parses the earliest value using the parse function", function() {
       var options = {earliest: 'foobar'}
         , value = XDate.today()
-        , spy = spyOn(validate.validators.datetime, 'parse').andReturn(value);
+        , spy = spyOn(validate.validators.datetime, 'parse').and.returnValue(value);
       datetime(value, options);
       expect(spy).toHaveBeenCalledWith('foobar', options);
     });
@@ -258,7 +258,7 @@ describe('validators.datetime', function() {
     it("formats the error using the format function", function() {
       var options = {latest: '2013-10-26 00:00:00'}
         , value = "2013-10-27 00:00:00"
-        , spy = spyOn(validate.validators.datetime, 'format').andReturn("foobar")
+        , spy = spyOn(validate.validators.datetime, 'format').and.returnValue("foobar")
         , expected = ["must be no later than foobar"];
       expect(datetime(value, options)).toEqual(expected);
     });
@@ -266,7 +266,7 @@ describe('validators.datetime', function() {
     it("parses the latest value using the parse function", function() {
       var options = {latest: 'foobar'}
         , value = XDate.today()
-        , spy = spyOn(validate.validators.datetime, 'parse').andReturn(value);
+        , spy = spyOn(validate.validators.datetime, 'parse').and.returnValue(value);
       datetime(value, options);
       expect(spy).toHaveBeenCalledWith('foobar', options);
     });
@@ -320,7 +320,7 @@ describe('validators.date', function() {
     var errors = ["my error"]
       , value = "my value"
       , options = {foo: "bar"}
-      , spy = spyOn(validate.validators, 'datetime').andReturn(errors);
+      , spy = spyOn(validate.validators, 'datetime').and.returnValue(errors);
     expect(validate.validators.date(value, options)).toBe(errors);
     expect(spy).toHaveBeenCalledWith(value, {foo: "bar", dateOnly: true});
   });

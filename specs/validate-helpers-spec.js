@@ -24,7 +24,7 @@ describe("validate", function() {
     });
 
     it("calls the argument if it's a function and returns the result", function() {
-      var obj = jasmine.createSpy().andReturn("some return value");
+      var obj = jasmine.createSpy().and.returnValue("some return value");
       expect(validate.result(obj)).toEqual("some return value");
     });
 
@@ -349,7 +349,7 @@ describe("validate", function() {
           expect(func()).toBe(validate);
         };
 
-      var defineSpy = jasmine.createSpy('define').andCallFake(define);
+      var defineSpy = jasmine.createSpy('define').and.callFake(define);
 
       exposeModule(validate, root, null, null, defineSpy);
       expect(defineSpy).not.toHaveBeenCalled();
@@ -398,8 +398,8 @@ describe("validate", function() {
       window.console = console;
     });
 
-    it("does not nothing if the console isn't defined", function() {
-      validate.warn("Msg");
+    it("does nothing if the console isn't defined", function() {
+      expect(function() { validate.warn("Msg"); }).not.toThrow();
     });
 
     it("calls console.warn if defined", function() {
@@ -417,8 +417,9 @@ describe("validate", function() {
     beforeEach(function() { window.console = undefined; });
     afterEach(function() { window.console = console; });
 
-    it("does not nothing if the console isn't defined", function() {
+    it("does nothing if the console isn't defined", function() {
       validate.error("Msg");
+      expect(function() { validate.error("Msg"); }).not.toThrow();
     });
 
     it("calls console.error if defined", function() {
@@ -442,13 +443,13 @@ describe("validate", function() {
 
     it("returns the imported module if found", function() {
       var module = {foo: "bar"};
-      spyOn(validate, "require").andReturn(module);
+      spyOn(validate, "require").and.returnValue(module);
       expect(validate.tryRequire("foobar")).toBe(module);
       expect(validate.require).toHaveBeenCalledWith("foobar");
     });
 
     it("returns null if the module isn't found", function() {
-      spyOn(validate, "require").andThrow(new Error("Not found"));
+      spyOn(validate, "require").and.throwError(new Error("Not found"));
       expect(validate.tryRequire("foobar")).toBe(null);
       expect(validate.require).toHaveBeenCalledWith("foobar");
     });

@@ -95,7 +95,7 @@ describe("validate.async", function() {
     });
 
     it("tries to import each promise", function() {
-      spyOn(validate, "tryRequire").andReturn(null);
+      spyOn(validate, "tryRequire").and.returnValue(null);
       expect(function() { new validate.Promise(); }).toThrow();
       expect(validate.tryRequire).toHaveBeenCalledWith("es6-promise");
       expect(validate.tryRequire).toHaveBeenCalledWith("rsvp");
@@ -112,7 +112,7 @@ describe("validate.async", function() {
     });
 
     it("tries to import the native promised polyfill", function() {
-      spyOn(validate, "tryRequire").andCallFake(function(module) {
+      spyOn(validate, "tryRequire").and.callFake(function(module) {
         if (module === "es6-promise") {
           return {Promise: store.Promise};
         } else {
@@ -131,7 +131,7 @@ describe("validate.async", function() {
     });
 
     it("tries to import the RSVP module", function() {
-      spyOn(validate, "tryRequire").andCallFake(function(module) {
+      spyOn(validate, "tryRequire").and.callFake(function(module) {
         if (module === "rsvp") {
           return store.RSVP;
         } else {
@@ -150,7 +150,7 @@ describe("validate.async", function() {
     });
 
     it("tries to import the when.js module", function() {
-      spyOn(validate, "tryRequire").andCallFake(function(module) {
+      spyOn(validate, "tryRequire").and.callFake(function(module) {
         console.log(module);
         if (module === "when") {
           return store.when;
@@ -170,7 +170,7 @@ describe("validate.async", function() {
     });
 
     it("tries to import the q module", function() {
-      spyOn(validate, "tryRequire").andCallFake(function(module) {
+      spyOn(validate, "tryRequire").and.callFake(function(module) {
         if (module === "q") {
           return store.Q;
         } else {

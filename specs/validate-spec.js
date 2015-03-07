@@ -6,8 +6,8 @@ describe("validate", function() {
     , pass2;
 
   beforeEach(function() {
-    fail = jasmine.createSpy('failValidator').andReturn("my error");
-    fail2 = jasmine.createSpy('failValidator2').andReturn("my error");
+    fail = jasmine.createSpy('failValidator').and.returnValue("my error");
+    fail2 = jasmine.createSpy('failValidator2').and.returnValue("my error");
     pass = jasmine.createSpy('passValidator');
     pass2 = jasmine.createSpy('passValidator2');
     validators.pass = pass;
@@ -25,7 +25,7 @@ describe("validate", function() {
   });
 
   it("raises an error if a promise is returned", function() {
-    fail.andReturn(validate.Promise(function() {}));
+    fail.and.returnValue(validate.Promise(function() {}));
     var constraints = {name: {fail: true}};
     expect(function() { validate({}, constraints); }).toThrow();
   });
@@ -59,8 +59,8 @@ describe("validate", function() {
       },
     };
 
-    fail.andReturn("must be a valid email address");
-    fail2.andReturn("is simply not good enough");
+    fail.and.returnValue("must be a valid email address");
+    fail2.and.returnValue("is simply not good enough");
 
     expect(validate(attributes, constraints)).toEqual({
       email: [
@@ -92,7 +92,7 @@ describe("validate", function() {
     it("throws an error when the validator is not found", function() {
       expect(function() {
         validate.runValidations({}, {name: {foobar: true}}, {});
-      }).toThrow("Unknown validator foobar");
+      }).toThrow(new Error("Unknown validator foobar"));
     });
 
     it("calls the validator with the validator itself as context", function() {
@@ -112,9 +112,9 @@ describe("validate", function() {
     });
 
     it("returns an array of results", function() {
-      fail.andReturn("foobar");
-      fail2.andReturn(["foo", "bar"]);
-      pass.andReturn(null);
+      fail.and.returnValue("foobar");
+      fail2.and.returnValue(["foo", "bar"]);
+      pass.and.returnValue(null);
 
       var options = {someOption: true}
         , constraints = {name: {fail: true, fail2: true, pass: true}};
@@ -133,7 +133,7 @@ describe("validate", function() {
     });
 
     it("validates all attributes", function() {
-      fail.andReturn("error");
+      fail.and.returnValue("error");
       var constraints = {
         attr1: {pass: true},
         attr2: {fail: true},
@@ -149,7 +149,7 @@ describe("validate", function() {
     it("allows the options for an attribute to be a function", function() {
       var options = {pass: {option1: "value1"}}
         , attrs = {name: "Nicklas"}
-        , spy = jasmine.createSpy("options").andReturn(options)
+        , spy = jasmine.createSpy("options").and.returnValue(options)
         , constraints = {name: spy}
         , globalOptions = {foo: "bar"};
       validate.runValidations(attrs, constraints, globalOptions);
@@ -160,7 +160,7 @@ describe("validate", function() {
     it("allows the options for a validator to be a function", function() {
       var options = {option1: "value1"}
         , attrs = {name: "Nicklas"}
-        , spy = jasmine.createSpy("options").andReturn(options)
+        , spy = jasmine.createSpy("options").and.returnValue(options)
         , constraints = {name: {pass: spy}}
         , globalOptions = {foo: "bar"};
       validate.runValidations(attrs, constraints, globalOptions);
@@ -176,8 +176,8 @@ describe("validate", function() {
     it("calls collectFormValues if the attributes is a DOM element", function() {
       var form = document.createElement("div");
       form.innerHTML = '<input type="text" name="foo" value="bar">';
-      spyOn(validate, "collectFormValues").andCallThrough();
-      spyOn(validate.validators, "presence").andCallThrough();
+      spyOn(validate, "collectFormValues").and.callThrough();
+      spyOn(validate.validators, "presence").and.callThrough();
       var constraints = {foo: {presence: true}};
       validate(form, constraints);
 
@@ -236,7 +236,7 @@ describe("validate", function() {
     });
   });
 
-  describe("works with flatten: true and fullMessages: false", function() {
+  it("works with flatten: true and fullMessages: false", function() {
     var constraints = {foo: {presence: true}}
       , options = {flatten: true, fullMessages: false};
     expect(validate({}, constraints, options)).toEqual(["can't be blank"]);

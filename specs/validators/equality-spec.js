@@ -72,7 +72,7 @@ describe('validators.equality', function() {
   it("accepts an optional comparator", function() {
     var complex = {foo: "bar"}
       , other = {bar: "foo"}
-      , comparator = jasmine.createSpy("comparator").andReturn(true)
+      , comparator = jasmine.createSpy("comparator").and.returnValue(true)
       , attributes = {complex: complex, other: other}
       , constraints = {
           complex: {
@@ -91,7 +91,7 @@ describe('validators.equality', function() {
                             "complex",
                             attributes);
 
-    comparator.andReturn(false);
+    comparator.and.returnValue(false);
     expect(validate(attributes, constraints)).toBeDefined();
   });
 });
