@@ -866,9 +866,6 @@
       if (!v.isString(value)) {
         return message;
       }
-      if ((/^\s*$/).test(value)) {
-        return;
-      }
       if (!this.PATTERN.exec(value)) {
         return message;
       }
