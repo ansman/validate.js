@@ -33,7 +33,7 @@
   var v = validate
     , root = this
     // Finds %{key} style patterns in the given string
-    , FORMAT_REGEXP = /%\{([^\}]+)\}/g;
+    , FORMAT_REGEXP = /(%?)%\{([^\}]+)\}/g;
 
   // Copies over attributes from one or more sources to a single destination.
   // Very much similar to underscore's extend.
@@ -299,9 +299,16 @@
     // ```
     // format("Foo: %{foo}", {foo: "bar"}) // "Foo bar"
     // ```
+    // If you want to write %{...} without having it replaced simply
+    // prefix it with % like this `Foo: %%{foo}` and it will be returned
+    // as `"Foo: %{foo}"`
     format: function(str, vals) {
-      return str.replace(FORMAT_REGEXP, function(m0, m1) {
-        return String(vals[m1]);
+      return str.replace(FORMAT_REGEXP, function(m0, m1, m2) {
+        if (m1 === '%') {
+          return "%{" + m2 + "}";
+        } else {
+          return String(vals[m2]);
+        }
       });
     },
 

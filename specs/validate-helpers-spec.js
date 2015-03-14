@@ -120,6 +120,11 @@ describe("validate", function() {
       var actual = validate.format("%{foo} %{foo}", {foo: "foo"});
       expect(actual).toEqual("foo foo");
     });
+
+    it("supports escaping %", function() {
+      var actual = validate.format("Foo is %%{foo}", {foo: "foo"});
+      expect(actual).toEqual("Foo is %{foo}");
+    });
   });
 
   describe('prettify', function() {
