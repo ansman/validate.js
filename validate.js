@@ -232,7 +232,7 @@
     // Checks if the given argument is a promise. Anything with a `then`
     // function is considered a promise.
     isPromise: function(p) {
-      return !!p && typeof p.then === 'function';
+      return !!p && v.isFunction(p.then);
     },
 
     isDomElement: function(o) {
