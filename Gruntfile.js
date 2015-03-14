@@ -45,7 +45,7 @@ module.exports = function(grunt) {
       },
       specs: {
         files: ['specs/**/*.js', '<%= pkg.name %>'],
-        tasks: ['jasmine:coverage', 'jasmine:specs'],
+        tasks: ['jasmine:specs', 'jasmine:coverage'],
         options: {
           atBegin: true
         }
@@ -59,7 +59,8 @@ module.exports = function(grunt) {
           vendor: "specs/vendor/**/*.js",
           specs: "specs/**/*-spec.js",
           helpers: "specs/helpers.js",
-          display: "short"
+          display: "short",
+          summary: true
         }
       },
       coverage: {
