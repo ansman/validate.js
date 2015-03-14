@@ -172,7 +172,7 @@
       margin-bottom: 3px;
     }
 
-    #validators > div {
+    #validators > div, #utilities > div {
       padding: 10px 0px;
     }
 
@@ -303,7 +303,24 @@
       <li>
         <a href="#utilities">Utilities</a>
         <ul>
+          <li><a href="#utilities-capitalize">capitalize</a></li>
           <li><a href="#utilities-collect-form-values">collectFormValues</a></li>
+          <li><a href="#utilities-contains">contains</a></li>
+          <li><a href="#utilities-extend">extend</a></li>
+          <li><a href="#utilities-format">format</a></li>
+          <li><a href="#utilities-get-deep-object-value">getDeepObjectValue</a></li>
+          <li><a href="#utilities-is-array">isArray</a></li>
+          <li><a href="#utilities-is-defined">isDefined</a></li>
+          <li><a href="#utilities-is-dom-element">isDomElement</a></li>
+          <li><a href="#utilities-is-empty">isEmpty</a></li>
+          <li><a href="#utilities-is-function">isFunction</a></li>
+          <li><a href="#utilities-is-integer">isInteger</a></li>
+          <li><a href="#utilities-is-number">isNumber</a></li>
+          <li><a href="#utilities-is-object">isObject</a></li>
+          <li><a href="#utilities-is-promise">isPromise</a></li>
+          <li><a href="#utilities-is-string">isString</a></li>
+          <li><a href="#utilities-prettify">prettify</a></li>
+          <li><a href="#utilities-result">result</a></li>
         </ul>
       </li>
       <li>
@@ -317,6 +334,7 @@
       <li>
         <a href="#changelog">Changelog</a>
         <ul>
+          <li><a href="#changelog-wip">WIP</a></li>
           <li><a href="#changelog-0-5-0">0.5.0</a></li>
           <li><a href="#changelog-0-4-0">0.4.0</a></li>
           <li><a href="#changelog-0-3-2">0.3.2</a></li>
@@ -1386,6 +1404,17 @@ validate({complexAttribute: [1,2,3], otherComplexAttribute: [3,2,1]}, constraint
         </div>
         <div id="utilities">
           <h2>Utilities</h2>
+          <div id="utilities-capitalize">
+            <div class="signature">
+              <b>capitalize</b>
+              <code>validate.capitalize(string)</code>
+            </div>
+            <p class="description">
+              Simply makes the first character in the string upper case.
+            </p>
+            <pre class="javascript"><code>validate.capitalize("foobar");
+// =&gt; "Foobar"</code></pre>
+          </div>
           <div id="utilities-collect-form-values">
             <div class="signature">
               <b>collectFormValues</b>
@@ -1430,8 +1459,349 @@ validate({complexAttribute: [1,2,3], otherComplexAttribute: [3,2,1]}, constraint
 &lt;script&gt;
 var form = document.querySelector(&quot;form#login&quot;);
 validate.collectFormValues(form);
-// =&gt; {username: &quot;ansman&quot;, password: &quot;correcthorsebatterystaple&quot;, remember-me: true}
+// =&gt; {username: &quot;ansman&quot;, password: &quot;correcthorsebatterystaple&quot;, remember-me: false}
 &lt;/script&gt;</code></pre>
+          </div>
+          <div id="utilities-contains">
+            <div class="signature">
+              <b>contains</b>
+              <code>validate.contains(collection, value)</code>
+            </div>
+            <p class="description">
+              Check if the given value exists in the given collection.
+              Both arrays and objects are supported.
+            </p>
+            <pre class="javascript"><code>validate.contains({}, "foo");
+// =&gt; false
+
+validate.contains({foo: "bar"}, "foo");
+// =&gt; true
+
+validate.contains([1, 2, 3], 4);
+// =&gt; false
+
+validate.contains([1, 2, 3], 3);
+// =&gt; true</code></pre>
+          </div>
+          <div id="utilities-extend">
+            <div class="signature">
+              <b>extend</b>
+              <code>validate.extend(object, otherObjects...)</code>
+            </div>
+            <p class="description">
+              A clone from underscore's extend. It will copy all attributes
+              from the given objects to the first argument and return the
+              first argument.
+            </p>
+            <p class="description">
+              This can be used to do a shallow copy of objects by calling
+              it with <code>{}</code> as the first argument.
+            </p>
+            <pre class="javascript"><code>var o1 = {foo: "bar"}
+  , o2 = {baz: "quux"};
+
+validate.extend(o1, o2) === o1;
+// =&gt; true
+
+o1;
+// =&gt; {foo: "bar", baz: "quux"};
+
+o2;
+// =&gt; {bar: "quux"};
+
+// Makes a copy of o1, doesn't modify o1
+validate.extend({}, o1);
+// =&gt; {foo: "bar", baz: "quux"};
+
+// o1 is not touched
+validate.extend({}, o1) === o1;
+// =&gt; false</code></pre>
+          </div>
+          <div id="utilities-format">
+            <div class="signature">
+              <b>format</b>
+              <code>validate.format(formatString, values)</code>
+            </div>
+            <p class="description">
+              This function allows you do perform basic string substitution.<br>
+              It simply finds all <code>%{...}</code> and replaces them with
+              the value in the values object.
+            </p>
+            <p class="description">
+              The values are converted to strings using the string constructor.
+            </p>
+            <p class="description">
+              If you want to have the <code>%{...}</code> literal simply prefix
+              it with a single <code>%</code>.
+            </p>
+            <pre class="javascript"><code>validate.format("Hi, my name is %{name}", {name: "Nicklas"});
+// =&gt; "Hi, my name is Nicklas"
+
+validate.format("%%{this} will not be replaced", {this: "that"});
+// =&gt; "%{this} will not be replaced"</code></pre>
+          </div>
+          <div id="utilities-get-deep-object-value">
+            <div class="signature">
+              <b>getDeepObjectValue</b>
+              <code>validate.getDeepObjectValue(object, keypath)</code>
+            </div>
+            <p class="description">
+              A function that returns attributes from object. If the key
+              contains a period (<code>.</code>) it looks for the attribute
+              in a nested object. Attributes containing a period can be accessed
+              by escaping the period with a <code>\</code>.
+            </p>
+            <pre class="javascript"><code>validate.getDeepObjectValue({foo: "bar"}, "foo");
+// =&gt; "bar"
+
+validate.getDeepObjectValue({foo: {bar: {baz: "quux"}}}, "foo.bar.baz");
+// =&gt; "quux"
+
+validate.getDeepObjectValue({"foo.bar": "baz"}, "foo\\.bar");
+// =&gt; "baz"</code></pre>
+          </div>
+          <div id="utilities-is-array">
+            <div class="signature">
+              <b>isArray</b>
+              <code>validate.isArray(value)</code>
+            </div>
+            <p class="description">
+              Check if the given value is an array.
+            </p>
+            <pre class="javascript"><code>validate.isArray({});
+// =&gt; false
+
+validate.isArray([]);
+// =&gt; true</code></pre>
+          </div>
+          <div id="utilities-is-defined">
+            <div class="signature">
+              <b>isDefined</b>
+              <code>validate.isDefined(value)</code>
+            </div>
+            <p class="description">
+              Check if the given value is not <code>null</code> or
+              <code>undefined</code>.
+            </p>
+            <pre class="javascript"><code>validate.isDefined("foobar");
+// =&gt; true
+
+validate.isDefined(null);
+// =&gt; false
+
+validate.isDefined(undefined);
+// =&gt; false</code></pre>
+          </div>
+          <div id="utilities-is-dom-element">
+            <div class="signature">
+              <b>isDomElement</b>
+              <code>validate.isDomElement(value)</code>
+            </div>
+            <p class="description">
+              Check if the given value is a DOM element.
+              This function does slightly more than to just check if it's a DOM
+              element. It also checks that the object supports
+              <code>querySelector</code> and <code>querySelectorAll</code> which
+              is used in the project.
+            </p>
+            <pre class="javascript"><code>validate.isDomElement({});
+// =&gt; false
+
+validate.isDomElement(document.createElement("div"));
+// =&gt; true</code></pre>
+          </div>
+          <div id="utilities-is-empty">
+            <div class="signature">
+              <b>isEmpty</b>
+              <code>validate.isEmpty(value)</code>
+            </div>
+            <p class="description">
+              Check if the given value is non empty. The following value are
+              considered empty:
+            </p>
+            <ul>
+              <li><code>null</code></li>
+              <li><code>undefined</code></li>
+              <li>Empty strings</li>
+              <li>Whitespace only strings</li>
+              <li>Empty arrays</li>
+              <li>Empty objects</li>
+            </ul>
+            <pre class="javascript"><code>validate.isEmpty({});
+// =&gt; true
+
+validate.isEmpty(null);
+// =&gt; true
+
+validate.isEmpty("");
+// =&gt; true
+
+validate.isEmpty("   ");
+// =&gt; true
+
+validate.isEmpty("foo");
+// =&gt; false
+
+validate.isEmpty({foo: "bar"});
+// =&gt; false</code></pre>
+          </div>
+          <div id="utilities-is-function">
+            <div class="signature">
+              <b>isFunction</b>
+              <code>validate.isFunction(value)</code>
+            </div>
+            <p class="description">
+              Check if the given value is a function. If this returns
+              <code>true</code> the value will be callable.
+            </p>
+            <pre class="javascript"><code>validate.isFunction("foobar");
+// =&gt; false
+
+validate.isFunction(function() {});
+// =&gt; true</code></pre>
+          </div>
+          <div id="utilities-is-integer">
+            <div class="signature">
+              <b>isInteger</b>
+              <code>validate.isInteger(value)</code>
+            </div>
+            <p class="description">
+              Check if the given value is an integer. If this returns true
+              <a href="#utilities-is-number"><code>isNumber</code></a>
+              will also return true.
+            </p>
+            <pre class="javascript"><code>validate.isInteger("foobar");
+// =&gt; false
+
+validate.isInteger(3.14);
+// =&gt; false
+
+validate.isInteger(3);
+// =&gt; true</code></pre>
+          </div>
+          <div id="utilities-is-number">
+            <div class="signature">
+              <b>isNumber</b>
+              <code>validate.isNumber(value)</code>
+            </div>
+            <p class="description">
+              Check if the given value is a number. Unlike most
+              <code>isNumber</code> checks this function does not consider
+              <code>NaN</code> to be a number.
+            </p>
+            <pre class="javascript"><code>validate.isNumber("foobar");
+// =&gt; false
+
+validate.isNumber(3.14);
+// =&gt; true</code></pre>
+          </div>
+          <div id="utilities-is-object">
+            <div class="signature">
+              <b>isObject</b>
+              <code>validate.isObject(value)</code>
+            </div>
+            <p class="description">
+              Check if the given value is an object. This function considers
+              arrays objects so be careful if this matters to you.
+            </p>
+            <pre class="javascript"><code>validate.isObject("foobar");
+// =&gt; false
+
+validate.isObject({});
+// =&gt; true
+
+validate.isObject([]);
+// =&gt; true</code></pre>
+          </div>
+          <div id="utilities-is-promise">
+            <div class="signature">
+              <b>isPromise</b>
+              <code>validate.isPromise(value)</code>
+            </div>
+            <p class="description">
+              Check if the given value is a promise. This used the same
+              semantics as the ECMAScript spec which means that any non empty
+              object that has a <code>.then</code> function is a promise.
+            </p>
+            <pre class="javascript"><code>validate.isPromise({});
+// =&gt; false
+
+validate.isPromise(new Promise(function() {}));
+// =&gt; true
+
+validate.isPromise({then: function() {}});
+// =&gt; true</code></pre>
+          </div>
+          <div id="utilities-is-string">
+            <div class="signature">
+              <b>isString</b>
+              <code>validate.isString(value)</code>
+            </div>
+            <p class="description">
+              Check if the given value is a string.
+            </p>
+            <pre class="javascript"><code>validate.isString("");
+// =&gt; true
+
+validate.isString({});
+// =&gt; false</code></pre>
+          </div>
+          <div id="utilities-prettify">
+            <div class="signature">
+              <b>prettify</b>
+              <code>validate.prettify(string)</code>
+            </div>
+            <p class="description">
+              Provides a way to clean up strings so that they become human
+              readable.
+            </p>
+            <p class="description">
+              It is meant to prettify things like attribute names and other
+              programming related entities. It will do the following things:
+            </p>
+            <ul>
+              <li>Split words divided by <code>.</code></li>
+              <li>Remove backslashes</li>
+              <li>Replace <code>_</code> and <code>-</code> with spaces</li>
+              <li>Split cameled cased words</li>
+              <li>Make the whole string lower case</li>
+            </ul>
+            <p class="notes">
+              <b>Important!</b> It does not removing leading or trailing period
+              since these are not considered separators.
+            </p>
+            <pre class="javascript"><code>validate.prettify("This.is_a-weirdString\\.");
+// =&gt; "this is a weird string."</code></pre>
+          </div>
+          <div id="utilities-result">
+            <div class="signature">
+              <b>result</b>
+              <code>validate.result(value, [arguments...])</code>
+            </div>
+            <p class="description">
+              Calls the value with the specified arguments and returns the
+              result if it's a function otherwise it simply returns the value.
+            </p>
+            <p class="description">
+              This is used in validate.js in places where for example options
+              can be either an object or a function returning the options.
+            </p>
+            <p class="notes">
+              <b>Important!</b> Since the function is detached it is not
+              called with a specific context, therefor this only works when the
+              value is a pure function.
+            </p>
+            <pre class="javascript"><code>// Not a function, returns the first argument
+validate.result("foobar", 1, 2);
+// =&gt; "foobar"
+
+// Returns the result of Math.max(1, 2)
+validate.result(Math.max, 1, 2);
+// =&gt; 2
+
+// Doesn't work since String#toUpperCase is not a pure function
+validate.result("foo".toUpperCase);
+// =&gt; Uncaught TypeError: String.prototype.toUpperCase called on null or undefined</code></pre>
           </div>
         </div>
         <div id="installing">
@@ -1496,6 +1866,14 @@ validate({}, {username: {presence: true}});
         </div>
         <div id="changelog">
           <h2>Changelog</h2>
+          <div id="changelog-wip">
+            <h3>
+              <b class="version">WIP</b>
+            </h3>
+            <ul>
+              <li>Document the utility functions used by this library.</li>
+            </ul>
+          </div>
           <div id="changelog-0-5-0">
             <h3>
               <b class="version">0.5.0</b>
