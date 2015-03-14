@@ -19,16 +19,7 @@
     var results = v.runValidations(attributes, constraints, options)
       , attr
       , validator;
-    
-    // Allows a single primitive to be validated against an single set of validators easily
-    // ex: validate('example@email.com', {presence: true, email: true});
-    if (typeof(attributes) !== 'object') {
-      attributes = {single: attributes};
-      constraints = {single: constraints};
-      options.fullMessages = false;
-      options.flatten = true;
-    }
-    
+
     for (attr in results) {
       for (validator in results[attr]) {
         if (v.isPromise(results[attr][validator])) {
@@ -160,6 +151,14 @@
           }
         }).then(undefined, v.error);
       });
+    },
+
+    single: function(value, constraints, options) {
+      options = v.extend({}, v.single.options, options, {
+        flatten: true,
+        fullMessages: false
+      });
+      return v({single: value}, {single: constraints}, options);
     },
 
     // Returns a promise that is resolved when all promises in the results array

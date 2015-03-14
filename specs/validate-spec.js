@@ -250,4 +250,30 @@ describe("validate", function() {
     expect(options).toEqual({foo: "bar"});
     expect(validate.options).toEqual({flatten: true});
   });
+
+  describe("single", function() {
+    it("validates the single property", function() {
+      var validators = {
+        presence: {
+          message: "example message"
+        },
+        length: {
+          is: 6,
+          message: "^It needs to be 6 characters long"
+        }
+      };
+
+      expect(validate.single(null, validators)).toEqual(["example message"]);
+      expect(validate.single("foo", validators)).toEqual(["It needs to be 6 characters long"]);
+      expect(validate.single("foobar", validators)).not.toBeDefined();
+    });
+
+    it("ignores the flatten and fullMessages options", function() {
+      var validators = {presence: true}
+        , options = {flatten: false, fullMessages: true};
+
+      expect(validate.single(null, validators, options))
+        .toEqual(["can't be blank"]);
+    });
+  });
 });

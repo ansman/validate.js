@@ -275,6 +275,7 @@
         <a href="#validate">Validate function</a>
         <ul>
           <li><a href="#validate-async">Async validation</a></li>
+          <li><a href="#validate-single">Single value validation</a></li>
           <li><a href="#validate-nested">Nested validation</a></li>
           <li><a href="#validate-default-options">Default options</a></li>
         </ul>
@@ -671,6 +672,39 @@ validate.async({}, constraints).then(success, error);
 validate.Promise = function(callback) {
   return new Promise(callback);
 };</code></pre>
+          </div>
+          <div id="validate-single">
+            <h3>Single value validation</h3>
+            <div class="signature">
+              <b>validate.single</b>
+              <code>validate.single(value, constraints, [options])</code>
+            </div>
+            <p class="description">
+              Sometimes you only want to validate a single value against some
+              constraints and using the normal validate function is quite
+              verbose so there is a shorthand for this.
+            </p>
+            <p class="description">
+              It does little more than proxying the call do the main validation
+              function but with the value wrapped in an object and the options
+              <b>fullMessages</b> and <b>flatten</b> set to <code>false</code>.
+              This is because there is no name which means it can't produce
+              full messages.
+            </p>
+            <p class="description">
+              You can use the provided <a href="#utilities-format">format</a>,
+              <a href="#utilities-capitalize">capitalize</a> and
+              <a href="#utilities-prettify">prettify</a>
+              utility functions to append your own name.
+            </p>
+            <pre class="javascript"><code>validate.single(null, {presence: true, email: true});
+// =&gt; ["can't be blank"]
+
+validate.single("foo", {presence: true, email: true});
+// =&gt; ["is not a valid email"]
+
+validate.single("foo@bar.com", {presence: true, email: true});
+// =&gt; undefined</code></pre>
           </div>
           <div id="validate-nested">
             <h3>Nested validation</h3>
@@ -1872,6 +1906,11 @@ validate({}, {username: {presence: true}});
             </h3>
             <ul>
               <li>Document the utility functions used by this library.</li>
+              <li>
+                Add support for validating a single value. Thanks
+                <a href="https://github.com/ansman/validate.js/issues/7" target="_blank">Aristides Lourenco</a>
+                for suggesting and implementing this.
+              </li>
             </ul>
           </div>
           <div id="changelog-0-5-0">
