@@ -1,15 +1,15 @@
 describe('validators.datetime', function() {
   var datetime = validate.validators.datetime.bind(validate.validators.datetime)
-    , XDate = window.XDate
-    , moment = window.moment;
+    , XDate = validate.XDate
+    , moment = validate.moment;
 
   afterEach(function() {
-    window.XDate = XDate;
-    window.moment = undefined;
     delete validate.validators.datetime.notValid;
     delete validate.validators.datetime.tooEarly;
     delete validate.validators.datetime.tooLate;
     delete validate.validators.datetime.options;
+    validate.XDate = XDate;
+    validate.moment = moment;
   });
 
   it("allows empty values", function() {
@@ -22,9 +22,12 @@ describe('validators.datetime', function() {
   describe("parse", function() {
     var parse = validate.validators.datetime.parse;
 
+    beforeEach(function() {
+      delete validate.XDate;
+      delete validate.moment;
+    });
+
     it("throws an error if neither XDate or moment.js is found", function() {
-      window.XDate = null;
-      spyOn(validate, 'tryRequire').and.returnValue(null);
       expect(function() {
         parse("2014-09-02");
       }).toThrow();
@@ -49,7 +52,7 @@ describe('validators.datetime', function() {
 
     describe("with XDate", function() {
       beforeEach(function() {
-        spyOn(validate, "tryRequire").and.returnValue(null);
+        validate.XDate = XDate;
       });
 
       it("returns the millis since epoch for valid strings", function() {
@@ -63,9 +66,8 @@ describe('validators.datetime', function() {
 
     describe("with moment.js", function() {
       beforeEach(function() {
-        window.XDate = undefined;
+        validate.moment = moment;
         spyOn(moment, "utc").and.callThrough();
-        spyOn(validate, "tryRequire").and.returnValue(moment);
       });
 
       it("returns the millis since epoch for valid strings", function() {
@@ -77,22 +79,18 @@ describe('validators.datetime', function() {
         runNaNTests();
         expect(moment.utc).toHaveBeenCalled();
       });
-
-      it("works with global scope too", function() {
-        window.moment = moment;
-        validate.tryRequire.and.returnValue(null);
-        runParseTestsForValidStrings();
-        expect(moment.utc).toHaveBeenCalled();
-      });
     });
   });
 
   describe("format", function() {
     var format = validate.validators.datetime.format;
 
+    beforeEach(function() {
+      delete validate.XDate;
+      delete validate.moment;
+    });
+
     it("throws and error if neither XDate or moment.js is found", function() {
-      window.XDate = null;
-      spyOn(validate, 'tryRequire').and.returnValue(null);
       expect(function() {
         format(1382808924000, {});
       }).toThrow();
@@ -115,7 +113,7 @@ describe('validators.datetime', function() {
 
     describe("with XDate", function() {
       beforeEach(function() {
-        spyOn(validate, "tryRequire").and.returnValue(null);
+        validate.XDate = XDate;
       });
 
       it("formats as ISO8601 in errors", function() {
@@ -133,9 +131,8 @@ describe('validators.datetime', function() {
 
     describe("with moment.js", function() {
       beforeEach(function() {
-        window.XDate = undefined;
+        validate.moment = moment;
         spyOn(moment, "utc").and.callThrough();
-        spyOn(validate, "tryRequire").and.returnValue(moment);
       });
 
       it("formats as ISO8601 in errors", function() {
@@ -150,13 +147,6 @@ describe('validators.datetime', function() {
 
       it("allows you to override the format string", function() {
         runOverrideTest("MM/DD/YY");
-        expect(moment.utc).toHaveBeenCalled();
-      });
-
-      it("works with global scope too", function() {
-        window.moment = moment;
-        validate.tryRequire.and.returnValue(null);
-        runDatetimeTest();
         expect(moment.utc).toHaveBeenCalled();
       });
     });

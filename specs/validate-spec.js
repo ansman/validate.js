@@ -25,7 +25,7 @@ describe("validate", function() {
   });
 
   it("raises an error if a promise is returned", function() {
-    fail.and.returnValue(validate.Promise(function() {}));
+    fail.and.returnValue(new validate.Promise(function() {}));
     var constraints = {name: {fail: true}};
     expect(function() { validate({}, constraints); }).toThrow();
   });

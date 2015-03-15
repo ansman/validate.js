@@ -398,7 +398,10 @@
           <p class="dependencies">
             There are no required external dependencies but the default parser and
             formatter for the datetime and date validator requires <a href="http://arshaw.com/xdate/">XDate</a> or
-            <a href="http://momentjs.com/">moment.js</a>
+            <a href="http://momentjs.com/">moment.js</a>.<br>
+            Validate.js will pick them up if they are in the global scope, otherwise
+            you can set <code>validate.moment</code> and <code>validate.XDate</code>
+            manually.
           </p>
         </div>
         <div id="overview">
@@ -630,27 +633,16 @@ validate({}, {username: {presence: {message: "^You must pick a username"}}});
                the regular function with async validations.
             </p>
             <p class="description">
-              Any A+ type promise can be used, the following are supported out
-              of the box (in order of precedence):
-            </p>
-            <ul>
-              <li>ES6 promises (or the <a href="https://github.com/jakearchibald/ES6-Promises" target="_blank">polyfill version</a>)</li>
-              <li><a href="https://github.com/tildeio/rsvp.js" target="_blank">RSVP.js</a></li>
-              <li><a href="https://github.com/cujojs/when" target="_blank">when</a></li>
-              <li><a href="http://documentup.com/kriskowal/q/" target="_blank">Q</a></li>
-            </ul>
-            <p class="description">
-              Validate.js looks for the promises in the global scope first and
-              if it can't find it, it tries to import them using the <code>require</code>
-              function if it exists. This means that AMD is supported but you will
-              need to make sure that the implementation you want to use is loaded
-              before you use the async function.
+              Any A+ type promise can be used, just override <code>validate.Promise</code>
+              with the constructor of the new Promise implementation.
             </p>
             <p class="description">
-              You can easily use any other A+ compatible
-              Promise by simply setting <code>validate.Promise</code> to a function
-              that accepts the promise callback and returns the created promise.<br>
-              <em>Please note that jQuery's promise implementation is not A+ compatible and will not work.</em>
+              Validate.js will try to use the global Promise function if it exists
+              otherwise it will throw an exception when using <code>validate.async</code>
+            </p>
+            <p class="notes">
+              Please note that jQuery's promise implementation is not A+
+              compatible and will not work.
             </p>
             <p class="description">Example:</p>
             <pre class="javascript"><code>var success = function() {
@@ -667,11 +659,8 @@ validate.async({name: "Nicklas"}, constraints).then(success, error);
 // Will call the error function
 validate.async({}, constraints).then(success, error);
 
-// Supporting another promise implementation, in this case we'll always use
-// the ES6 promise
-validate.Promise = function(callback) {
-  return new Promise(callback);
-};</code></pre>
+// Supporting another promise implementation (RSVP in this case)
+validate.Promise = RSVP.Promise;</code></pre>
           </div>
           <div id="validate-single">
             <h3>Single value validation</h3>
@@ -1085,6 +1074,11 @@ validate({duration: 4711}, constraints);
               The default implementation supports <a href="http://arshaw.com/xdate/" target="_blank">XDate</a>
               and <a href="http://momentjs.com/">moment.js</a> but it's easy to use any
               date library (see example below).
+            </p>
+            <p class="description">
+              Validate.js looks for moment and XDate in the global scope, if it
+              isn't found you can set <code>validate.moment</code> and
+              <code>validate.XDate</code> manually.
             </p>
             <p class="description">
               You can specify the follow constraints:
@@ -1910,6 +1904,16 @@ validate({}, {username: {presence: true}});
                 Add support for validating a single value. Thanks
                 <a href="https://github.com/ansman/validate.js/issues/7" target="_blank">Aristides Lourenco</a>
                 for suggesting and implementing this.
+              </li>
+              <li>All calls to <code>Promise</code> is now made with the <code>new</code> operator.</li>
+              <li>
+                <b>Breaking:</b> <code>require</code> is no longer used for
+                dependency management. Validate.js will still look for moment,
+                XDate and Promise in the global scope but not using require
+                any more. They can be added by settings <code>validate.moment</code>,
+                <code>validate.XDate</code> and <code>validate.Promise</code>
+                respectively. The idea behind this is to stop using the
+                <code>require</code> function improperly.
               </li>
             </ul>
           </div>

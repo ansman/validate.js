@@ -1,10 +1,9 @@
-//     Validate.js 0.5.0
 //     (c) 2013-2015 Nicklas Ansman, 2013 Wrapp
 //     Validate.js may be freely distributed under the MIT license.
 //     For all details and documentation:
 //     http://validatejs.org/
 
-(function(exports, module, define, require) {
+(function(exports, module, define) {
   "use strict";
 
   // The main function that calls the validators specified by the constraints.
@@ -30,10 +29,7 @@
     return validate.processValidationResults(results, options);
   };
 
-  var v = validate
-    , root = this
-    // Finds %{key} style patterns in the given string
-    , FORMAT_REGEXP = /(%?)%\{([^\}]+)\}/g;
+  var v = validate;
 
   // Copies over attributes from one or more sources to a single destination.
   // Very much similar to underscore's extend.
@@ -49,6 +45,20 @@
   };
 
   v.extend(validate, {
+    // Below is the dependencies that are used in validate.js
+
+    // The constructor of the Promise implementation.
+    // If you are using Q.js, RSVP or any other A+ compatible implementation
+    // override this attribute to be the constructor of that promise.
+    // Since jQuery promises aren't A+ compatible they won't work.
+    Promise: typeof Promise !== "undefined" ? Promise : /* istanbul ignore next */ null,
+
+    // If moment is used in node, browserify etc please set this attribute
+    // like this: `validate.moment = require("moment");
+    moment: typeof moment !== "undefined" ? moment : /* istanbul ignore next */ null,
+
+    XDate: typeof XDate !== "undefined" ? XDate : /* istanbul ignore next */ null,
+
     EMPTY_STRING_REGEXP: /^\s*$/,
 
     // Runs the validators specified by the constraints object.
@@ -141,7 +151,7 @@
       options = v.extend({}, v.async.options, options);
       var results = v.runValidations(attributes, constraints, options);
 
-      return v.Promise(function(resolve, reject) {
+      return new v.Promise(function(resolve, reject) {
         v.waitForResults(results).then(function() {
           var errors = v.processValidationResults(results, options);
           if (errors) {
@@ -189,7 +199,7 @@
             }
           ).then(undefined, v.error);
         }).then(undefined, v.error);
-      }, v.Promise(function(r) { r(); })); // A resolved promise
+      }, new v.Promise(function(r) { r(); })); // A resolved promise
 
       return promise.then(undefined, v.error);
     },
@@ -310,15 +320,18 @@
     // If you want to write %{...} without having it replaced simply
     // prefix it with % like this `Foo: %%{foo}` and it will be returned
     // as `"Foo: %{foo}"`
-    format: function(str, vals) {
-      return str.replace(FORMAT_REGEXP, function(m0, m1, m2) {
+    format: v.extend(function(str, vals) {
+      return str.replace(v.format.FORMAT_REGEXP, function(m0, m1, m2) {
         if (m1 === '%') {
           return "%{" + m2 + "}";
         } else {
           return String(vals[m2]);
         }
       });
-    },
+    }, {
+      // Finds %{key} style patterns in the given string
+      FORMAT_REGEXP: /(%?)%\{([^\}]+)\}/g
+    }),
 
     // "Prettifies" the given string.
     // Prettifying means replacing [.\_-] with spaces as well as splitting
@@ -515,101 +528,6 @@
       return ret;
     },
 
-    // Returns a promise, should be called with the new operator.
-    // The first argument will be called with two functions, the first for
-    // resolving the promise and the second for rejecting it.
-    // Supports (in order of precedence):
-    //   * EcmaScript 6 Promises
-    //   * RSVP
-    //   * when
-    //   * Q
-    //
-    // If no supported promises are detected an error is thrown.
-    // A word of warning, only A+ style promises are supported. jQuery deferreds
-    // are NOT supported.
-    Promise: v.extend(function(callback) {
-      var promise = v.Promise.nativePromise(callback) ||
-                    v.Promise.RSVPPromise(callback) ||
-                    v.Promise.whenPromise(callback) ||
-                    v.Promise.QPromise(callback);
-
-      if (!promise) {
-        throw new Error("No promises could be detected");
-      }
-
-      return promise;
-    }, {
-      nativePromise: function(callback) {
-        var Promise_, module;
-        if (typeof Promise !== "undefined") {
-          Promise_ = Promise;
-        } else {
-          module = v.tryRequire("es6-promise");
-          if (module) {
-            Promise_ = module.Promise;
-          }
-        }
-        if (Promise_) {
-          return new Promise_(callback);
-        }
-      },
-      RSVPPromise: function(callback) {
-        var Promise, module;
-        if (typeof RSVP !== "undefined") {
-          Promise = RSVP.Promise;
-        } else {
-          module = v.tryRequire("rsvp");
-          if (module) {
-            Promise = module.Promise;
-          }
-        }
-        if (Promise) {
-          return new Promise(callback);
-        }
-      },
-      whenPromise: function(callback) {
-        var promise, module;
-        if (typeof when !== "undefined") {
-          promise = when.promise;
-        } else {
-          module = v.tryRequire("when");
-          if (module) {
-            promise = module.promise;
-          }
-        }
-        if (promise) {
-          return promise(callback);
-        }
-      },
-      QPromise: function(callback) {
-        var promise, module;
-        if (typeof Q !== "undefined") {
-          promise = Q.promise;
-        } else {
-          module = v.tryRequire("q");
-          if (module) {
-            promise = module.promise;
-          }
-        }
-        if (promise) {
-          return promise(callback);
-        }
-      }
-    }),
-
-    tryRequire: function(moduleName) {
-      if (!v.require) {
-        return null;
-      }
-      try {
-        return v.require(moduleName);
-      } catch(e) {
-        return null;
-      }
-    },
-
-    require: require,
-
     exposeModule: function(validate, root, exports, module, define) {
       if (exports) {
         if (module && module.exports) {
@@ -797,13 +715,12 @@
       // of millis since the epoch.
       // It should return NaN if it's not a valid date.
       parse: function(value, options) {
-        if (v.isFunction(root.XDate)) {
-          return new root.XDate(value, true).getTime();
+        if (v.isFunction(v.XDate)) {
+          return new v.XDate(value, true).getTime();
         }
 
-        var moment = v.tryRequire("moment") || root.moment;
-        if (v.isDefined(moment)) {
-          return +moment.utc(value);
+        if (v.isDefined(v.moment)) {
+          return +v.moment.utc(value);
         }
 
         throw new Error("Neither XDate or moment.js was found");
@@ -814,15 +731,14 @@
       format: function(date, options) {
         var format = options.dateFormat;
 
-        if (v.isFunction(root.XDate)) {
+        if (v.isFunction(v.XDate)) {
           format = format || (options.dateOnly ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss");
           return new XDate(date, true).toString(format);
         }
 
-        var moment = v.tryRequire("moment") || root.moment;
-        if (v.isDefined(moment)) {
+        if (v.isDefined(v.moment)) {
           format = format || (options.dateOnly ? "YYYY-MM-DD" : "YYYY-MM-DD HH:mm:ss");
-          return moment.utc(date).format(format);
+          return v.moment.utc(date).format(format);
         }
 
         throw new Error("Neither XDate or moment.js was found");
@@ -935,9 +851,8 @@
     }
   };
 
-  validate.exposeModule(validate, root, exports, module, define);
+  validate.exposeModule(validate, this, exports, module, define);
 }).call(this,
         typeof exports !== 'undefined' ? /* istanbul ignore next */ exports : null,
         typeof module !== 'undefined' ? /* istanbul ignore next */ module : null,
-        typeof define !== 'undefined' ? /* istanbul ignore next */ define : null,
-        typeof require !== 'undefined' ? /* istanbul ignore next */ require : null);
+        typeof define !== 'undefined' ? /* istanbul ignore next */ define : null);

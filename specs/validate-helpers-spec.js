@@ -436,30 +436,6 @@ describe("validate", function() {
     });
   });
 
-  describe("tryRequire", function() {
-    var require = validate.require;
-
-    beforeEach(function() { validate.require = null; });
-    afterEach(function() { validate.require = require; });
-
-    it("returns null if v.require isn't defined", function() {
-      expect(validate.tryRequire("foobar")).toBe(null);
-    });
-
-    it("returns the imported module if found", function() {
-      var module = {foo: "bar"};
-      spyOn(validate, "require").and.returnValue(module);
-      expect(validate.tryRequire("foobar")).toBe(module);
-      expect(validate.require).toHaveBeenCalledWith("foobar");
-    });
-
-    it("returns null if the module isn't found", function() {
-      spyOn(validate, "require").and.throwError(new Error("Not found"));
-      expect(validate.tryRequire("foobar")).toBe(null);
-      expect(validate.require).toHaveBeenCalledWith("foobar");
-    });
-  });
-
   describe("getDeepObjectValue", function() {
     it("supports multiple keys separated using a period", function() {
       var attributes = {

@@ -1,13 +1,14 @@
 describe("validate.async", function() {
   var error = null
-    , success = null;
+    , success = null
+    , Promise = validate.Promise;
 
   beforeEach(function() {
     success = jasmine.createSpy("success");
     error = jasmine.createSpy("error");
 
     validate.validators.asyncFail = function() {
-      return validate.Promise(function(resolve, reject) {
+      return new validate.Promise(function(resolve, reject) {
         setTimeout(function() {
           reject("failz");
         }, 1);
@@ -15,7 +16,7 @@ describe("validate.async", function() {
     };
 
     validate.validators.asyncSuccess = function() {
-      return validate.Promise(function(resolve, reject) {
+      return new validate.Promise(function(resolve, reject) {
         setTimeout(function() {
           resolve();
         }, 1);
@@ -27,11 +28,27 @@ describe("validate.async", function() {
     delete validate.validators.asyncFail;
     delete validate.validators.asyncSuccess;
     delete validate.async.options;
+    validate.Promise = Promise;
   });
 
   it("makes validate return a promise", function() {
     var promise = validate.async({}, {});
     expect(promise).toBeAPromise();
+  });
+
+  it("throws an error if no promise is found", function() {
+    delete validate.Promise;
+    expect(function() {
+      validate.async({}, {});
+    }).toThrow();
+  });
+
+  it("allows you to specify a custom Promise implementation", function() {
+    spyOn(validate, "Promise").and.callFake(function(func) {
+      return new Promise(func);
+    });
+    var promise = validate.async({}, {});
+    expect(validate.Promise).toHaveBeenCalled();
   });
 
   it.promise("resolves the promise if all constraints pass", function() {
@@ -76,111 +93,6 @@ describe("validate.async", function() {
     });
   });
 
-  describe("Promise", function() {
-    var globals = ["Promise", "Q", "when", "RSVP"]
-      , store = {};
-
-    globals.forEach(function(name) { store[name] = window[name]; });
-
-    beforeEach(function() {
-      globals.forEach(function(name) { window[name] = undefined; });
-    });
-
-    afterEach(function() {
-      globals.forEach(function(name) { window[name] = store[name]; });
-    });
-
-    it("throws an error if no promise can be detected", function() {
-      expect(function() { new validate.Promise(); }).toThrow();
-    });
-
-    it("tries to import each promise", function() {
-      spyOn(validate, "tryRequire").and.returnValue(null);
-      expect(function() { new validate.Promise(); }).toThrow();
-      expect(validate.tryRequire).toHaveBeenCalledWith("es6-promise");
-      expect(validate.tryRequire).toHaveBeenCalledWith("rsvp");
-      expect(validate.tryRequire).toHaveBeenCalledWith("when");
-      expect(validate.tryRequire).toHaveBeenCalledWith("q");
-    });
-
-    it("supports native promises", function() {
-      var callback = jasmine.createSpy("callback");
-      window.Promise = store.Promise;
-      promise = new validate.Promise(callback);
-      expect(promise).toBeInstanceOf(Promise);
-      expect(callback).toHaveBeenCalled();
-    });
-
-    it("tries to import the native promised polyfill", function() {
-      spyOn(validate, "tryRequire").and.callFake(function(module) {
-        if (module === "es6-promise") {
-          return {Promise: store.Promise};
-        } else {
-          return null;
-        }
-      });
-      expect(validate.Promise(function() {})).toBeAPromise();
-    });
-
-    it("supports RSVP promises", function() {
-      var callback = jasmine.createSpy("callback");
-      window.RSVP = store.RSVP;
-      promise = new validate.Promise(callback);
-      expect(promise).toBeInstanceOf(RSVP.Promise);
-      expect(callback).toHaveBeenCalled();
-    });
-
-    it("tries to import the RSVP module", function() {
-      spyOn(validate, "tryRequire").and.callFake(function(module) {
-        if (module === "rsvp") {
-          return store.RSVP;
-        } else {
-          return null;
-        }
-      });
-      expect(validate.Promise(function() {})).toBeAPromise();
-    });
-
-    it("supports when.js promises", function() {
-      var callback = jasmine.createSpy("callback");
-      window.when = store.when;
-      promise = new validate.Promise(callback);
-      expect(when.isPromiseLike(promise)).toBe(true);
-      expect(callback).toHaveBeenCalled();
-    });
-
-    it("tries to import the when.js module", function() {
-      spyOn(validate, "tryRequire").and.callFake(function(module) {
-        console.log(module);
-        if (module === "when") {
-          return store.when;
-        } else {
-          return null;
-        }
-      });
-      expect(validate.Promise(function() {})).toBeAPromise();
-    });
-
-    it("supports Q promises", function() {
-      var callback = jasmine.createSpy("callback");
-      window.Q = store.Q;
-      promise = new validate.Promise(callback);
-      expect(Q.isPromise(promise)).toBe(true);
-      expect(callback).toHaveBeenCalled();
-    });
-
-    it("tries to import the q module", function() {
-      spyOn(validate, "tryRequire").and.callFake(function(module) {
-        if (module === "q") {
-          return store.Q;
-        } else {
-          return null;
-        }
-      });
-      expect(validate.Promise(function() {})).toBeAPromise();
-    });
-  });
-
   describe("waitForResults", function() {
     var error, success;
 
@@ -203,12 +115,12 @@ describe("validate.async", function() {
     it.promise("handles results with no promises", function() {
       var results = [{
         attribute: "foo",
-        error: validate.Promise(function(resolve, reject) {
+        error: new validate.Promise(function(resolve, reject) {
           setTimeout(resolve, 1);
         })
       }, {
         attribute: "bar",
-        error: validate.Promise(function(resolve, reject) {
+        error: new validate.Promise(function(resolve, reject) {
           setTimeout(reject.bind(this, "My error"), 1);
         })
       }, {
@@ -235,7 +147,7 @@ describe("validate.async", function() {
 
       var results = [{
         attribute: "foo",
-        error: validate.Promise(function(resolve, reject) { reject(); })
+        error: new validate.Promise(function(resolve, reject) { reject(); })
       }];
 
       return validate.waitForResults(results).then(function() {
