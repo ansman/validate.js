@@ -1899,6 +1899,10 @@ validate({}, {username: {presence: true}});
               <b class="version">WIP</b>
             </h3>
             <ul>
+              <li>
+                Async validation errors are no longer wrapped in the
+                <code>validate.ValidationErrors</code> object.
+              </li>
               <li>Document the utility functions used by this library.</li>
               <li>
                 Add support for validating a single value. Thanks
