@@ -27,7 +27,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>Validate.js <span class="hljs-number">0.5</span><span class="hljs-number">.0</span>
+              <pre><code>Validate.js <span class="hljs-number">0.6</span><span class="hljs-number">.0</span>
 (c) <span class="hljs-number">2013</span>-<span class="hljs-number">2015</span> Nicklas Ansman, <span class="hljs-number">2013</span> Wrapp
 Validate.js may be freely distributed under the MIT license.
 For all details and documentation:
@@ -36,7 +36,7 @@ http:<span class="hljs-comment">//validatejs.org/</span>
             </div>
             
             <div class="content"><div class='highlight'><pre>
-(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(exports, module, define, require)</span> </span>{
+(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(exports, module, define)</span> </span>{
 <span class="hljs-pi">  "use strict"</span>;</pre></div></div>
             
         </li>
@@ -75,8 +75,7 @@ The options are the following:</p>
     <span class="hljs-keyword">return</span> validate.processValidationResults(results, options);
   };
 
-  <span class="hljs-keyword">var</span> v = validate
-    , root = <span class="hljs-keyword">this</span></pre></div></div>
+  <span class="hljs-keyword">var</span> v = validate;</pre></div></div>
             
         </li>
         
@@ -86,21 +85,6 @@ The options are the following:</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
-              </div>
-              <p>Finds %{key} style patterns in the given string</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    , FORMAT_REGEXP = <span class="hljs-regexp">/%\{([^\}]+)\}/g</span>;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-4">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <p>Copies over attributes from one or more sources to a single destination.
 Very much similar to underscore’s extend.
@@ -118,8 +102,20 @@ used as targets.</p>
     <span class="hljs-keyword">return</span> obj;
   };
 
-  v.extend(validate, {
-    EMPTY_STRING_REGEXP: <span class="hljs-regexp">/^\s*$/</span>,</pre></div></div>
+  v.extend(validate, {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Below is the dependencies that are used in validate.js</p>
+
+            </div>
             
         </li>
         
@@ -129,6 +125,44 @@ used as targets.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>The constructor of the Promise implementation.
+If you are using Q.js, RSVP or any other A+ compatible implementation
+override this attribute to be the constructor of that promise.
+Since jQuery promises aren’t A+ compatible they won’t work.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    Promise: <span class="hljs-keyword">typeof</span> Promise !== <span class="hljs-string">"undefined"</span> ? Promise : <span class="hljs-comment">/* istanbul ignore next */</span> <span class="hljs-literal">null</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>If moment is used in node, browserify etc please set this attribute
+like this: `validate.moment = require(“moment”);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    moment: <span class="hljs-keyword">typeof</span> moment !== <span class="hljs-string">"undefined"</span> ? moment : <span class="hljs-comment">/* istanbul ignore next */</span> <span class="hljs-literal">null</span>,
+
+    XDate: <span class="hljs-keyword">typeof</span> XDate !== <span class="hljs-string">"undefined"</span> ? XDate : <span class="hljs-comment">/* istanbul ignore next */</span> <span class="hljs-literal">null</span>,
+
+    EMPTY_STRING_REGEXP: <span class="hljs-regexp">/^\s*$/</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>Runs the validators specified by the constraints object.
 Will return an array of the format:
@@ -153,11 +187,11 @@ Will return an array of the format:
         </li>
         
         
-        <li id="section-6">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>Loops through each constraints, finds the correct validator and run it.</p>
 
@@ -169,11 +203,11 @@ Will return an array of the format:
         </li>
         
         
-        <li id="section-7">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>This allows the constraints for an attribute to be a function.
 The function will be called with the value, attribute name, the complete dict of
@@ -198,11 +232,11 @@ validations depending on the attribute value.</p>
         </li>
         
         
-        <li id="section-8">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>This allows the options to be a function. The function will be
 called with the value, attribute name, the complete dict of
@@ -230,11 +264,11 @@ validations depending on the attribute value.</p>
         </li>
         
         
-        <li id="section-9">
+        <li id="section-11">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <p>Takes the output from runValidations and converts it to the correct
 output format.</p>
@@ -247,11 +281,11 @@ output format.</p>
         </li>
         
         
-        <li id="section-10">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>This indexes the errors per attribute</p>
 
@@ -273,11 +307,11 @@ output format.</p>
         </li>
         
         
-        <li id="section-11">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>Semi ugly way to check if the errors are empty, try iterating over
 them and short circuit when something is found.</p>
@@ -292,11 +326,11 @@ them and short circuit when something is found.</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>Runs the validations with support for promises.
 This function will return a promise that is settled when all the
@@ -309,7 +343,7 @@ It can be called even if no validations returned a promise.</p>
       options = v.extend({}, v.async.options, options);
       <span class="hljs-keyword">var</span> results = v.runValidations(attributes, constraints, options);
 
-      <span class="hljs-keyword">return</span> v.Promise(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(resolve, reject)</span> </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> v.Promise(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(resolve, reject)</span> </span>{
         v.waitForResults(results).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
           <span class="hljs-keyword">var</span> errors = v.processValidationResults(results, options);
           <span class="hljs-keyword">if</span> (errors) {
@@ -319,16 +353,24 @@ It can be called even if no validations returned a promise.</p>
           }
         }).then(<span class="hljs-literal">undefined</span>, v.error);
       });
+    },
+
+    single: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, constraints, options)</span> </span>{
+      options = v.extend({}, v.single.options, options, {
+        flatten: <span class="hljs-literal">true</span>,
+        fullMessages: <span class="hljs-literal">false</span>
+      });
+      <span class="hljs-keyword">return</span> v({single: value}, {single: constraints}, options);
     },</pre></div></div>
             
         </li>
         
         
-        <li id="section-13">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Returns a promise that is resolved when all promises in the results array
 are settled. The promise returned from this function is always resolved,
@@ -343,11 +385,11 @@ with the value returned from the promise.</p>
         </li>
         
         
-        <li id="section-14">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>Create a sequence of all the results starting with a resolved promise.</p>
 
@@ -358,11 +400,11 @@ with the value returned from the promise.</p>
         </li>
         
         
-        <li id="section-15">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>If this result isn’t a promise skip it in the sequence.</p>
 
@@ -382,11 +424,11 @@ with the value returned from the promise.</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>If for some reason the validator promise was rejected but no
 error was specified.</p>
@@ -400,7 +442,7 @@ error was specified.</p>
             }
           ).then(<span class="hljs-literal">undefined</span>, v.error);
         }).then(<span class="hljs-literal">undefined</span>, v.error);
-      }, v.Promise(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(r)</span> </span>{ r(); })); <span class="hljs-comment">// A resolved promise</span>
+      }, <span class="hljs-keyword">new</span> v.Promise(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(r)</span> </span>{ r(); })); <span class="hljs-comment">// A resolved promise</span>
 
       <span class="hljs-keyword">return</span> promise.then(<span class="hljs-literal">undefined</span>, v.error);
     },</pre></div></div>
@@ -408,11 +450,11 @@ error was specified.</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>If the given argument is a call: function the and: function return the value
 otherwise just return the value. Additional arguments will be passed as
@@ -434,11 +476,11 @@ result(<span class="hljs-built_in">Math</span>.max, <span class="hljs-number">1<
         </li>
         
         
-        <li id="section-18">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>Checks if the value is a number. This function does not consider NaN a
 number like many other <code>isNumber</code> functions do.</p>
@@ -452,11 +494,11 @@ number like many other <code>isNumber</code> functions do.</p>
         </li>
         
         
-        <li id="section-19">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Returns false if the object is not a function</p>
 
@@ -469,11 +511,11 @@ number like many other <code>isNumber</code> functions do.</p>
         </li>
         
         
-        <li id="section-20">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>A simple check to verify that the value is an integer. Uses <code>isNumber</code>
 and a simple modulo check.</p>
@@ -487,11 +529,11 @@ and a simple modulo check.</p>
         </li>
         
         
-        <li id="section-21">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>Uses the <code>Object</code> function to check if the given argument is an object.</p>
 
@@ -504,11 +546,11 @@ and a simple modulo check.</p>
         </li>
         
         
-        <li id="section-22">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>Returns false if the object is <code>null</code> of <code>undefined</code></p>
 
@@ -521,11 +563,11 @@ and a simple modulo check.</p>
         </li>
         
         
-        <li id="section-23">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>Checks if the given argument is a promise. Anything with a <code>then</code>
 function is considered a promise.</p>
@@ -533,7 +575,7 @@ function is considered a promise.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    isPromise: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p)</span> </span>{
-      <span class="hljs-keyword">return</span> !!p &amp;&amp; <span class="hljs-keyword">typeof</span> p.then === <span class="hljs-string">'function'</span>;
+      <span class="hljs-keyword">return</span> !!p &amp;&amp; v.isFunction(p.then);
     },
 
     isDomElement: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(o)</span> </span>{
@@ -552,11 +594,11 @@ function is considered a promise.</p>
         </li>
         
         
-        <li id="section-24">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p><a href="http://stackoverflow.com/a/384380/699304">http://stackoverflow.com/a/384380/699304</a></p>
 
@@ -580,11 +622,11 @@ function is considered a promise.</p>
         </li>
         
         
-        <li id="section-25">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Null and undefined are empty</p>
 
@@ -597,11 +639,11 @@ function is considered a promise.</p>
         </li>
         
         
-        <li id="section-26">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>functions are non empty</p>
 
@@ -614,11 +656,11 @@ function is considered a promise.</p>
         </li>
         
         
-        <li id="section-27">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Whitespace only strings are empty</p>
 
@@ -631,11 +673,11 @@ function is considered a promise.</p>
         </li>
         
         
-        <li id="section-28">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>For arrays we use the length property</p>
 
@@ -648,11 +690,11 @@ function is considered a promise.</p>
         </li>
         
         
-        <li id="section-29">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>If we find at least one property we consider it non empty</p>
 
@@ -671,31 +713,54 @@ function is considered a promise.</p>
         </li>
         
         
-        <li id="section-30">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
               <p>Formats the specified strings with the given values like so:</p>
 <pre><code>format(<span class="hljs-string">"Foo: %{foo}"</span>, {foo: <span class="hljs-string">"bar"</span>}) <span class="hljs-comment">// "Foo bar"</span>
-</code></pre>
+</code></pre><p>If you want to write %{…} without having it replaced simply
+prefix it with % like this <code>Foo: %%{foo}</code> and it will be returned
+as <code>&quot;Foo: %{foo}&quot;</code></p>
+
             </div>
             
-            <div class="content"><div class='highlight'><pre>    format: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(str, vals)</span> </span>{
-      <span class="hljs-keyword">return</span> str.replace(FORMAT_REGEXP, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(m0, m1)</span> </span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-built_in">String</span>(vals[m1]);
+            <div class="content"><div class='highlight'><pre>    format: v.extend(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(str, vals)</span> </span>{
+      <span class="hljs-keyword">return</span> str.replace(v.format.FORMAT_REGEXP, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(m0, m1, m2)</span> </span>{
+        <span class="hljs-keyword">if</span> (m1 === <span class="hljs-string">'%'</span>) {
+          <span class="hljs-keyword">return</span> <span class="hljs-string">"%{"</span> + m2 + <span class="hljs-string">"}"</span>;
+        } <span class="hljs-keyword">else</span> {
+          <span class="hljs-keyword">return</span> <span class="hljs-built_in">String</span>(vals[m2]);
+        }
       });
-    },</pre></div></div>
+    }, {</pre></div></div>
             
         </li>
         
         
-        <li id="section-31">
+        <li id="section-33">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-31">&#182;</a>
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>Finds %{key} style patterns in the given string</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      FORMAT_REGEXP: <span class="hljs-regexp">/(%?)%\{([^\}]+)\}/g</span>
+    }),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
               <p>“Prettifies” the given string.
 Prettifying means replacing [._-] with spaces as well as splitting
@@ -709,11 +774,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-32">
+        <li id="section-35">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-32">&#182;</a>
+                <a class="pilcrow" href="#section-35">&#182;</a>
               </div>
               <p>Splits keys separated by periods</p>
 
@@ -724,11 +789,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-33">
+        <li id="section-36">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-33">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <p>Removes backslashes</p>
 
@@ -739,11 +804,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-34">
+        <li id="section-37">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-34">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>Replaces - and - with space</p>
 
@@ -754,11 +819,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-35">
+        <li id="section-38">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>Splits camel cased words</p>
 
@@ -837,11 +902,11 @@ camel case words.</p>
         </li>
         
         
-        <li id="section-36">
+        <li id="section-39">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>This returns an object with all the values of the form.
 It uses the input name as key and the value as value
@@ -945,11 +1010,11 @@ would return:
         </li>
         
         
-        <li id="section-37">
+        <li id="section-40">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>If flatten is true a flat array is returned.</p>
 
@@ -967,11 +1032,11 @@ would return:
         </li>
         
         
-        <li id="section-38">
+        <li id="section-41">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>Converts the errors of object of the format
 {attr: [<error>, <error>, …]} to contain the attribute name.</p>
@@ -982,115 +1047,7 @@ would return:
         processErrors(attr, errors[attr]);
       }
       <span class="hljs-keyword">return</span> ret;
-    },</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-39">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
-              </div>
-              <p>Returns a promise, should be called with the new operator.
-The first argument will be called with two functions, the first for
-resolving the promise and the second for rejecting it.
-Supports (in order of precedence):</p>
-<ul>
-<li>EcmaScript 6 Promises</li>
-<li>RSVP</li>
-<li>when</li>
-<li>Q</li>
-</ul>
-<p>If no supported promises are detected an error is thrown.
-A word of warning, only A+ style promises are supported. jQuery deferreds
-are NOT supported.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    Promise: v.extend(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span> </span>{
-      <span class="hljs-keyword">var</span> promise = v.Promise.nativePromise(callback) ||
-                    v.Promise.RSVPPromise(callback) ||
-                    v.Promise.whenPromise(callback) ||
-                    v.Promise.QPromise(callback);
-
-      <span class="hljs-keyword">if</span> (!promise) {
-        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"No promises could be detected"</span>);
-      }
-
-      <span class="hljs-keyword">return</span> promise;
-    }, {
-      nativePromise: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span> </span>{
-        <span class="hljs-keyword">var</span> Promise_, <span class="hljs-built_in">module</span>;
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> Promise !== <span class="hljs-string">"undefined"</span>) {
-          Promise_ = Promise;
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-built_in">module</span> = v.tryRequire(<span class="hljs-string">"es6-promise"</span>);
-          <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>) {
-            Promise_ = <span class="hljs-built_in">module</span>.Promise;
-          }
-        }
-        <span class="hljs-keyword">if</span> (Promise_) {
-          <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise_(callback);
-        }
-      },
-      RSVPPromise: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span> </span>{
-        <span class="hljs-keyword">var</span> Promise, <span class="hljs-built_in">module</span>;
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> RSVP !== <span class="hljs-string">"undefined"</span>) {
-          Promise = RSVP.Promise;
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-built_in">module</span> = v.tryRequire(<span class="hljs-string">"rsvp"</span>);
-          <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>) {
-            Promise = <span class="hljs-built_in">module</span>.Promise;
-          }
-        }
-        <span class="hljs-keyword">if</span> (Promise) {
-          <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Promise(callback);
-        }
-      },
-      whenPromise: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span> </span>{
-        <span class="hljs-keyword">var</span> promise, <span class="hljs-built_in">module</span>;
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> when !== <span class="hljs-string">"undefined"</span>) {
-          promise = when.promise;
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-built_in">module</span> = v.tryRequire(<span class="hljs-string">"when"</span>);
-          <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>) {
-            promise = <span class="hljs-built_in">module</span>.promise;
-          }
-        }
-        <span class="hljs-keyword">if</span> (promise) {
-          <span class="hljs-keyword">return</span> promise(callback);
-        }
-      },
-      QPromise: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(callback)</span> </span>{
-        <span class="hljs-keyword">var</span> promise, <span class="hljs-built_in">module</span>;
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> Q !== <span class="hljs-string">"undefined"</span>) {
-          promise = Q.promise;
-        } <span class="hljs-keyword">else</span> {
-          <span class="hljs-built_in">module</span> = v.tryRequire(<span class="hljs-string">"q"</span>);
-          <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>) {
-            promise = <span class="hljs-built_in">module</span>.promise;
-          }
-        }
-        <span class="hljs-keyword">if</span> (promise) {
-          <span class="hljs-keyword">return</span> promise(callback);
-        }
-      }
-    }),
-
-    tryRequire: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(moduleName)</span> </span>{
-      <span class="hljs-keyword">if</span> (!v.require) {
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
-      }
-      <span class="hljs-keyword">try</span> {
-        <span class="hljs-keyword">return</span> v.require(moduleName);
-      } <span class="hljs-keyword">catch</span>(e) {
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
-      }
     },
-
-    <span class="hljs-built_in">require</span>: <span class="hljs-built_in">require</span>,
 
     exposeModule: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(validate, root, exports, module, define)</span> </span>{
       <span class="hljs-keyword">if</span> (exports) {
@@ -1125,11 +1082,11 @@ are NOT supported.</p>
         </li>
         
         
-        <li id="section-40">
+        <li id="section-42">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>Presence validates that the value isn’t empty</p>
 
@@ -1146,11 +1103,11 @@ are NOT supported.</p>
         </li>
         
         
-        <li id="section-41">
+        <li id="section-43">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <p>Empty values are allowed</p>
 
@@ -1179,11 +1136,11 @@ are NOT supported.</p>
         </li>
         
         
-        <li id="section-42">
+        <li id="section-44">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p>Is checks</p>
 
@@ -1219,11 +1176,11 @@ are NOT supported.</p>
         </li>
         
         
-        <li id="section-43">
+        <li id="section-45">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p>Empty values are fine</p>
 
@@ -1249,11 +1206,11 @@ are NOT supported.</p>
         </li>
         
         
-        <li id="section-44">
+        <li id="section-46">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p>Coerce the value to a number unless we’re being strict.</p>
 
@@ -1266,11 +1223,11 @@ are NOT supported.</p>
         </li>
         
         
-        <li id="section-45">
+        <li id="section-47">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <p>If it’s not a number we shouldn’t continue since it will compare it.</p>
 
@@ -1283,11 +1240,11 @@ are NOT supported.</p>
         </li>
         
         
-        <li id="section-46">
+        <li id="section-48">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <p>Same logic as above, sort of. Don’t bother with comparisons if this
 doesn’t pass.</p>
@@ -1305,11 +1262,11 @@ doesn’t pass.</p>
         </li>
         
         
-        <li id="section-47">
+        <li id="section-49">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <p>This picks the default message if specified
 For example the greaterThan check uses the message from
@@ -1343,11 +1300,11 @@ this.notGreaterThan so we capitalize the name and prepend “not”</p>
         </li>
         
         
-        <li id="section-48">
+        <li id="section-50">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <p>Empty values are fine</p>
 
@@ -1369,11 +1326,11 @@ this.notGreaterThan so we capitalize the name and prepend “not”</p>
         </li>
         
         
-        <li id="section-49">
+        <li id="section-51">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <p>86400000 is the number of seconds in a day, this is used to remove
 the time from the date</p>
@@ -1404,11 +1361,11 @@ the time from the date</p>
         </li>
         
         
-        <li id="section-50">
+        <li id="section-52">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
               <p>This is the function that will be used to convert input to the number
 of millis since the epoch.
@@ -1417,13 +1374,12 @@ It should return NaN if it’s not a valid date.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>      parse: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(value, options)</span> </span>{
-        <span class="hljs-keyword">if</span> (v.isFunction(root.XDate)) {
-          <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> root.XDate(value, <span class="hljs-literal">true</span>).getTime();
+        <span class="hljs-keyword">if</span> (v.isFunction(v.XDate)) {
+          <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> v.XDate(value, <span class="hljs-literal">true</span>).getTime();
         }
 
-        <span class="hljs-keyword">var</span> moment = v.tryRequire(<span class="hljs-string">"moment"</span>) || root.moment;
-        <span class="hljs-keyword">if</span> (v.isDefined(moment)) {
-          <span class="hljs-keyword">return</span> +moment.utc(value);
+        <span class="hljs-keyword">if</span> (v.isDefined(v.moment)) {
+          <span class="hljs-keyword">return</span> +v.moment.utc(value);
         }
 
         <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Neither XDate or moment.js was found"</span>);
@@ -1432,11 +1388,11 @@ It should return NaN if it’s not a valid date.</p>
         </li>
         
         
-        <li id="section-51">
+        <li id="section-53">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               <p>Formats the given timestamp. Uses ISO8601 to format them.
 If options.dateOnly is true then only the year, month and day will be
@@ -1447,15 +1403,14 @@ output.</p>
             <div class="content"><div class='highlight'><pre>      format: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(date, options)</span> </span>{
         <span class="hljs-keyword">var</span> format = options.dateFormat;
 
-        <span class="hljs-keyword">if</span> (v.isFunction(root.XDate)) {
+        <span class="hljs-keyword">if</span> (v.isFunction(v.XDate)) {
           format = format || (options.dateOnly ? <span class="hljs-string">"yyyy-MM-dd"</span> : <span class="hljs-string">"yyyy-MM-dd HH:mm:ss"</span>);
           <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> XDate(date, <span class="hljs-literal">true</span>).toString(format);
         }
 
-        <span class="hljs-keyword">var</span> moment = v.tryRequire(<span class="hljs-string">"moment"</span>) || root.moment;
-        <span class="hljs-keyword">if</span> (v.isDefined(moment)) {
+        <span class="hljs-keyword">if</span> (v.isDefined(v.moment)) {
           format = format || (options.dateOnly ? <span class="hljs-string">"YYYY-MM-DD"</span> : <span class="hljs-string">"YYYY-MM-DD HH:mm:ss"</span>);
-          <span class="hljs-keyword">return</span> moment.utc(date).format(format);
+          <span class="hljs-keyword">return</span> v.moment.utc(date).format(format);
         }
 
         <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Neither XDate or moment.js was found"</span>);
@@ -1479,11 +1434,11 @@ output.</p>
         </li>
         
         
-        <li id="section-52">
+        <li id="section-54">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
               <p>Empty values are allowed</p>
 
@@ -1509,11 +1464,11 @@ output.</p>
         </li>
         
         
-        <li id="section-53">
+        <li id="section-55">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-53">&#182;</a>
+                <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
               <p>Empty values are fine</p>
 
@@ -1539,11 +1494,11 @@ output.</p>
         </li>
         
         
-        <li id="section-54">
+        <li id="section-56">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-54">&#182;</a>
+                <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
               <p>Empty values are fine</p>
 
@@ -1569,11 +1524,11 @@ output.</p>
         </li>
         
         
-        <li id="section-55">
+        <li id="section-57">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-55">&#182;</a>
+                <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
               <p>Empty values are fine</p>
 
@@ -1619,12 +1574,11 @@ output.</p>
     }
   };
 
-  validate.exposeModule(validate, root, exports, <span class="hljs-built_in">module</span>, define);
+  validate.exposeModule(validate, <span class="hljs-keyword">this</span>, exports, <span class="hljs-built_in">module</span>, define);
 }).call(<span class="hljs-keyword">this</span>,
         <span class="hljs-keyword">typeof</span> exports !== <span class="hljs-string">'undefined'</span> ? <span class="hljs-comment">/* istanbul ignore next */</span> exports : <span class="hljs-literal">null</span>,
         <span class="hljs-keyword">typeof</span> <span class="hljs-built_in">module</span> !== <span class="hljs-string">'undefined'</span> ? <span class="hljs-comment">/* istanbul ignore next */</span> <span class="hljs-built_in">module</span> : <span class="hljs-literal">null</span>,
-        <span class="hljs-keyword">typeof</span> define !== <span class="hljs-string">'undefined'</span> ? <span class="hljs-comment">/* istanbul ignore next */</span> define : <span class="hljs-literal">null</span>,
-        <span class="hljs-keyword">typeof</span> <span class="hljs-built_in">require</span> !== <span class="hljs-string">'undefined'</span> ? <span class="hljs-comment">/* istanbul ignore next */</span> <span class="hljs-built_in">require</span> : <span class="hljs-literal">null</span>);</pre></div></div>
+        <span class="hljs-keyword">typeof</span> define !== <span class="hljs-string">'undefined'</span> ? <span class="hljs-comment">/* istanbul ignore next */</span> define : <span class="hljs-literal">null</span>);</pre></div></div>
             
         </li>
         
