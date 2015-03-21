@@ -262,6 +262,8 @@
           </li>
         </ul>
       </li>
+      <li><a href="#downloads">Downloads</a></li>
+      <li><a href="#dependencies">Dependencies</a></li>
       <li>
         <a href="#overview">Overview</a>
         <ul>
@@ -369,7 +371,7 @@
             Validate.js is an open source component of <a href="https://www.wrapp.com">Wrapp</a>
             and is licensed under <a href="LICENSE.txt">the MIT license</a>.
           </p>
-          <h2>Downloads &amp; Dependencies</h2>
+          <h2 id="downloads">Downloads</h2>
           <div class="download">
             <a class="btn btn-default" download href="validate.js">Development version (0.6.0)</a>
             <div class="info">
@@ -387,22 +389,36 @@
             <a class="btn btn-danger" download href="https://raw.github.com/ansman/validate.js/master/validate.js">Bleeding edge</a>
             <div class="info badges">
               <span class="details">Might not be 100% stable</span><br>
-              <a href="https://travis-ci.org/ansman/validate.js">
+              <a href="https://travis-ci.org/ansman/validate.js" target="_blank">
                 <img src="https://travis-ci.org/ansman/validate.js.png?branch=master" height="19">
               </a>
-              <a href="https://coveralls.io/r/ansman/validate.js">
+              <a href="https://coveralls.io/r/ansman/validate.js" target="_blank">
                 <img src="https://coveralls.io/repos/ansman/validate.js/badge.png?branch=master" alt="Coverage Status" />
               </a>
             </div>
           </div>
+          <h2 id="dependencies">Dependencies</h2>
           <p class="dependencies">
             There are no required external dependencies but the default parser and
             formatter for the datetime and date validator requires <a href="http://arshaw.com/xdate/">XDate</a> or
             <a href="http://momentjs.com/">moment.js</a>.<br>
             Validate.js will pick them up if they are in the global scope, otherwise
             you can set <code>validate.moment</code> and <code>validate.XDate</code>
-            manually.
+            manually, for example like this if using a require based system:
           </p>
+          <pre class="javascript"><code>var validate = require("validate.js");
+validate.moment = require("moment");</code></pre>
+          <p class="dependencies">
+            If you want to use async validation you need to use a runtime that
+            supports <a href="http://www.html5rocks.com/en/tutorials/es6/promises/" target="_blank">Promises</a>.<br>
+            You can tell validate.js to use any A+ compatible promise implemention
+            like this:
+          </p>
+          <pre class="javascript"><code>// Simply set validate.Promise to be the promise constructor
+// RSVP works
+validate.Promise = RSVP.Promise;
+// and Q.js too
+validate.Promise = Q.Promise;</code></pre>
         </div>
         <div id="overview">
           <h2>Overview</h2>
