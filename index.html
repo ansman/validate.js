@@ -1926,22 +1926,6 @@ validate({}, {username: {presence: true}});
                 Fixed <code>validate.collectFormValues</code> for IE9 and IE10.<br>
                 Thanks <a href="https://github.com/ansman/validate.js/pull/40" target="_blank">Kevin Burke</a> for reporting and fixing this.
               </li>
-              <li>Document the utility functions used by this library.</li>
-              <li>
-                Add support for validating a single value. Thanks
-                <a href="https://github.com/ansman/validate.js/issues/7" target="_blank">Aristides Lourenco</a>
-                for suggesting and implementing this.
-              </li>
-              <li>All calls to <code>Promise</code> is now made with the <code>new</code> operator.</li>
-              <li>
-                <b>Breaking:</b> <code>require</code> is no longer used for
-                dependency management. Validate.js will still look for moment,
-                XDate and Promise in the global scope but not using require
-                any more. They can be added by settings <code>validate.moment</code>,
-                <code>validate.XDate</code> and <code>validate.Promise</code>
-                respectively. The idea behind this is to stop using the
-                <code>require</code> function improperly.
-              </li>
             </ul>
           </div>
           <div id="changelog-0-6-0">
