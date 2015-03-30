@@ -6,5 +6,6 @@
 6. Update the library size in index.html
 7. Commit with message "Release version X.X.X"
 8. Tag using `git tag -a X.X.X` with message "X.X.X"
-9. Publish with npm using `npm publish`
-10. Update validatejs.org using `git checkout gh-pages && git merge master`
+9. Push using `git push origin master --tags`
+10. Publish with npm using `npm publish`
+11. Update validatejs.org using `git checkout gh-pages && git merge master`
