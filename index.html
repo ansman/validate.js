@@ -337,6 +337,7 @@
       <li>
         <a href="#changelog">Changelog</a>
         <ul>
+          <li><a href="#changelog-0-6-1">0.6.1</a></li>
           <li><a href="#changelog-0-6-0">0.6.0</a></li>
           <li><a href="#changelog-0-5-0">0.5.0</a></li>
           <li><a href="#changelog-0-4-0">0.4.0</a></li>
@@ -373,13 +374,13 @@
           </p>
           <h2 id="downloads">Downloads</h2>
           <div class="download">
-            <a class="btn btn-default" download href="validate.js">Development version (0.6.0)</a>
+            <a class="btn btn-default" download href="validate.js">Development version (0.6.1)</a>
             <div class="info">
               <span class="details">26KB, uncompressed and plenty of comments</span>
             </div>
           </div>
           <div class="download">
-            <a class="btn btn-primary" download href="validate.min.js">Production version (0.6.0)</a>
+            <a class="btn btn-primary" download href="validate.min.js">Production version (0.6.1)</a>
             <div class="info">
               <span class="details">3.4KB, minified and gzipped</span><br>
               <a download href="validate.min.map">(Source map)</a>
@@ -1863,7 +1864,7 @@ validate.result("foo".toUpperCase);
             </p>
             <pre class="json"><code>{
   "dependencies": {
-    "validate.js": "~0.6.0"
+    "validate.js": "~0.6.1"
   }
 }</code></pre>
             <p class="description">
@@ -1903,13 +1904,46 @@ validate({}, {username: {presence: true}});
               or add it to your <code>bower.json</code> file:
               <pre class="json"><code>{
   "dependencies": {
-    "validate": "0.6.0"
+    "validate": "0.6.1"
   }
 }</code></pre>
           </div>
         </div>
         <div id="changelog">
           <h2>Changelog</h2>
+          <div id="changelog-0-6-1">
+            <h3>
+              <b class="version">0.6.1</b>
+              -
+              <span class="date">Mar 30, 2015</span>
+              -
+              <a href="http://htmlpreview.github.com/?https://raw.github.com/ansman/validate.js/0.6.1/index.html">Docs</a>
+              -
+              <a href="https://github.com/ansman/validate.js/compare/0.6.0...0.6.1">Diff</a>
+            </h3>
+            <ul>
+              <li>
+                Fixed <code>validate.collectFormValues</code> for IE9 and IE10.<br>
+                Thanks <a href="https://github.com/ansman/validate.js/pull/40" target="_blank">Kevin Burke</a> for reporting and fixing this.
+              </li>
+              <li>Document the utility functions used by this library.</li>
+              <li>
+                Add support for validating a single value. Thanks
+                <a href="https://github.com/ansman/validate.js/issues/7" target="_blank">Aristides Lourenco</a>
+                for suggesting and implementing this.
+              </li>
+              <li>All calls to <code>Promise</code> is now made with the <code>new</code> operator.</li>
+              <li>
+                <b>Breaking:</b> <code>require</code> is no longer used for
+                dependency management. Validate.js will still look for moment,
+                XDate and Promise in the global scope but not using require
+                any more. They can be added by settings <code>validate.moment</code>,
+                <code>validate.XDate</code> and <code>validate.Promise</code>
+                respectively. The idea behind this is to stop using the
+                <code>require</code> function improperly.
+              </li>
+            </ul>
+          </div>
           <div id="changelog-0-6-0">
             <h3>
               <b class="version">0.6.0</b>
