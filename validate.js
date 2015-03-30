@@ -439,7 +439,7 @@
       for (i = 0; i < inputs.length; ++i) {
         input = inputs.item(i);
 
-        if (input.dataset.ignored !== undefined) {
+        if (input.getAttribute("data-ignored") !== null) {
           continue;
         }
 
