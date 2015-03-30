@@ -1,6 +1,6 @@
 {
   "name": "validate.js",
-  "main": ["validate.js", "validate.min.js"],
+  "main": "validate.js",
   "version": "0.6.0",
   "ignore": [
     "**/.*",
