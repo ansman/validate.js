@@ -4,12 +4,13 @@
   <meta charset="UTF-8">
   <title>Validate.js</title>
   <link rel="shortcut icon" type="image/png" href="favicon.png">
-  <meta name="viewport" content="width=device-width, user-scalable=0">
+  <meta name="viewport" content="width=device-width, user-scalable=0, initial-scale=1, maximum-scale=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.4/styles/default.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.4/styles/github.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.4/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/xdate/0.8/xdate.min.js"></script>
   <script src="validate.js"></script>
   <style>
@@ -80,6 +81,7 @@
       padding-top: 10px;
       padding-left: 10px;
       overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
       width: 299px;
       border-right: 1px solid #eee;
       position: fixed;
@@ -227,36 +229,6 @@
     @media (max-width: 768px) {
       body {
         padding-left: 0;
-        padding-top: 70px;
-      }
-
-      body.sidebar.shown {
-        overflow-x: hidden;
-      }
-
-      header, #content, #sidebar {
-        -webkit-transition: -webkit-transform 250ms ease-in;
-        -webkit-transition: transform 250ms ease-in;
-        -moz-transition: -moz-transform 250ms ease-in;
-        -moz-transition: transform 250ms ease-in;
-        -ms-transition: -ms-transform 250ms ease-in;
-        -ms-transition: transform 250ms ease-in;
-        transition: transform 250ms ease-in;
-      }
-
-      .sidebar-shown header, .sidebar-shown #content, .sidebar-shown #sidebar {
-        -webkit-transition-timing-function: ease-out;
-        -moz-transition-timing-function: ease-out;
-        -ms-transition-timing-function: ease-out;
-        transition-timing-function: ease-out;
-        -webkit-transform: translateX(299px);
-        -webkit-transform: translate3d(299px, 0, 0);
-        -moz-transform: translateX(299px);
-        -moz-transform: translate3d(299px, 0, 0);
-        -ms-transform: translateX(299px);
-        -ms-transform: translate3d(299px, 0, 0);
-        transform: translateX(299px);
-        transform: translate3d(299px, 0, 0);
       }
 
       #fork-me {
@@ -296,10 +268,20 @@
 
       #sidebar {
         left: -299px;
+        top: 50px;
+        padding-top: 10px;
         z-index: 10;
+        -webkit-transition: left 250ms ease-in;
+      }
+
+      .sidebar-shown #sidebar {
+        left: 0;
+        -webkit-transition-timing-function: ease-out;
       }
 
       #content {
+        margin-top: 50px;
+        padding-top: 20px;
         margin-left: 0;
         overflow: hidden;
       }
@@ -315,6 +297,7 @@
 
       pre {
         overflow: scroll;
+        -webkit-overflow-scrolling: touch;
       }
 
       pre code {
@@ -2276,9 +2259,13 @@ validate({}, {username: {presence: true}});
     </div>
   </div>
   <script>
-    document.getElementById("menu-button").onclick = function() {
-      document.body.classList.toggle("sidebar-shown");
-    }
+    $("#menu-button").on("click", function() {
+      $("body").toggleClass("sidebar-shown");
+    });
+
+    $("#sidebar a").on("click", function() {
+      $("body").removeClass("sidebar-shown");
+    });
   </script>
 </body>
 </html>
