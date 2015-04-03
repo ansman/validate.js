@@ -1,6 +1,6 @@
 1. Bump the version in package.json
 2. Bump the version bower.json
-3. Bump the version validate.js
+3. Bump the version validate.js (header and validate.version)
 4. Bump the version index.html (sidebar link and all links with the old version, search for the old version)
 5. Compile with `grunt build`
 6. Update the library size in index.html

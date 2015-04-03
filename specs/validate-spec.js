@@ -276,4 +276,20 @@ describe("validate", function() {
         .toEqual(["can't be blank"]);
     });
   });
+
+  describe("version", function() {
+    it("contains major, minor and patch version", function() {
+      expect(validate.version.major).toBeANumber();
+      expect(validate.version.minor).toBeANumber();
+      expect(validate.version.patch).toBeANumber();
+    });
+
+    it("can be converted to a string", function() {
+      var version = validate.version.major + "." +
+        validate.version.minor + "." +
+        validate.version.patch;
+
+      expect("" + validate.version).toEqual(version);
+    });
+  });
 });

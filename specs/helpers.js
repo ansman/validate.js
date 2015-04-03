@@ -53,6 +53,15 @@ beforeEach(function() {
           };
         }
       };
+    },
+    toBeANumber: function(util, customEqualityTesters) {
+      return {
+        compare: function(actual, expected) {
+          return {
+            pass: typeof actual === 'number' && !isNaN(actual)
+          };
+        }
+      };
     }
   });
 });

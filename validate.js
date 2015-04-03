@@ -46,6 +46,17 @@
   };
 
   v.extend(validate, {
+    // This is the version of the library as a semver.
+    // The toString function will allow it to be coerced into a string
+    version: {
+      major: 0,
+      minor: 6,
+      patch: 1,
+      toString: function() {
+        return v.format("%{major}.%{minor}.%{patch}", v.version);
+      }
+    },
+
     // Below is the dependencies that are used in validate.js
 
     // The constructor of the Promise implementation.
