@@ -278,6 +278,16 @@ describe("validate", function() {
   });
 
   describe("version", function() {
+    var metadata = validate.version.metadata;
+
+    beforeEach(function() {
+      validate.version.metadata = null;
+    });
+
+    afterEach(function() {
+      validate.version.metadata = metadata;
+    });
+
     it("contains major, minor and patch version", function() {
       expect(validate.version.major).toBeANumber();
       expect(validate.version.minor).toBeANumber();
@@ -288,6 +298,16 @@ describe("validate", function() {
       var version = validate.version.major + "." +
         validate.version.minor + "." +
         validate.version.patch;
+
+      expect("" + validate.version).toEqual(version);
+    });
+
+    it("the string version can have metadata", function() {
+      var version = validate.version.major + "." +
+        validate.version.minor + "." +
+        validate.version.patch + "+foobar";
+
+      validate.version.metadata = "foobar";
 
       expect("" + validate.version).toEqual(version);
     });

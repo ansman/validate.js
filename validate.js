@@ -52,8 +52,13 @@
       major: 0,
       minor: 6,
       patch: 1,
+      metadata: "development",
       toString: function() {
-        return v.format("%{major}.%{minor}.%{patch}", v.version);
+        var version = v.format("%{major}.%{minor}.%{patch}", v.version);
+        if (!v.isEmpty(v.version.metadata)) {
+          version += "+" + v.version.metadata;
+        }
+        return version;
       }
     },
 
