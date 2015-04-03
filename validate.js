@@ -1,4 +1,5 @@
 //     Validate.js 0.6.1
+
 //     (c) 2013-2015 Nicklas Ansman, 2013 Wrapp
 //     Validate.js may be freely distributed under the MIT license.
 //     For all details and documentation:
@@ -530,8 +531,7 @@
           // If flatten is true a flat array is returned.
           if (options.flatten) {
             ret.push(error);
-          }
-          else {
+          } else {
             (ret[attr] || (ret[attr] = [])).push(error);
           }
         });
@@ -551,8 +551,7 @@
           exports = module.exports = validate;
         }
         exports.validate = validate;
-      }
-      else {
+      } else {
         root.validate = validate;
         if (validate.isFunction(define) && define.amd) {
           define("validate", [], function () { return validate; });
