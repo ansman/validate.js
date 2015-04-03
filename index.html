@@ -34,6 +34,46 @@
       -webkit-transform: translateZ(0);
     }
 
+    header {
+      z-index: 10;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+
+    header .title {
+      font-size: 25px;
+      line-height: 50px;
+      border-bottom: none;
+      display: inline-block;
+      margin: 0;
+      padding: 0;
+      display: none;
+    }
+
+    #menu-button {
+      display: none;
+      width: 30px;
+      border: none;
+      background: none;
+      padding: 0;
+      margin: 15px 10px;
+      -webkit-transform: translateZ(0);
+    }
+
+    #menu-button .bar {
+      width: 100%;
+      height: 4px;
+      background-color: black;
+      border-radius: 1px;
+      margin-top: 4px;
+    }
+
+    #menu-button .bar:first-child {
+      margin-top: 0;
+    }
+
     #sidebar {
       background-color: #F7F5FA;
       box-sizing: border-box;
@@ -114,7 +154,7 @@
       margin-top: 20px;
     }
 
-    h1 {
+    .banner h1 {
       font-size: 50px;
       text-transform: uppercase;
       border-bottom: 5px solid #333;
@@ -187,13 +227,56 @@
     @media (max-width: 768px) {
       body {
         padding-left: 0;
+        padding-top: 70px;
+      }
+
+      body.sidebar.shown {
+        overflow-x: hidden;
+      }
+
+      header, #content, #sidebar {
+        -webkit-transition: -webkit-transform 250ms ease-in;
+        -webkit-transition: transform 250ms ease-in;
+        -moz-transition: -moz-transform 250ms ease-in;
+        -moz-transition: transform 250ms ease-in;
+        -ms-transition: -ms-transform 250ms ease-in;
+        -ms-transition: transform 250ms ease-in;
+        transition: transform 250ms ease-in;
+      }
+
+      .sidebar-shown header, .sidebar-shown #content, .sidebar-shown #sidebar {
+        -webkit-transition-timing-function: ease-out;
+        -moz-transition-timing-function: ease-out;
+        -ms-transition-timing-function: ease-out;
+        transition-timing-function: ease-out;
+        -webkit-transform: translateX(299px);
+        -webkit-transform: translate3d(299px, 0, 0);
+        -moz-transform: translateX(299px);
+        -moz-transform: translate3d(299px, 0, 0);
+        -ms-transform: translateX(299px);
+        -ms-transform: translate3d(299px, 0, 0);
+        transform: translateX(299px);
+        transform: translate3d(299px, 0, 0);
       }
 
       #fork-me {
         display: none;
       }
 
-      .header {
+      header {
+        background-color: white;
+        height: 50px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        -webkit-box-shadow: 0px 2px black;
+        -moz-box-shadow: 0px 2px black;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      header #menu-button, header .title {
+        display: inline-block;
+      }
+
+      .banner {
         text-align: center;
       }
 
@@ -206,17 +289,19 @@
         margin-bottom: 3px;
       }
 
-      h1 {
+      .banner h1 {
         font-size: 40px;
         margin-top: 0;
       }
 
       #sidebar {
-        display: none;
+        left: -299px;
+        z-index: 10;
       }
 
       #content {
         margin-left: 0;
+        overflow: hidden;
       }
 
       #scroll-content {
@@ -353,12 +438,20 @@
       </li>
     </ul>
   </nav>
+  <header>
+    <button id="menu-button">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </button>
+    <div class="title">Validate.js</div>
+  </header>
   <div id="content">
     <div id="scroller">
       <a id="fork-me" href="https://github.com/ansman/validate.js"><img src="https://raw.github.com/aral/fork-me-on-github-retina-ribbons/master/images-after-imageoptim/fork-me-right-grey@2x.png" alt="Fork me" width="149" height="149"></a>
       <div id="scroll-content">
         <div id="validate-js">
-          <div class="header"><h1>Validate.js</h1></div>
+          <div class="banner"><h1>Validate.js</h1></div>
           <p>
             Validate.js provides a declarative way of validating javascript objects.
           </p>
@@ -2182,5 +2275,10 @@ validate({}, {username: {presence: true}});
       </div>
     </div>
   </div>
+  <script>
+    document.getElementById("menu-button").onclick = function() {
+      document.body.classList.toggle("sidebar-shown");
+    }
+  </script>
 </body>
 </html>
