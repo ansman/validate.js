@@ -4,12 +4,13 @@
   <meta charset="UTF-8">
   <title>Validate.js</title>
   <link rel="shortcut icon" type="image/png" href="favicon.png">
-  <meta name="viewport" content="width=device-width, user-scalable=0">
+  <meta name="viewport" content="width=device-width, user-scalable=0, initial-scale=1, maximum-scale=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.4/styles/default.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.4/styles/github.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.4/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/xdate/0.8/xdate.min.js"></script>
   <script src="validate.js"></script>
   <style>
@@ -34,12 +35,53 @@
       -webkit-transform: translateZ(0);
     }
 
+    header {
+      z-index: 10;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+
+    header .title {
+      font-size: 25px;
+      line-height: 50px;
+      border-bottom: none;
+      display: inline-block;
+      margin: 0;
+      padding: 0;
+      display: none;
+    }
+
+    #menu-button {
+      display: none;
+      width: 30px;
+      border: none;
+      background: none;
+      padding: 0;
+      margin: 15px 10px;
+      -webkit-transform: translateZ(0);
+    }
+
+    #menu-button .bar {
+      width: 100%;
+      height: 4px;
+      background-color: black;
+      border-radius: 1px;
+      margin-top: 4px;
+    }
+
+    #menu-button .bar:first-child {
+      margin-top: 0;
+    }
+
     #sidebar {
       background-color: #F7F5FA;
       box-sizing: border-box;
       padding-top: 10px;
       padding-left: 10px;
       overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
       width: 299px;
       border-right: 1px solid #eee;
       position: fixed;
@@ -114,7 +156,7 @@
       margin-top: 20px;
     }
 
-    h1 {
+    .banner h1 {
       font-size: 50px;
       text-transform: uppercase;
       border-bottom: 5px solid #333;
@@ -193,7 +235,20 @@
         display: none;
       }
 
-      .header {
+      header {
+        background-color: white;
+        height: 50px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        -webkit-box-shadow: 0px 2px black;
+        -moz-box-shadow: 0px 2px black;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      header #menu-button, header .title {
+        display: inline-block;
+      }
+
+      .banner {
         text-align: center;
       }
 
@@ -206,17 +261,29 @@
         margin-bottom: 3px;
       }
 
-      h1 {
+      .banner h1 {
         font-size: 40px;
         margin-top: 0;
       }
 
       #sidebar {
-        display: none;
+        left: -299px;
+        top: 50px;
+        padding-top: 10px;
+        z-index: 10;
+        -webkit-transition: left 250ms ease-in;
+      }
+
+      .sidebar-shown #sidebar {
+        left: 0;
+        -webkit-transition-timing-function: ease-out;
       }
 
       #content {
+        margin-top: 50px;
+        padding-top: 20px;
         margin-left: 0;
+        overflow: hidden;
       }
 
       #scroll-content {
@@ -230,6 +297,7 @@
 
       pre {
         overflow: scroll;
+        -webkit-overflow-scrolling: touch;
       }
 
       pre code {
@@ -329,6 +397,7 @@
       <li>
         <a href="#installing">Installing</a>
         <ul>
+          <li><a href="#installing-cdn">CDN</a></li>
           <li><a href="#installing-node">node.js</a></li>
           <li><a href="#installing-browser">Browser</a></li>
           <li><a href="#installing-bower">Bower</a></li>
@@ -354,12 +423,20 @@
       </li>
     </ul>
   </nav>
+  <header>
+    <button id="menu-button">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </button>
+    <div class="title">Validate.js</div>
+  </header>
   <div id="content">
     <div id="scroller">
       <a id="fork-me" href="https://github.com/ansman/validate.js"><img src="https://raw.github.com/aral/fork-me-on-github-retina-ribbons/master/images-after-imageoptim/fork-me-right-grey@2x.png" alt="Fork me" width="149" height="149"></a>
       <div id="scroll-content">
         <div id="validate-js">
-          <div class="header"><h1>Validate.js</h1></div>
+          <div class="banner"><h1>Validate.js</h1></div>
           <p>
             Validate.js provides a declarative way of validating javascript objects.
           </p>
@@ -431,8 +508,7 @@ validate.Promise = Q.Promise;</code></pre>
           <p>
             The goal of validate.js is to provide a cross framework and cross language
             way of validating data. The validation constraints can be declared in JSON
-            and shared between clients and the server. Python validation is planned
-            so is Clojure.
+            and shared between clients and the server.
           </p>
           <p>
             <b>Important!</b>
@@ -1852,6 +1928,22 @@ validate.result("foo".toUpperCase);
         </div>
         <div id="installing">
           <h2>Installing</h2>
+          <div id="installing-cdn">
+            <h3>CDN</h3>
+            <p class="description">
+              Validate.js is hosted on
+              <a href="https://cdnjs.com/libraries/validate.js" target="_blank">cdnjs.com</a>
+              so you can simply load the script from there.
+            </p>
+            <p class="description">
+              Simply add this to the <code>&lt;head&gt;</code> tag of a page:
+            </p>
+            <pre class="html"><code>&lt;script src=&quot;//cdnjs.cloudflare.com/ajax/libs/validate.js/0.6.1/validate.min.js&quot;&gt;&lt;/script&gt;</code></pre>
+            <p class="description">
+              Sourcemaps should work automatically if you use a browser that
+              supports it.
+            </p>
+          </div>
           <div id="installing-node">
             <h3>node.js</h3>
             <p class="description">
@@ -2195,5 +2287,14 @@ validate({}, {username: {presence: true}});
       </div>
     </div>
   </div>
+  <script>
+    $("#menu-button").on("click", function() {
+      $("body").toggleClass("sidebar-shown");
+    });
+
+    $("#sidebar a").on("click", function() {
+      $("body").removeClass("sidebar-shown");
+    });
+  </script>
 </body>
 </html>
