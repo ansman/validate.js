@@ -398,6 +398,7 @@
       <li>
         <a href="#changelog">Changelog</a>
         <ul>
+          <li><a href="#changelog-wip">WIP</a></li>
           <li><a href="#changelog-0-6-1">0.6.1</a></li>
           <li><a href="#changelog-0-6-0">0.6.0</a></li>
           <li><a href="#changelog-0-5-0">0.5.0</a></li>
@@ -1941,8 +1942,9 @@ validate.result("foo".toUpperCase);
             </h3>
             <ul>
               <li>Added <code>validate.version</code> as a way of gettings the version of the library.</li>
+              <li>Added a <code>component.json</code> file for installation via componentjs.</li>
               <li>
-                Don't supply a name when calling <code>define</code>.
+                <b>Breaking:</b> Don't supply a name when calling <code>define</code>.
                 Thanks <a href="https://github.com/ansman/validate.js/issues/20" target="_blank">Norman Xu</a> for reporting this.
               </li>
             </ul>
