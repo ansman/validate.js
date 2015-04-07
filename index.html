@@ -719,15 +719,16 @@ validate({}, {username: {presence: {message: "^You must pick a username"}}});
               and accepts the same options.
             </p>
             <p class="description">
-              <code>validate.async</code> returns a <a href="http://www.html5rocks.com/en/tutorials/es6/promises/" target="_blank">Promise</a>
+              <code>validate.async</code> returns a
+              <a href="http://www.html5rocks.com/en/tutorials/es6/promises/" target="_blank">Promise</a>
               that is resolved if the validation passes and is rejected if the
               validation failed, passing the errors as the first argument.<br>
               The errors has the same format as the errors from the regular validation function.
             </p>
             <p class="description">
-              The errors object will be an instance of <b>validate.ValidationErrors</b>
-              to be able to differentiate between coding errors and validation
-              errors.
+              If an <code>Error</code> is thrown from an async validator the
+              argument passed to the rejection handler will be that error. This
+              allows you to differentiate from coding errors and validation errors.
             </p>
             <p class="description">
                You can use the async validate function even if no validations
@@ -751,7 +752,12 @@ validate({}, {username: {presence: {message: "^You must pick a username"}}});
       alert("The validations passed");
     }
   , error = function(errors) {
-      alert(JSON.stringify(errors, null, 2));
+      if (errors instanceof Error) {
+        // This means an exception was thrown from a validator
+        console.err(errors);
+      } else {
+        alert(JSON.stringify(errors, null, 2));
+      }
     }
   , constraints = {name: {presence: true}};
 
@@ -1946,6 +1952,13 @@ validate.result("foo".toUpperCase);
               <li>
                 <b>Breaking:</b> Don't supply a name when calling <code>define</code>.
                 Thanks <a href="https://github.com/ansman/validate.js/issues/20" target="_blank">Norman Xu</a> for reporting this.
+              </li>
+              <li>
+                <b>Breaking:</b> If a async validator throw an error (or rejects
+                the promise with an <code>Error</code>) the validation promise
+                is rejected with the same error. Thanks
+                <a href="https://github.com/ansman/validate.js/issues/10" target="_blank">Sebastian Seilund, Dmitry Kirilyuk and Dave Kushner</a>
+                for helping out with the details of this.
               </li>
             </ul>
           </div>

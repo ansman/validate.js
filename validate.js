@@ -177,7 +177,9 @@
           } else {
             resolve(attributes);
           }
-        }).then(undefined, v.error);
+        }, function(err) {
+          reject(err);
+        });
       });
     },
 
@@ -196,7 +198,7 @@
     // with the value returned from the promise.
     waitForResults: function(results) {
       // Create a sequence of all the results starting with a resolved promise.
-      var promise = results.reduce(function(memo, result) {
+      return results.reduce(function(memo, result) {
         // If this result isn't a promise skip it in the sequence.
         if (!v.isPromise(result.error)) {
           return memo;
@@ -212,14 +214,14 @@
               // error was specified.
               if (!error) {
                 v.warn("Validator promise was rejected but didn't return an error");
+              } else if (error instanceof Error) {
+                throw error;
               }
               result.error = error;
             }
-          ).then(undefined, v.error);
-        }).then(undefined, v.error);
+          );
+        });
       }, new v.Promise(function(r) { r(); })); // A resolved promise
-
-      return promise.then(undefined, v.error);
     },
 
     // If the given argument is a call: function the and: function return the value
