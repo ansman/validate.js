@@ -369,6 +369,26 @@
     // Prettifying means replacing [.\_-] with spaces as well as splitting
     // camel case words.
     prettify: function(str) {
+      if (v.isNumber(str)) {
+        // If there are more than 2 decimals round it to two
+        if ((str * 100) % 1 === 0) {
+          return "" + str;
+        } else {
+          return parseFloat(Math.round(str * 100) / 100).toFixed(2);
+        }
+      }
+
+      if (v.isArray(str)) {
+        return str.map(function(s) { return v.prettify(s); }).join(", ");
+      }
+
+      if (v.isObject(str)) {
+        return str.toString();
+      }
+
+      // Ensure the string is actually a string
+      str = "" + str;
+
       return str
         // Splits keys separated by periods
         .replace(/([^\s])\.([^\s])/g, '$1 $2')
@@ -381,6 +401,10 @@
           return "" + m1 + " " + m2.toLowerCase();
         })
         .toLowerCase();
+    },
+
+    stringifyValue: function(value) {
+      return v.prettify(value);
     },
 
     isString: function(value) {
@@ -558,15 +582,14 @@
       var ret = [];
       errors.forEach(function(errorInfo) {
         var error = errorInfo.error;
+
         if (error[0] === '^') {
           error = error.slice(1);
         } else if (options.fullMessages !== false) {
-          error = v.format("%{attr} %{message}", {
-            attr: v.capitalize(v.prettify(errorInfo.attribute)),
-            message: error
-          });
+          error = v.capitalize(v.prettify(errorInfo.attribute)) + " " + error;
         }
         error = error.replace(/\\\^/g, "^");
+        error = v.format(error, {value: v.stringifyValue(errorInfo.value)});
         ret.push(v.extend({}, errorInfo, {error: error}));
       });
       return ret;

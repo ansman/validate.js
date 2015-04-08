@@ -667,6 +667,13 @@ validate({creditCardNumber: "340000000000000"}, constraints);
             have a leading <code>^</code> but want the prefixing just write <code>\^</code>.
           </p>
           <p class="description">
+            If you include <code>%{value}</code> in the error message it will be
+            replaced with the actual value. The value is transformed using
+            <code>validate.stringifyValue</code> (which per default just calls
+            <code>validate.prettify</code>) but it can be overidden to customize
+            the formatting.
+          </p>
+          <p class="description">
             If you want to customize how the attribute names are prettified you
             can just override the <code>validate.prettify</code> to your liking.
           </p>
@@ -680,7 +687,13 @@ validate({creditCardNumber: "340000000000000"}, constraints);
             <li><code>"detailed"</code> - Returns a list of error objects containing more info on the error (see example). Each object will only contain a single message.</li>
           </ul>
           <pre><code class="javascript">var constraints = {
-  username: {presence: true},
+  username: {
+    presence: true,
+    exclusion: {
+      within: ["nicklas"],
+      message: "'%{value}' is not allowed"
+    }
+  },
   password: {
     presence: true,
     length: {
@@ -695,8 +708,11 @@ validate({password: "bad"}, constraints);
 //   "password": ["Password must be at least 6 characters"]
 // }
 
-validate({username: "nicklas", password: "better"}, constraints);
+validate({username: "nick", password: "better"}, constraints);
 // =&gt; undefined
+
+validate({username: "nicklas", password: "better"}, constraints);
+// =&gt; {"username": ["Username 'nicklas' is not allowed"]}
 
 validate({password: "better"}, constraints, {fullMessages: false})
 // =&gt; {"username": ["can't be blank"]}
@@ -1917,6 +1933,9 @@ validate.isString({});
               <li>Replace <code>_</code> and <code>-</code> with spaces</li>
               <li>Split cameled cased words</li>
               <li>Make the whole string lower case</li>
+              <li>Converts number to strings with no more than 2 decimals</li>
+              <li>Calls <code>toString</code> on objects</li>
+              <li>Joins arrays with <code>, </code> and calls prettify on all items</li>
             </ul>
             <p class="notes">
               <b>Important!</b> It does not removing leading or trailing period
@@ -1986,6 +2005,11 @@ validate.result("foo".toUpperCase);
                 Implement a way to get detailed errors that contains the
                 validator, message, value etc.
                 Thanks <a href="https://github.com/ansman/validate.js/issues/14" target="_blank">mattruby</a> for suggesting this.
+              </li>
+              <li>
+                <code>%{value}</code> in messages is now replaced with the actual
+                value. Thanks <a href="https://github.com/ansman/validate.js/issues/32" target="_blank">nyrsimon</a>
+                for suggesting this.
               </li>
             </ul>
           </div>

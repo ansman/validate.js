@@ -127,6 +127,14 @@ describe("validate", function() {
     });
   });
 
+  describe("stringifyValue", function() {
+    it("simply calls validate.prettify", function() {
+      spyOn(validate, "prettify").and.returnValue("foobar");
+      expect(validate.stringifyValue("barfoo")).toEqual("foobar");
+      expect(validate.prettify).toHaveBeenCalledWith("barfoo");
+    });
+  });
+
   describe('prettify', function() {
     it("lower cases the entire string", function() {
       expect(validate.prettify("FOO BAR")).toEqual("foo bar");
@@ -154,6 +162,30 @@ describe("validate", function() {
     it("replaces backslashes with nothing", function() {
       expect(validate.prettify("foo\\.bar\\.baz")).toEqual("foo bar baz");
       expect(validate.prettify("foo\\\\.bar")).toEqual("foo bar");
+    });
+
+    it("calls toString on objects", function() {
+      var object = {
+          toString: function() { return "Custom string"; }
+        };
+
+      expect(validate.prettify(object)).toEqual("Custom string");
+    });
+
+    it("doesn't allow too many decimals", function() {
+      expect(validate.prettify(4711)).toEqual("4711");
+      expect(validate.prettify(4711.2)).toEqual("4711.2");
+      expect(validate.prettify(4711.255555)).toEqual("4711.26");
+    });
+
+    it("handles arrays", function() {
+      var array = ["foo", "bar_baz"];
+      // It valls it recusively
+      spyOn(validate, "prettify").and.callThrough();
+      expect(validate.prettify(array)).toEqual("foo, bar baz");
+      expect(validate.prettify).toHaveBeenCalledWith(array);
+      expect(validate.prettify).toHaveBeenCalledWith("foo");
+      expect(validate.prettify).toHaveBeenCalledWith("bar_baz");
     });
   });
 
@@ -340,35 +372,41 @@ describe("validate", function() {
   describe('convertErrorMessages', function() {
     var convertErrorMessages = validate.convertErrorMessages;
 
-    it("prettyfies and prepends the attribute", function() {
+    it("prettifies and prepends the attribute", function() {
       var errors = [{
         attribute: "foo",
         error: "can't be blank",
-        someOtherProperty: "someOtherProperty"
+        someOtherProperty: "someOtherProperty",
+        value: "foobar"
       }, {
         attribute: "foo_bar",
-        error: "has some other problem"
+        error: "has some other problem",
+        value: "foobar"
       }];
 
       expect(convertErrorMessages(errors)).toEqual([{
         attribute: "foo",
         error: "Foo can't be blank",
-        someOtherProperty: "someOtherProperty"
+        someOtherProperty: "someOtherProperty",
+        value: "foobar"
       }, {
         attribute: "foo_bar",
-        error: "Foo bar has some other problem"
+        error: "Foo bar has some other problem",
+        value: "foobar"
       }]);
     });
 
     it("doesn't modify the input", function() {
       var errors = [{
         attribute: "foo",
-        error: "can't be blank"
+        error: "can't be blank",
+        value: "foobar"
       }];
       convertErrorMessages(errors);
       expect(errors).toEqual([{
         attribute: "foo",
-        error: "can't be blank"
+        error: "can't be blank",
+        value: "foobar"
       }]);
     });
 
@@ -379,45 +417,75 @@ describe("validate", function() {
     it("doesn't prepend the attribute name if the message starts with a ^", function() {
       var errors = [{
         attribute: "foo",
-        error: "^Please don't do that"
+        error: "^Please don't do that",
+        value: "foobar"
       }];
       expect(convertErrorMessages(errors)).toEqual([{
         attribute: "foo",
-        error: "Please don't do that"
+        error: "Please don't do that",
+        value: "foobar"
       }]);
     });
 
     it("handles an escaped ^", function() {
       var errors = [{
         attribute: "foo",
-        error: "\\^ has a weird message^\\^"
+        error: "\\^ has a weird message^\\^",
+        value: "foobar"
       }];
       expect(convertErrorMessages(errors)).toEqual([{
         attribute: "foo",
-        error: "Foo ^ has a weird message^^"
+        error: "Foo ^ has a weird message^^",
+        value: "foobar"
       }]);
     });
 
     it("doesn't prepend the attribute name if fullMessages is false", function() {
       var errors = [{
         attribute: "foo",
-        error: "Please don't do that"
+        error: "Please don't do that",
+        value: "foobar"
       }];
       expect(convertErrorMessages(errors, {fullMessages: false})).toEqual([{
         attribute: "foo",
-        error: "Please don't do that"
+        error: "Please don't do that",
+        value: "foobar"
       }]);
     });
 
     it("still strips the leading ^ even if fullmessages if false", function() {
       var errors = [{
         attribute: "foo",
-        error: "\\^ has a weird message^\\^"
+        error: "\\^ has a weird message^\\^",
+        value: "foobar"
       }];
       expect(convertErrorMessages(errors, {fullMessages: false})).toEqual([{
         attribute: "foo",
-        error: "^ has a weird message^^"
+        error: "^ has a weird message^^",
+        value: "foobar"
       }]);
+    });
+
+    it("allow messages to contain %{value}", function() {
+      var errors = [{
+        attribute: "foo",
+        error: "foo %{value}",
+        someOtherProperty: "someOtherProperty",
+        value: "foobar"
+      }];
+
+      spyOn(validate, "format").and.callThrough();
+      spyOn(validate, "stringifyValue").and.returnValue("barfoo");
+
+      expect(convertErrorMessages(errors)).toEqual([{
+        attribute: "foo",
+        error: "Foo foo barfoo",
+        someOtherProperty: "someOtherProperty",
+        value: "foobar"
+      }]);
+      expect(validate.format).toHaveBeenCalledWith("Foo foo %{value}", {
+        value: "barfoo"
+      });
     });
   });
 
