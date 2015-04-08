@@ -1,4 +1,4 @@
-//     Validate.js 0.6.1
+//     Validate.js 0.7.0
 
 //     (c) 2013-2015 Nicklas Ansman, 2013 Wrapp
 //     Validate.js may be freely distributed under the MIT license.
@@ -54,9 +54,9 @@
     // The toString function will allow it to be coerced into a string
     version: {
       major: 0,
-      minor: 6,
-      patch: 1,
-      metadata: "development",
+      minor: 7,
+      patch: 0,
+      metadata: null,
       toString: function() {
         var version = v.format("%{major}.%{minor}.%{patch}", v.version);
         if (!v.isEmpty(v.version.metadata)) {
