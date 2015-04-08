@@ -28,7 +28,7 @@ If you want to just run the tests once you can do that by running `grunt test`.
 
 Build status
 ---
-[![Build Status](https://travis-ci.org/ansman/validate.js.png?branch=master)](https://travis-ci.org/ansman/validate.js)
+[![Build Status](https://travis-ci.org/ansman/validate.js.svg?branch=master)](https://travis-ci.org/ansman/validate.js)
 [![Coverage Status](https://coveralls.io/repos/ansman/validate.js/badge.svg?branch=master)](https://coveralls.io/r/ansman/validate.js?branch=master)
 
 Contributing
