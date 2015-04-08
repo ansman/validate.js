@@ -181,14 +181,14 @@ describe("validate.async", function() {
   });
 
   it.promise("allows default options", function() {
-    validate.async.options = {flatten: true};
+    validate.async.options = {format: "flat"};
     var c = {name: {presence: true}}
       , options = {foo: "bar"};
     return validate.async({}, c, options).then(success, error).then(function() {
       expect(success).not.toHaveBeenCalled();
       expect(error).toHaveBeenCalledWith(["Name can't be blank"]);
       expect(options).toEqual({foo: "bar"});
-      expect(validate.async.options).toEqual({flatten: true});
+      expect(validate.async.options).toEqual({format: "flat"});
     });
   });
 

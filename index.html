@@ -671,9 +671,14 @@ validate({creditCardNumber: "340000000000000"}, constraints);
             can just override the <code>validate.prettify</code> to your liking.
           </p>
           <p class="description">
-            There is also a <b>flatten</b> option which, if <code>true</code>, returns a flat
-            array instead of an object.
+            There is also a <b>format</b> option which accepts the following
+            values:
           </p>
+          <ul>
+            <li><code>"grouped"</code> (default) - Returns error messages grouped by attribute.</li>
+            <li><code>"flat"</code> - Returns a flat list of error messages.</li>
+            <li><code>"detailed"</code> - Returns a list of error objects containing more info on the error (see example). Each object will only contain a single message.</li>
+          </ul>
           <pre><code class="javascript">var constraints = {
   username: {presence: true},
   password: {
@@ -696,12 +701,23 @@ validate({username: "nicklas", password: "better"}, constraints);
 validate({password: "better"}, constraints, {fullMessages: false})
 // =&gt; {"username": ["can't be blank"]}
 
-validate({}, constraints, {flatten: true})
+validate({}, constraints, {format: "flat"})
 // =&gt; ["Username can't be blank", "Password can't be blank"]
 
+validate({username: "nicklas", password: "bad"}, constraints, {format: "detailed"})
+// =&gt; [{
+//   attribute: "password",
+//   error: "Password must be at least 6 characters",
+//   options: {
+//     minimum: 6,
+//     message: "must be at least 6 characters"
+//   },
+//   validator: "length",
+//   value: "bad"
+// }]
+
 validate({}, {username: {presence: {message: "^You must pick a username"}}});
-// =&gt; {"username": ["You must pick a username"]}
-  </code></pre>
+// =&gt; {"username": ["You must pick a username"]}</code></pre>
           <div id="validate-async">
             <h3>Async validation</h3>
             <div class="signature">
@@ -784,7 +800,7 @@ validate.Promise = RSVP.Promise;</code></pre>
             <p class="description">
               It does little more than proxying the call do the main validation
               function but with the value wrapped in an object and the options
-              <b>fullMessages</b> and <b>flatten</b> set to <code>false</code>.
+              <b>fullMessages</b> and <b>format</b> set to <code>"flat"</code>.
               This is because there is no name which means it can't produce
               full messages.
             </p>
@@ -857,8 +873,8 @@ validate({"foo.bar": 3}, {"foo\\.bar": {numericality: {even: true}}});
   }
 };
 
-validate.options = {flatten: true};
-validate.async.options = {flatten: true};
+validate.options = {format: "flat"};
+validate.async.options = {format: "flat"};
 validate.validators.presence.options = {message: "can't be empty"};
 
 // The default options will be used for both the
@@ -867,7 +883,7 @@ validate({}, constraints);
 // =&gt; ["Name can't be empty"]
 
 // The default options are not used if the constraints options are falsy
-validate({flatten: false}, {});
+validate({format: "grouped"}, {});
 // =&gt; undefined</code></pre>
           </div>
         </div>
@@ -1959,6 +1975,17 @@ validate.result("foo".toUpperCase);
                 is rejected with the same error. Thanks
                 <a href="https://github.com/ansman/validate.js/issues/10" target="_blank">Sebastian Seilund, Dmitry Kirilyuk and Dave Kushner</a>
                 for helping out with the details of this.
+              </li>
+              <li>
+                <b>Breaking:</b> The <b>flatten</b> option has been replaced with
+                a new <b>format</b> option. Simply replace
+                <code>flatten: true</code> with <code>format: "flat"</code> to
+                migrate.
+              </li>
+              <li>
+                Implement a way to get detailed errors that contains the
+                validator, message, value etc.
+                Thanks <a href="https://github.com/ansman/validate.js/issues/14" target="_blank">mattruby</a> for suggesting this.
               </li>
             </ul>
           </div>

@@ -249,75 +249,264 @@ describe("validate", function() {
     });
   });
 
-  describe('fullMessages', function() {
-    var fullMessages = validate.fullMessages;
+  describe("pruneEmptyErrors", function() {
+    it("removes empty errors", function() {
+      var input = [{
+          attribute: "name",
+          value: "test",
+          validator: "fail",
+          options: {"someOption": "someValue"},
+          error: "foobar"
+        }, {
+          attribute: "name",
+          value: "test",
+          validator: "fail2",
+          options: true,
+          error: ["foo", "bar"]
+        }, {
+          attribute: "name",
+          value: "test",
+          validator: "pass",
+          options: true,
+          error: null
+        }, {
+          attribute: "name",
+          value: "test",
+          validator: "pass",
+          options: true,
+          error: []
+        }, {
+          attribute: "name",
+          value: "test",
+          validator: "pass",
+          options: true,
+          error: ""
+      }];
+
+      expect(validate.pruneEmptyErrors(input)).toEqual([{
+          attribute: "name",
+          value: "test",
+          validator: "fail",
+          options: {"someOption": "someValue"},
+          error: "foobar"
+        }, {
+          attribute: "name",
+          value: "test",
+          validator: "fail2",
+          options: true,
+          error: ["foo", "bar"]
+      }]);
+    });
+  });
+
+  describe("expandMultipleErrors", function() {
+    it("expands error arrays to multiple entries", function() {
+      var input = [{
+          attribute: "name",
+          value: "test",
+          validator: "fail",
+          options: {"someOption": "someValue"},
+          error: "foobar"
+        }, {
+          attribute: "name",
+          value: "test",
+          validator: "fail2",
+          options: true,
+          error: ["foo", "bar"]
+      }];
+
+      expect(validate.expandMultipleErrors(input)).toEqual([{
+          attribute: "name",
+          value: "test",
+          validator: "fail",
+          options: {"someOption": "someValue"},
+          error: "foobar"
+        }, {
+          attribute: "name",
+          value: "test",
+          validator: "fail2",
+          options: true,
+          error: "foo"
+        }, {
+          attribute: "name",
+          value: "test",
+          validator: "fail2",
+          options: true,
+          error: "bar"
+      }]);
+    });
+  });
+
+  describe('convertErrorMessages', function() {
+    var convertErrorMessages = validate.convertErrorMessages;
 
     it("prettyfies and prepends the attribute", function() {
-      var errors = {
-        foo: ["can't be blank", "is too short"],
-        foo_bar: ["is simply not good enough"]
-      };
+      var errors = [{
+        attribute: "foo",
+        error: "can't be blank",
+        someOtherProperty: "someOtherProperty"
+      }, {
+        attribute: "foo_bar",
+        error: "has some other problem"
+      }];
 
-      expect(fullMessages(errors)).toEqual({
-        foo: ["Foo can't be blank", "Foo is too short"],
-        foo_bar: ["Foo bar is simply not good enough"]
-      });
+      expect(convertErrorMessages(errors)).toEqual([{
+        attribute: "foo",
+        error: "Foo can't be blank",
+        someOtherProperty: "someOtherProperty"
+      }, {
+        attribute: "foo_bar",
+        error: "Foo bar has some other problem"
+      }]);
     });
 
     it("doesn't modify the input", function() {
-      var errors = {foo: ["can't be blank"]};
-      fullMessages(errors);
-      expect(errors).toEqual({foo: ["can't be blank"]});
+      var errors = [{
+        attribute: "foo",
+        error: "can't be blank"
+      }];
+      convertErrorMessages(errors);
+      expect(errors).toEqual([{
+        attribute: "foo",
+        error: "can't be blank"
+      }]);
     });
 
     it("returns an empty object if there are no errors", function() {
-      expect(fullMessages()).toEqual({});
-    });
-
-    it("accepts a flatten option", function() {
-      var errors = {
-        foo: ["can't be blank", "is too short"],
-        foo_bar: ["is simply not good enough"]
-      };
-
-      var actual = fullMessages(errors, {flatten: true});
-      expect(actual.sort()).toEqual([
-        "Foo bar is simply not good enough",
-        "Foo can't be blank",
-        "Foo is too short"
-      ]);
-    });
-
-    it("returns an array if there are no errors and flatten is true", function() {
-      expect(fullMessages(null, {flatten: true})).toEqual([]);
+      expect(convertErrorMessages([])).toEqual([]);
     });
 
     it("doesn't prepend the attribute name if the message starts with a ^", function() {
-      var errors = {foo: ["^Please don't do that"]};
-      expect(fullMessages(errors)).toEqual({foo: ["Please don't do that"]});
+      var errors = [{
+        attribute: "foo",
+        error: "^Please don't do that"
+      }];
+      expect(convertErrorMessages(errors)).toEqual([{
+        attribute: "foo",
+        error: "Please don't do that"
+      }]);
     });
 
     it("handles an escaped ^", function() {
-      var errors = {foo: ["\\^ weird error"]};
-      expect(fullMessages(errors)).toEqual({foo: ["Foo ^ weird error"]});
+      var errors = [{
+        attribute: "foo",
+        error: "\\^ has a weird message^\\^"
+      }];
+      expect(convertErrorMessages(errors)).toEqual([{
+        attribute: "foo",
+        error: "Foo ^ has a weird message^^"
+      }]);
     });
 
     it("doesn't prepend the attribute name if fullMessages is false", function() {
-      var errors = {
-        foo: ["can't be blank", "is too short"],
-        foo_bar: ["is simply not good enough"]
-      };
-
-      expect(fullMessages(errors, {fullMessages: false})).toEqual({
-        foo: ["can't be blank", "is too short"],
-        foo_bar: ["is simply not good enough"]
-      });
+      var errors = [{
+        attribute: "foo",
+        error: "Please don't do that"
+      }];
+      expect(convertErrorMessages(errors, {fullMessages: false})).toEqual([{
+        attribute: "foo",
+        error: "Please don't do that"
+      }]);
     });
 
     it("still strips the leading ^ even if fullmessages if false", function() {
-      var errors = {foo: ["^Please don't do that"]}
-        , expected = {foo: ["Please don't do that"]};
-      expect(fullMessages(errors, {fullMessages: false})).toEqual(expected);
+      var errors = [{
+        attribute: "foo",
+        error: "\\^ has a weird message^\\^"
+      }];
+      expect(convertErrorMessages(errors, {fullMessages: false})).toEqual([{
+        attribute: "foo",
+        error: "^ has a weird message^^"
+      }]);
+    });
+  });
+
+  describe("groupErrorsByAttribute", function() {
+    it("groups errors by attribute", function() {
+      var input = [{
+          attribute: "foo",
+          someKey: "someValue"
+        }, {
+          attribute: "bar",
+          someOtherKey: "someOtherValue"
+        }, {
+          attribute: "foo",
+          someThirdKey: "someThirdValue"
+      }];
+
+      expect(validate.groupErrorsByAttribute(input)).toEqual({
+        foo: [{
+          attribute: "foo",
+          someKey: "someValue"
+        }, {
+          attribute: "foo",
+          someThirdKey: "someThirdValue"
+        }],
+        bar: [{
+          attribute: "bar",
+          someOtherKey: "someOtherValue"
+        }]
+      });
+    });
+  });
+
+  describe("processValidationResults", function() {
+    var pvr = validate.processValidationResults;
+
+    it("allows the validator to return a string", function() {
+      var results = [{attribute: "name", error: "foobar"}];
+      expect(pvr(results, {})).toEqual({name: ["Name foobar"]});
+    });
+
+    it("allows the validator to return an array", function() {
+      var results = [{attribute: "name", error: ["foo", "bar"]}];
+      expect(pvr(results, {})).toEqual({name: ["Name foo", "Name bar"]});
+    });
+
+    it("supports multiple entries for the same attribute", function() {
+      var results = [
+        {attribute: "name", error: ["foo", "bar"]},
+        {attribute: "name", error: "baz"}
+      ];
+      expect(pvr(results, {})).toEqual({
+        name: ["Name foo", "Name bar", "Name baz"]
+      });
+    });
+
+    it("the correct functions", function() {
+      spyOn(validate, "pruneEmptyErrors").and.returnValue("pruned");
+      spyOn(validate, "expandMultipleErrors").and.returnValue("expanded");
+      spyOn(validate, "convertErrorMessages").and.returnValue([]);
+      var options = {option: "value"};
+      expect(pvr("input", options)).toBe(undefined);
+
+      expect(validate.pruneEmptyErrors)
+        .toHaveBeenCalledWith("input", options);
+      expect(validate.expandMultipleErrors)
+        .toHaveBeenCalledWith("pruned", options);
+      expect(validate.convertErrorMessages)
+        .toHaveBeenCalledWith("expanded", options);
+    });
+
+    it("throws an error for unknown formats", function() {
+      expect(function() {
+        pvr([], {format: "foobar"});
+      }).toThrow(new Error("Unknown format foobar"));
+    });
+  });
+
+  describe("flattenErrorsToArray", function() {
+    it("flattens an array of errors objects to just the messages", function() {
+      var input = [{
+        error: "error 1",
+        someKey: "someValue"
+      }, {
+        error: "error 2"
+      }];
+      expect(validate.flattenErrorsToArray(input)).toEqual([
+        "error 1",
+        "error 2"
+      ]);
     });
   });
 

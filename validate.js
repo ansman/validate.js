@@ -10,7 +10,10 @@
 
   // The main function that calls the validators specified by the constraints.
   // The options are the following:
-  //   - flatten (boolean) - If `true` will return a flat array instead of an object.
+  //   - format (string) - An option that controls how the returned value is formatted
+  //     * flat - Returns a flat array of just the error messages
+  //     * grouped - Returns the messages grouped by attribute (default)
+  //     * detailed - Returns an array of the raw validation data
   //   - fullMessages (boolean) - If `true` (default) the attribute name is prepended to the error.
   //
   // Please note that the options are also passed to each validator.
@@ -126,6 +129,9 @@
           }
           results.push({
             attribute: attr,
+            value: value,
+            validator: validatorName,
+            options: validatorOptions,
             error: validator.call(validator, value, validatorOptions, attr,
                                   attributes)
           });
@@ -137,28 +143,34 @@
 
     // Takes the output from runValidations and converts it to the correct
     // output format.
-    processValidationResults: function(results, options) {
-      var errors = {};
+    processValidationResults: function(errors, options) {
+      var attr;
 
-      // This indexes the errors per attribute
-      results.forEach(function(result) {
-        var error = result.error
-          , attribute = result.attribute;
+      errors = v.pruneEmptyErrors(errors, options);
+      errors = v.expandMultipleErrors(errors, options);
+      errors = v.convertErrorMessages(errors, options);
 
-        if (v.isString(error)) {
-          error = [error];
-        }
+      switch (options.format || "grouped") {
+        case "detailed":
+          // Do nothing more to the errors
+          break;
 
-        if (error) {
-          errors[attribute] = (errors[attribute] || []).concat(error);
-        }
-      });
+        case "flat":
+          errors = v.flattenErrorsToArray(errors);
+          break;
 
-      // Semi ugly way to check if the errors are empty, try iterating over
-      // them and short circuit when something is found.
-      for (var _ in errors) {
-        return v.fullMessages(errors, options);
+        case "grouped":
+          errors = v.groupErrorsByAttribute(errors);
+          for (attr in errors) {
+            errors[attr] = v.flattenErrorsToArray(errors[attr]);
+          }
+          break;
+
+        default:
+          throw new Error(v.format("Unknown format %{format}", options));
       }
+
+      return v.isEmpty(errors) ? undefined : errors;
     },
 
     // Runs the validations with support for promises.
@@ -185,7 +197,7 @@
 
     single: function(value, constraints, options) {
       options = v.extend({}, v.single.options, options, {
-        flatten: true,
+        format: "flat",
         fullMessages: false
       });
       return v({single: value}, {single: constraints}, options);
@@ -509,42 +521,80 @@
       return str[0].toUpperCase() + str.slice(1);
     },
 
-    fullMessages: function(errors, options) {
+    // Remove all errors who's error attribute is empty (null or undefined)
+    pruneEmptyErrors: function(errors) {
+      return errors.filter(function(error) {
+        return !v.isEmpty(error.error);
+      });
+    },
+
+    // In
+    // [{error: ["err1", "err2"], ...}]
+    // Out
+    // [{error: "err1", ...}, {error: "err2", ...}]
+    //
+    // All attributes in an error with multiple messages are duplicated
+    // when expanding the errors.
+    expandMultipleErrors: function(errors) {
+      var ret = [];
+      errors.forEach(function(error) {
+        // Removes errors without a message
+        if (v.isArray(error.error)) {
+          error.error.forEach(function(msg) {
+            ret.push(v.extend({}, error, {error: msg}));
+          });
+        } else {
+          ret.push(error);
+        }
+      });
+      return ret;
+    },
+
+    // Converts the error mesages by prepending the attribute name unless the
+    // message is prefixed by ^
+    convertErrorMessages: function(errors, options) {
       options = options || {};
 
-      var ret = options.flatten ? [] : {}
-        , attr;
-
-      if (!errors) {
-        return ret;
-      }
-
-      function processErrors(attr, errors) {
-        errors.forEach(function(error) {
-          if (error[0] === '^') {
-            error = error.slice(1);
-          } else if (options.fullMessages !== false) {
-            error = v.format("%{attr} %{message}", {
-              attr: v.capitalize(v.prettify(attr)),
-              message: error
-            });
-          }
-          error = error.replace(/\\\^/g, "^");
-          // If flatten is true a flat array is returned.
-          if (options.flatten) {
-            ret.push(error);
-          } else {
-            (ret[attr] || (ret[attr] = [])).push(error);
-          }
-        });
-      }
-
-      // Converts the errors of object of the format
-      // {attr: [<error>, <error>, ...]} to contain the attribute name.
-      for (attr in errors) {
-        processErrors(attr, errors[attr]);
-      }
+      var ret = [];
+      errors.forEach(function(errorInfo) {
+        var error = errorInfo.error;
+        if (error[0] === '^') {
+          error = error.slice(1);
+        } else if (options.fullMessages !== false) {
+          error = v.format("%{attr} %{message}", {
+            attr: v.capitalize(v.prettify(errorInfo.attribute)),
+            message: error
+          });
+        }
+        error = error.replace(/\\\^/g, "^");
+        ret.push(v.extend({}, errorInfo, {error: error}));
+      });
       return ret;
+    },
+
+    // In:
+    // [{attribute: "<attributeName>", ...}]
+    // Out:
+    // {"<attributeName>": [{attribute: "<attributeName>", ...}]}
+    groupErrorsByAttribute: function(errors) {
+      var ret = {};
+      errors.forEach(function(error) {
+        var list = ret[error.attribute];
+        if (list) {
+          list.push(error);
+        } else {
+          ret[error.attribute] = [error];
+        }
+      });
+      return ret;
+    },
+
+    // In:
+    // [{error: "<message 1>", ...}, {error: "<message 2>", ...}]
+    // Out:
+    // ["<message 1>", "<message 2>"]
+    flattenErrorsToArray: function(errors) {
+      return errors.map(function(error) { return error.error; });
     },
 
     exposeModule: function(validate, root, exports, module, define) {
