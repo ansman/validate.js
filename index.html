@@ -538,14 +538,7 @@ validate.Promise = Q.Promise;</code></pre>
               Validate.js works with any ECMAScript 5.1 runtime which means it works in
               both the browser and in node.js
             </p>
-            <p>
-              All modern browsers are supported (IE9+, Firefox 3+, Opera 10.5+, Safari 4+).<br>
-              IE8 support can likely be achived by polyfilling the following functions:
-            </p>
-            <ul>
-              <li><code>Array.prototype.indexOf</code></li>
-              <li><code>String.prototype.trim</code></li>
-            </ul>
+            <p>All modern browsers are supported (IE9+, Firefox 3+, Opera 10.5+, Safari 4+, Chrome).</p>
           </div>
           <div id="examples">
             <h3>Examples</h3>
@@ -1998,7 +1991,7 @@ validate.result("foo".toUpperCase);
                 Thanks <a href="https://github.com/ansman/validate.js/issues/20" target="_blank">Norman Xu</a> for reporting this.
               </li>
               <li>
-                <b>Breaking:</b> If a async validator throw an error (or rejects
+                <b>Breaking:</b> If an async validator throws an error (or rejects
                 the promise with an <code>Error</code>) the validation promise
                 is rejected with the same error. Thanks
                 <a href="https://github.com/ansman/validate.js/issues/10" target="_blank">Sebastian Seilund, Dmitry Kirilyuk and Dave Kushner</a>
