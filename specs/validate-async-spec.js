@@ -27,6 +27,7 @@ describe("validate.async", function() {
   afterEach(function() {
     delete validate.validators.asyncFail;
     delete validate.validators.asyncSuccess;
+    delete validate.validators.asyncError;
     delete validate.async.options;
     validate.Promise = Promise;
   });
@@ -66,7 +67,6 @@ describe("validate.async", function() {
       expect(error).toHaveBeenCalled();
     });
   });
-
 
   it.promise("handles validators returning a promise", function() {
     var c = {
@@ -158,17 +158,55 @@ describe("validate.async", function() {
         expect(validate.warn).toHaveBeenCalled();
       });
     });
+
+    it.promise("rejects the promise if any promise throw an exception", function() {
+      var results = [{
+        attribute: "foo",
+        error: new validate.Promise(function(res, rej) { res(); })
+      }, {
+        attribute: "bar",
+        error: new validate.Promise(function(resolve, reject) {
+          throw new Error("Error");
+        })
+      }, {
+        attribute: "baz",
+        error: new validate.Promise(function(res, rej) { res(); })
+      }];
+
+      return validate.waitForResults(results).then(success, error).then(function() {
+        expect(success).not.toHaveBeenCalled();
+        expect(error).toHaveBeenCalledWith(new Error("Error"));
+      });
+    });
   });
 
   it.promise("allows default options", function() {
-    validate.async.options = {flatten: true};
+    validate.async.options = {format: "flat"};
     var c = {name: {presence: true}}
       , options = {foo: "bar"};
     return validate.async({}, c, options).then(success, error).then(function() {
       expect(success).not.toHaveBeenCalled();
       expect(error).toHaveBeenCalledWith(["Name can't be blank"]);
       expect(options).toEqual({foo: "bar"});
-      expect(validate.async.options).toEqual({flatten: true});
+      expect(validate.async.options).toEqual({format: "flat"});
+    });
+  });
+
+  it.promise("rejects the promise with an error if an exception is thrown", function() {
+    var c = {
+      attribute: {
+        asyncError: true
+      }
+    };
+    validate.validators.asyncError = function() {
+      return new Promise(function(resolve, reject) {
+        reject(new Error("Some error"));
+      });
+    };
+
+    return validate.async({}, c).then(success, error).then(function() {
+      expect(success).not.toHaveBeenCalled();
+      expect(error).toHaveBeenCalledWith(new Error("Some error"));
     });
   });
 });

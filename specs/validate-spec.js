@@ -72,7 +72,7 @@ describe("validate", function() {
       ]
     });
 
-    expect(validate(attributes, constraints, {flatten: true})).toEqual([
+    expect(validate(attributes, constraints, {format: "flat"})).toEqual([
       "Email must be a valid email address",
       "Email is simply not good enough",
       "Addresses work street is simply not good enough"
@@ -117,17 +117,26 @@ describe("validate", function() {
       pass.and.returnValue(null);
 
       var options = {someOption: true}
-        , constraints = {name: {fail: true, fail2: true, pass: true}};
-      var result = validate.runValidations({}, constraints, {});
+        , constraints = {name: {fail: options, fail2: true, pass: true}};
+      var result = validate.runValidations({name: "test"}, constraints, {});
 
       expect(result).toHaveItems([{
         attribute: "name",
+        value: "test",
+        validator: "fail",
+        options: options,
         error: "foobar"
       }, {
         attribute: "name",
+        value: "test",
+        validator: "fail2",
+        options: true,
         error: ["foo", "bar"]
       }, {
         attribute: "name",
+        value: "test",
+        validator: "pass",
+        options: true,
         error: null
       }]);
     });
@@ -135,14 +144,30 @@ describe("validate", function() {
     it("validates all attributes", function() {
       fail.and.returnValue("error");
       var constraints = {
-        attr1: {pass: true},
+        attr1: {pass: {foo: "bar"}},
         attr2: {fail: true},
         attr3: {fail: true}
       };
       expect(validate.runValidations({}, constraints, {})).toHaveItems([
-        {attribute: "attr1", error: undefined},
-        {attribute: "attr2", error: "error"},
-        {attribute: "attr3", error: "error"}
+        {
+          attribute: "attr1",
+          value: undefined,
+          validator: "pass",
+          options: {foo: "bar"},
+          error: undefined
+        }, {
+          attribute: "attr2",
+          value: undefined,
+          validator: "fail",
+          options: true,
+          error: "error"
+        }, {
+          attribute: "attr3",
+          value: undefined,
+          validator: "fail",
+          options: true,
+          error: "error"
+        }
       ]);
     });
 
@@ -191,64 +216,94 @@ describe("validate", function() {
     });
   });
 
-  describe("processValidationResults", function() {
-    var pvr = validate.processValidationResults;
+  describe("format", function() {
+    describe("flat", function() {
+      it("returns a flat list of errors", function() {
+        var c = {
+          foo: {
+            presence: true,
+            numericality: true,
+            length: {
+              is: 23,
+              wrongLength: "some error"
+            }
+          }
+        };
+        expect(validate({foo: "bar"}, c, {format: "flat"})).toHaveItems([
+          "Foo some error",
+          "Foo is not a number"
+        ]);
+      });
 
-    it("allows the validator to return a string", function() {
-      var results = [{attribute: "name", error: "foobar"}];
-      expect(pvr(results, {})).toEqual({name: ["Name foobar"]});
-    });
-
-    it("allows the validator to return an array", function() {
-      var results = [{attribute: "name", error: ["foo", "bar"]}];
-      expect(pvr(results, {})).toEqual({name: ["Name foo", "Name bar"]});
-    });
-
-    it("supports multiple entries for the same attribue", function() {
-      var results = [
-        {attribute: "name", error: ["foo", "bar"]},
-        {attribute: "name", error: "baz"}
-      ];
-      expect(pvr(results, {})).toEqual({
-        name: ["Name foo", "Name bar", "Name baz"]
+      it("fullMessages = false", function() {
+        var constraints = {foo: {presence: true}}
+          , options = {format: "flat", fullMessages: false};
+        expect(validate({}, constraints, options)).toEqual(["can't be blank"]);
       });
     });
-  });
 
-  describe("fullMessages", function() {
-    it("calls fullMessages regardless of the fullMessages option", function() {
-      spyOn(validate, 'fullMessages');
-      var options = {option1: "value1", fullMessages: false}
-        , constraints = {name: {fail: true}};
-
-      validate({}, constraints, options);
-      expect(validate.fullMessages).toHaveBeenCalledWith(
-        {name: ["my error"]},
-        options
-      );
-
-      options.fullMessages = true;
-      validate({}, constraints, options);
-      expect(validate.fullMessages).toHaveBeenCalledWith(
-        {name: ["my error"]},
-        options
-      );
+    describe("detailedErrors", function() {
+      it("allows you to get more info about the errors", function() {
+        var attributes = {
+          foo: "foo",
+          bar: 10
+        };
+        var c = {
+          foo: {
+            presence: true,
+            length: {
+              is: 15,
+              message: "^foobar",
+              someOption: "someValue"
+            }
+          },
+          bar: {
+            numericality: {
+              lessThan: 5,
+              greaterThan: 15
+            }
+          }
+        };
+        expect(validate(attributes, c, {format: "detailed"})).toHaveItems([{
+            attribute: "foo",
+            value: "foo",
+            validator: "length",
+            options: {
+              is: 15,
+              message: "^foobar",
+              someOption: "someValue"
+            },
+            error: "foobar"
+          }, {
+            attribute: "bar",
+            value: 10,
+            validator: "numericality",
+            options: {
+              lessThan: 5,
+              greaterThan: 15
+            },
+            error: "Bar must be greater than 15"
+          }, {
+            attribute: "bar",
+            value: 10,
+            validator: "numericality",
+            options: {
+              lessThan: 5,
+              greaterThan: 15
+            },
+            error: "Bar must be less than 5"
+        }]);
+      });
     });
-  });
-
-  it("works with flatten: true and fullMessages: false", function() {
-    var constraints = {foo: {presence: true}}
-      , options = {flatten: true, fullMessages: false};
-    expect(validate({}, constraints, options)).toEqual(["can't be blank"]);
   });
 
   it("allows default options", function() {
     var constraints = {foo: {presence: true}}
       , options = {foo: "bar"};
-    validate.options = {flatten: true};
+    validate.options = {format: "flat"};
     expect(validate({}, constraints, options)).toEqual(["Foo can't be blank"]);
     expect(options).toEqual({foo: "bar"});
-    expect(validate.options).toEqual({flatten: true});
+    expect(validate.options).toEqual({format: "flat"});
   });
 
   describe("single", function() {
@@ -268,12 +323,48 @@ describe("validate", function() {
       expect(validate.single("foobar", validators)).not.toBeDefined();
     });
 
-    it("ignores the flatten and fullMessages options", function() {
+    it("doesn't support the format and fullMessages options", function() {
       var validators = {presence: true}
-        , options = {flatten: false, fullMessages: true};
+        , options = {format: "detailed", fullMessages: true};
 
       expect(validate.single(null, validators, options))
         .toEqual(["can't be blank"]);
+    });
+  });
+
+  describe("version", function() {
+    var metadata = validate.version.metadata;
+
+    beforeEach(function() {
+      validate.version.metadata = null;
+    });
+
+    afterEach(function() {
+      validate.version.metadata = metadata;
+    });
+
+    it("contains major, minor and patch version", function() {
+      expect(validate.version.major).toBeANumber();
+      expect(validate.version.minor).toBeANumber();
+      expect(validate.version.patch).toBeANumber();
+    });
+
+    it("can be converted to a string", function() {
+      var version = validate.version.major + "." +
+        validate.version.minor + "." +
+        validate.version.patch;
+
+      expect("" + validate.version).toEqual(version);
+    });
+
+    it("the string version can have metadata", function() {
+      var version = validate.version.major + "." +
+        validate.version.minor + "." +
+        validate.version.patch + "+foobar";
+
+      validate.version.metadata = "foobar";
+
+      expect("" + validate.version).toEqual(version);
     });
   });
 });
