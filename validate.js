@@ -179,6 +179,12 @@
     // It can be called even if no validations returned a promise.
     async: function(attributes, constraints, options) {
       options = v.extend({}, v.async.options, options);
+
+      // Removes unknown attributes
+      if (options.cleanAttributes !== false) {
+        attributes = v.cleanAttributes(attributes, constraints);
+      }
+
       var results = v.runValidations(attributes, constraints, options);
 
       return new v.Promise(function(resolve, reject) {
@@ -425,8 +431,8 @@
       return value in obj;
     },
 
-    getDeepObjectValue: function(obj, keypath) {
-      if (!v.isObject(obj) || !v.isString(keypath)) {
+    forEachKeyInKeypath: function(object, keypath, callback) {
+      if (!v.isString(keypath)) {
         return undefined;
       }
 
@@ -440,11 +446,9 @@
             if (escape) {
               escape = false;
               key += '.';
-            } else if (key in obj) {
-              obj = obj[key];
-              key = "";
             } else {
-              return undefined;
+              object = callback(object, key, false);
+              key = "";
             }
             break;
 
@@ -464,11 +468,19 @@
         }
       }
 
-      if (v.isDefined(obj) && key in obj) {
-        return obj[key];
-      } else {
+      return callback(object, key, true);
+    },
+
+    getDeepObjectValue: function(obj, keypath) {
+      if (!v.isObject(obj)) {
         return undefined;
       }
+
+      return v.forEachKeyInKeypath(obj, keypath, function(obj, key) {
+        if (v.isObject(obj)) {
+          return obj[key];
+        }
+      });
     },
 
     // This returns an object with all the values of the form.
@@ -618,6 +630,54 @@
     // ["<message 1>", "<message 2>"]
     flattenErrorsToArray: function(errors) {
       return errors.map(function(error) { return error.error; });
+    },
+
+    cleanAttributes: function(attributes, whitelist) {
+      function buildObjectWhitelist(whitelist) {
+        var ow = {}
+          , lastObject
+          , attr;
+        for (attr in whitelist) {
+          if (!whitelist[attr]) {
+            continue;
+          }
+          v.forEachKeyInKeypath(ow, attr, function(obj, key, last) {
+            if (v.isObject(obj[key])) {
+              return obj[key];
+            }
+            return obj[key] = last ? true : {};
+          });
+        }
+        return ow;
+      }
+
+      function cleanRecursive(attributes, whitelist) {
+        if (!v.isObject(attributes)) {
+          return attributes;
+        }
+
+        var ret = v.extend({}, attributes)
+          , w
+          , attribute;
+
+        for (attribute in attributes) {
+          w = whitelist[attribute];
+
+          if (v.isObject(w)) {
+            ret[attribute] = cleanRecursive(ret[attribute], w);
+          } else if (!w) {
+            delete ret[attribute];
+          }
+        }
+        return ret;
+      }
+
+      if (!v.isObject(whitelist) || !v.isObject(attributes)) {
+        return {};
+      }
+
+      whitelist = buildObjectWhitelist(whitelist);
+      return cleanRecursive(attributes, whitelist);
     },
 
     exposeModule: function(validate, root, exports, module, define) {

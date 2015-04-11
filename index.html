@@ -376,6 +376,7 @@
         <a href="#utilities">Utilities</a>
         <ul>
           <li><a href="#utilities-capitalize">capitalize</a></li>
+          <li><a href="#utilities-clean-attributes">cleanAttributes</a></li>
           <li><a href="#utilities-collect-form-values">collectFormValues</a></li>
           <li><a href="#utilities-contains">contains</a></li>
           <li><a href="#utilities-extend">extend</a></li>
@@ -398,6 +399,7 @@
       <li>
         <a href="#changelog">Changelog</a>
         <ul>
+          <li><a href="#changelog-wip">WIP</a></li>
           <li><a href="#changelog-0-7-0">0.7.0</a></li>
           <li><a href="#changelog-0-6-1">0.6.1</a></li>
           <li><a href="#changelog-0-6-0">0.6.0</a></li>
@@ -743,8 +745,7 @@ validate({}, {username: {presence: {message: "^You must pick a username"}}});
             </p>
             <p class="description">
               Validate.js supports async validations through the <code>validate.async</code>
-              function. It has the same signature as the regular validation function
-              and accepts the same options.
+              function. It has the same signature as the regular validation function.
             </p>
             <p class="description">
               <code>validate.async</code> returns a
@@ -752,6 +753,13 @@ validate({}, {username: {presence: {message: "^You must pick a username"}}});
               that is resolved if the validation passes and is rejected if the
               validation failed, passing the errors as the first argument.<br>
               The errors has the same format as the errors from the regular validation function.
+            </p>
+            <p class="description">
+              Besides accepting all options as the non async validation function
+              it also accepts an option called <b>cleanAttributes</b> which,
+              unless <code>false</code>, makes <code>validate.async</code>
+              call <a href="#utilities-clean-attributes"><code>validate.cleanAttributes</code></a>
+              before resolving the promise.
             </p>
             <p class="description">
               If an <code>Error</code> is thrown from an async validator the
@@ -776,21 +784,38 @@ validate({}, {username: {presence: {message: "^You must pick a username"}}});
               compatible and will not work.
             </p>
             <p class="description">Example:</p>
-            <pre><code class="javascript">var success = function() {
-      alert("The validations passed");
-    }
-  , error = function(errors) {
-      if (errors instanceof Error) {
-        // This means an exception was thrown from a validator
-        console.err(errors);
-      } else {
-        alert(JSON.stringify(errors, null, 2));
-      }
-    }
-  , constraints = {name: {presence: true}};
+            <pre><code class="javascript">function success(attributes) {
+  console.log(attributes);
+}
 
-// Will call the success function
-validate.async({name: "Nicklas"}, constraints).then(success, error);
+function error(errors) {
+  if (errors instanceof Error) {
+    // This means an exception was thrown from a validator
+    console.err("An error ocurred", errors);
+  } else {
+    console.log(errors);
+  }
+}
+
+var constraints = {
+  name: {
+    presence: true
+  },
+  // This is so the country doesn't get removed when cleaning the attributes
+  country: {}
+};
+
+var attributes = {
+  name: "Nicklas",
+  country: "Sweden",
+  someMaliciousAttribute: "scary value"
+};
+
+// Will call the success function and log {
+//   name: "Nicklas",
+//   country: "Sweden"
+// }
+validate.async(attributes, constraints).then(success, error);
 
 // Will call the error function
 validate.async({}, constraints).then(success, error);
@@ -886,7 +911,7 @@ validate({"foo.bar": 3}, {"foo\\.bar": {numericality: {even: true}}});
 };
 
 validate.options = {format: "flat"};
-validate.async.options = {format: "flat"};
+validate.async.options = {format: "flat", cleanAttributes: false};
 validate.validators.presence.options = {message: "can't be empty"};
 
 // The default options will be used for both the
@@ -1579,6 +1604,65 @@ validate({complexAttribute: [1,2,3], otherComplexAttribute: [3,2,1]}, constraint
             <pre><code class="javascript">validate.capitalize("foobar");
 // =&gt; "Foobar"</code></pre>
           </div>
+          <div id="utilities-clean-attributes">
+            <div class="signature">
+              <b>cleanAttributes</b>
+              <code>validate.cleanAttributes(attributes, whitelist)</code>
+            </div>
+            <p class="description">
+              Returns an object that only contains the whitelisted attributes.
+              It will remove all attributes that have a falsy value in the whitelist.
+            </p>
+            <p class="description">
+              It also accepts a constraints object used for the validation but
+              to make it keep attributes that doesn't have any constraints
+              you can simply set the constraints for that attribute to <code>{}</code>.
+            </p>
+            <pre><code class="javascript">var whitelist = {
+  name: true,
+  "address.street": true,
+  "address.postal": true,
+  "something\\.with\\.periods": true
+};
+
+var attributes = {
+  name: "Nicklas",
+  address: {
+    street: "Drottninggatan 98",
+    postal: "111 60"
+  },
+  "something.with.periods": "some value",
+  id: 4711,
+  createdAt: "1970-01-01 00:00"
+};
+
+validate.cleanAttributes(attributes, whitelist);
+// =&gt; {
+//   name: "Nicklas",
+//     street: "Drottninggatan 98",
+//     postal: "111 60"
+//   },
+//   "something.with.periods": "some value"
+// }
+
+var constraints = {
+  name: {
+    presence: true
+  },
+  "address.street": {},
+  "address.postal": {},
+  "something\\.with\\.periods": {}
+};
+
+validate.cleanAttributes(attributes, constraints);
+// =&gt; {
+//   name: "Nicklas",
+//     street: "Drottninggatan 98",
+//     postal: "111 60"
+//   },
+//   "something.with.periods": "some value"
+// }</code></pre>
+          </div>
           <div id="utilities-collect-form-values">
             <div class="signature">
               <b>collectFormValues</b>
@@ -1973,6 +2057,26 @@ validate.result("foo".toUpperCase);
         </div>
         <div id="changelog">
           <h2>Changelog</h2>
+          <div id="changelog-wip">
+            <h3>
+              <b>WIP</b>
+            </h3>
+            <ul>
+              <li>
+                Added <code>validate.cleanAttributes</code> as a way of removing
+                unknown attributes. Thanks to
+                <a href="https://github.com/ansman/validate.js/issues/43" target="_blank">Johannes Edelstam</a>
+                for suggesting this.
+              </li>
+              <li>
+                <b>Breaking:</b> <code>validate.async</code> now cleans attributes
+                before resolving the promise. This can be disabled by
+                setting the <code>cleanAttributes</code> option to <code>false</code>
+                like this:
+                <pre class="javascript"><code>validate.async.options = {cleanAttributes: false};</code></pre>
+              </li>
+            </ul>
+          </div>
           <div id="changelog-0-7-0">
             <h3>
               <b class="version">0.7.0</b>

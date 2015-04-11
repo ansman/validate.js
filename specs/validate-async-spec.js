@@ -53,8 +53,9 @@ describe("validate.async", function() {
   });
 
   it.promise("resolves the promise if all constraints pass", function() {
-    var attrs = {foo: "bar"};
-    return validate.async(attrs, {}).then(success, error).then(function() {
+    var attrs = {foo: "bar"}
+      , constraints = {foo: {presence: true}};
+    return validate.async(attrs, constraints).then(success, error).then(function() {
       expect(error).not.toHaveBeenCalled();
       expect(success).toHaveBeenCalledWith(attrs);
     });
@@ -207,6 +208,34 @@ describe("validate.async", function() {
     return validate.async({}, c).then(success, error).then(function() {
       expect(success).not.toHaveBeenCalled();
       expect(error).toHaveBeenCalledWith(new Error("Some error"));
+    });
+  });
+
+  it.promise("cleans the attributes per default", function() {
+    var attrs = {foo: "bar"}
+      , constraints = {bar: {presence: true}}
+      , cleaned = {bar: "foo"};
+
+    spyOn(validate, "cleanAttributes").and.returnValue(cleaned);
+
+    return validate.async(attrs, constraints).then(success, error).then(function() {
+      expect(error).not.toHaveBeenCalled();
+      expect(success).toHaveBeenCalledWith(cleaned);
+      expect(validate.cleanAttributes).toHaveBeenCalledWith(attrs, constraints);
+    });
+  });
+
+  it.promise("doesn't cleans the attributes is cleanAttributes: false", function() {
+    var attrs = {foo: "bar"}
+      , constraints = {foo: {presence: true}}
+      , cleaned = {bar: "foo"};
+
+    spyOn(validate, "cleanAttributes").and.returnValue(cleaned);
+
+    return validate.async(attrs, constraints, {cleanAttributes: false}).then(success, error).then(function() {
+      expect(error).not.toHaveBeenCalled();
+      expect(success).toHaveBeenCalledWith(attrs);
+      expect(validate.cleanAttributes).not.toHaveBeenCalled();
     });
   });
 });
