@@ -633,6 +633,13 @@
     },
 
     cleanAttributes: function(attributes, whitelist) {
+      function whitelistCreator(obj, key, last) {
+        if (v.isObject(obj[key])) {
+          return obj[key];
+        }
+        return (obj[key] = last ? true : {});
+      }
+
       function buildObjectWhitelist(whitelist) {
         var ow = {}
           , lastObject
@@ -641,12 +648,7 @@
           if (!whitelist[attr]) {
             continue;
           }
-          v.forEachKeyInKeypath(ow, attr, function(obj, key, last) {
-            if (v.isObject(obj[key])) {
-              return obj[key];
-            }
-            return obj[key] = last ? true : {};
-          });
+          v.forEachKeyInKeypath(ow, attr, whitelistCreator);
         }
         return ow;
       }
