@@ -1,5 +1,5 @@
 {
-  "name": "validate.js",
+  "name": "validate",
   "main": "validate.js",
   "version": "0.7.0",
   "ignore": [
