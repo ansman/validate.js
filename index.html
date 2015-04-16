@@ -401,7 +401,7 @@
         <a href="#changelog">Changelog</a>
         <ul>
           <li><a href="#changelog-wip">WIP</a></li>
-          <li><a href="#changelog-0.7.1">0.7.1</a></li>
+          <li><a href="#changelog-0-7-1">0.7.1</a></li>
           <li><a href="#changelog-0-7-0">0.7.0</a></li>
           <li><a href="#changelog-0-6-1">0.6.1</a></li>
           <li><a href="#changelog-0-6-0">0.6.0</a></li>
@@ -890,8 +890,7 @@ validate({addresses: {shipping: {street: "Foobar"}}}, constraints);
 // =&gt; {"addresses.shipping.street": ["The street for the shipping address must be a valid street name"]}
 
 validate({"foo.bar": 3}, {"foo\\.bar": {numericality: {even: true}}});
-// =&gt; {"foo\.bar": ["Foo bar must be even"]}
-            </code></pre>
+// =&gt; {"foo\.bar": ["Foo bar must be even"]}</code></pre>
           </div>
           <div id="validate-default-options">
             <h3>Default options</h3>
