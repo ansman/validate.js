@@ -274,6 +274,11 @@
       return obj === Object(obj);
     },
 
+    // Simply checks if the object is an instance of a date
+    isDate: function(obj) {
+      return obj instanceof Date;
+    },
+
     // Returns false if the object is `null` of `undefined`
     isDefined: function(obj) {
       return obj !== null && obj !== undefined;
@@ -332,6 +337,11 @@
       // For arrays we use the length property
       if (v.isArray(value)) {
         return value.length === 0;
+      }
+
+      // Dates have no attributes but aren't empty
+      if (v.isDate(value)) {
+        return false;
       }
 
       // If we find at least one property we consider it non empty

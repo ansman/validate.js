@@ -382,6 +382,7 @@
           <li><a href="#utilities-format">format</a></li>
           <li><a href="#utilities-get-deep-object-value">getDeepObjectValue</a></li>
           <li><a href="#utilities-is-array">isArray</a></li>
+          <li><a href="#utilities-is-date">isDate</a></li>
           <li><a href="#utilities-is-defined">isDefined</a></li>
           <li><a href="#utilities-is-dom-element">isDomElement</a></li>
           <li><a href="#utilities-is-empty">isEmpty</a></li>
@@ -398,6 +399,7 @@
       <li>
         <a href="#changelog">Changelog</a>
         <ul>
+          <li><a href="#changelog-wip">WIP</a></li>
           <li><a href="#changelog-0-7-0">0.7.0</a></li>
           <li><a href="#changelog-0-6-1">0.6.1</a></li>
           <li><a href="#changelog-0-6-0">0.6.0</a></li>
@@ -1742,6 +1744,23 @@ validate.getDeepObjectValue({"foo.bar": "baz"}, "foo\\.bar");
 validate.isArray([]);
 // =&gt; true</code></pre>
           </div>
+          <div id="utilities-is-date">
+            <div class="signature">
+              <b>isDate</b>
+              <code>validate.isDate(value)</code>
+            </div>
+            <p class="description">
+              Check if the given value is a <code>Date</code> instance.
+            </p>
+            <pre><code class="javascript">validate.isDate(new Date());
+// =&gt; true
+
+validate.isDate(null);
+// =&gt; false
+
+validate.isDate({});
+// =&gt; false</code></pre>
+          </div>
           <div id="utilities-is-defined">
             <div class="signature">
               <b>isDefined</b>
@@ -1977,6 +1996,19 @@ validate.result("foo".toUpperCase);
         </div>
         <div id="changelog">
           <h2>Changelog</h2>
+          <div id="changelog-wip">
+            <h3>
+              <b class="version">WIP</b>
+            </h3>
+            <ul>
+              <li>
+                Fixed an issue where dates would not be accepted by the presence
+                validator due to an issue in <code>validate.isEmpty</code>.
+                Thanks <a href="https://github.com/ansman/validate.js/issues/48" target="_blank">Yun Jia</a>
+                for reporting this.
+              </li>
+            </ul>
+          </div>
           <div id="changelog-0-7-0">
             <h3>
               <b class="version">0.7.0</b>
