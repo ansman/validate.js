@@ -1,4 +1,4 @@
-//     Validate.js 0.7.0
+//     Validate.js 0.7.1
 
 //     (c) 2013-2015 Nicklas Ansman, 2013 Wrapp
 //     Validate.js may be freely distributed under the MIT license.
@@ -55,7 +55,7 @@
     version: {
       major: 0,
       minor: 7,
-      patch: 0,
+      patch: 1,
       metadata: null,
       toString: function() {
         var version = v.format("%{major}.%{minor}.%{patch}", v.version);
