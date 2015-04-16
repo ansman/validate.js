@@ -759,6 +759,18 @@ describe("validate", function() {
     });
   });
 
+  describe("isDate", function() {
+    it("returns true for dates", function() {
+      expect(validate.isDate(new Date())).toBe(true);
+    });
+
+    it("returns false for non dates", function() {
+      expect(validate.isDate(new XDate())).toBe(false);
+      expect(validate.isDate(Date.now())).toBe(false);
+      expect(validate.isDate({})).toBe(false);
+    });
+  });
+
   describe("isEmpty", function() {
     it("considers null and undefined values empty", function() {
       expect(validate.isEmpty(null)).toBe(true);
@@ -789,6 +801,12 @@ describe("validate", function() {
     it("considers false and 0 non empty", function() {
       expect(validate.isEmpty(false)).toBe(false);
       expect(validate.isEmpty(0)).toBe(false);
+    });
+
+    it("considers date non empty", function() {
+      spyOn(validate, "isDate").and.callThrough();
+      expect(validate.isEmpty(new Date())).toBe(false);
+      expect(validate.isDate).toHaveBeenCalled();
     });
   });
 
