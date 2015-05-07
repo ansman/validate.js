@@ -896,7 +896,7 @@
 
         if (v.isFunction(v.XDate)) {
           format = format || (options.dateOnly ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss");
-          return new XDate(date, true).toString(format);
+          return new v.XDate(date, true).toString(format);
         }
 
         if (v.isDefined(v.moment)) {
