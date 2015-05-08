@@ -2093,6 +2093,12 @@ validate.result("foo".toUpperCase);
                 like this:
                 <pre class="javascript"><code>validate.async.options = {cleanAttributes: false};</code></pre>
               </li>
+              <li>
+                Fix a bug where the <code>validate.XDate</code> would be ignored
+                and the global XDate would be used instead.
+                Thanks <a href="https://github.com/ansman/validate.js/pull/52" target="_blank">Andrew Luetgers</a>
+                for fixing this.
+              </li>
             </ul>
           </div>
           <div id="changelog-0-7-1">
