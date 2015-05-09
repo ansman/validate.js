@@ -1640,6 +1640,7 @@ var attributes = {
 validate.cleanAttributes(attributes, whitelist);
 // =&gt; {
 //   name: "Nicklas",
+//   address: {
 //     street: "Drottninggatan 98",
 //     postal: "111 60"
 //   },
@@ -1658,6 +1659,7 @@ var constraints = {
 validate.cleanAttributes(attributes, constraints);
 // =&gt; {
 //   name: "Nicklas",
+//   address: {
 //     street: "Drottninggatan 98",
 //     postal: "111 60"
 //   },
