@@ -170,7 +170,9 @@
           throw new Error(v.format("Unknown format %{format}", options));
       }
 
-      return v.isEmpty(errors) ? undefined : errors;
+      var resp = v.isEmpty(errors) ? undefined : errors;
+
+      return resp && options.wrapErrors ? new options.wrapErrors(resp) : resp;
     },
 
     // Runs the validations with support for promises.
