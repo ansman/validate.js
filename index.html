@@ -5,12 +5,13 @@
   <title>Validate.js</title>
   <link rel="shortcut icon" type="image/png" href="favicon.png">
   <meta name="viewport" content="width=device-width, user-scalable=0, initial-scale=1, maximum-scale=1">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.4/styles/default.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.4/styles/github.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.4/highlight.min.js"></script>
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.4/styles/default.min.css">
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.4/styles/github.min.css">
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/7.4/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/bluebird/2.9.25/bluebird.min.js"></script>
   <script src="https://cdn.jsdelivr.net/xdate/0.8/xdate.min.js"></script>
   <script src="validate.js"></script>
   <style>
@@ -758,10 +759,13 @@ validate({}, {username: {presence: {message: "^You must pick a username"}}});
             </p>
             <p class="description">
               Besides accepting all options as the non async validation function
-              it also accepts an option called <b>cleanAttributes</b> which,
+              it also accepts two additional options; <b>cleanAttributes</b> which,
               unless <code>false</code>, makes <code>validate.async</code>
               call <a href="#utilities-clean-attributes"><code>validate.cleanAttributes</code></a>
-              before resolving the promise.
+              before resolving the promise and <b>wrapErrors</b> which can be
+              a function or constructor that will be called with the errors,
+              options, attributes and constraints if an error occurs. This allows
+              you to define a better way of catching validation errors.
             </p>
             <p class="description">
               If an <code>Error</code> is thrown from an async validator the
@@ -787,7 +791,7 @@ validate({}, {username: {presence: {message: "^You must pick a username"}}});
             </p>
             <p class="description">Example:</p>
             <pre><code class="javascript">function success(attributes) {
-  console.log(attributes);
+  console.log("Success!", attributes);
 }
 
 function error(errors) {
@@ -795,7 +799,7 @@ function error(errors) {
     // This means an exception was thrown from a validator
     console.err("An error ocurred", errors);
   } else {
-    console.log(errors);
+    console.log("Validation errors", errors);
   }
 }
 
@@ -821,6 +825,27 @@ validate.async(attributes, constraints).then(success, error);
 
 // Will call the error function
 validate.async({}, constraints).then(success, error);
+
+function ValidationErrors(errors, options, attributes, constraints) {
+  Error.captureStackTrace(this, this.constructor);
+  this.errors = errors;
+  this.options = options;
+  this.attributes = attributes;
+  this.constraints = constraints;
+}
+ValidationErrors.prototype = new Error();
+
+// This isn't supported by the ES6 promises
+validate.async({}, constraints, {wrapErrors: ValidationErrors})
+  .then(success)
+  .catch(ValidationErrors, function(error) {
+    // Handle the validation errors
+    console.log("ValidationErrors", error);
+  })
+  .catch(function(error) {
+    // Handle other errors;
+    console.log("SystemError", error);
+  });
 
 // Supporting another promise implementation (RSVP in this case)
 validate.Promise = RSVP.Promise;</code></pre>
@@ -2100,6 +2125,12 @@ validate.result("foo".toUpperCase);
                 and the global XDate would be used instead.
                 Thanks <a href="https://github.com/ansman/validate.js/pull/52" target="_blank">Andrew Luetgers</a>
                 for fixing this.
+              </li>
+              <li>
+                Add an options to the async validation to wrap the errors before
+                passing them to the reject handler. Thanks
+                <a href="https://github.com/ansman/validate.js/pull/57" target="_blank">Kristijan Sedlak</a>
+                for suggesting and implementing this.
               </li>
             </ul>
           </div>

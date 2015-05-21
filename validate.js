@@ -170,9 +170,7 @@
           throw new Error(v.format("Unknown format %{format}", options));
       }
 
-      var resp = v.isEmpty(errors) ? undefined : errors;
-
-      return resp && options.wrapErrors ? new options.wrapErrors(resp) : resp;
+      return v.isEmpty(errors) ? undefined : errors;
     },
 
     // Runs the validations with support for promises.
@@ -181,6 +179,10 @@
     // It can be called even if no validations returned a promise.
     async: function(attributes, constraints, options) {
       options = v.extend({}, v.async.options, options);
+
+      var WrapErrors = options.wrapErrors || function(errors) {
+        return errors;
+      };
 
       // Removes unknown attributes
       if (options.cleanAttributes !== false) {
@@ -193,7 +195,7 @@
         v.waitForResults(results).then(function() {
           var errors = v.processValidationResults(results, options);
           if (errors) {
-            reject(errors);
+            reject(new WrapErrors(errors, options, attributes, constraints));
           } else {
             resolve(attributes);
           }

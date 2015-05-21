@@ -238,4 +238,45 @@ describe("validate.async", function() {
       expect(validate.cleanAttributes).not.toHaveBeenCalled();
     });
   });
+
+  describe("wrapping errors", function() {
+    it.promise("it allows you to wrap errors using a custom function", function() {
+      validate.async.options = {someOption: "someValue"};
+
+      var attrs = {foo: "bar", bar: "foo"}
+        , originalConstraints = {foo: {numericality: true}}
+        , wrapped = {attr: ["errors"]}
+        , wrapper = jasmine.createSpy("wrapper").and.callFake(function(errors, options, attributes, constraints) {
+            expect(errors).toEqual({foo: ["Foo is not a number"]});
+            // The options should have been merged with the default options
+            expect(options).toEqual({
+              wrapErrors: wrapper,
+              someOption: "someValue"
+            });
+            expect(attributes).toEqual({foo: "bar"});
+            expect(constraints).toBe(originalConstraints);
+            return wrapped;
+          })
+        , originalOptions = {wrapErrors: wrapper};
+
+      return validate.async(attrs, originalConstraints, originalOptions).then(success, error).then(function() {
+        expect(wrapper).toHaveBeenCalled();
+        expect(error).toHaveBeenCalledWith(wrapped);
+        expect(success).not.toHaveBeenCalled();
+      });
+    });
+
+    it.promise("calls the wrapper function with the new keyword", function() {
+      var wrapper = jasmine.createSpy("wrapper").and.callFake(function(errors) {
+        expect(this.constructor).toBe(wrapper);
+        return errors;
+      });
+
+      return validate.async({}, {foo: {presence: true}}, {wrapErrors: wrapper}).then(success, error).then(function() {
+        expect(error).toHaveBeenCalled();
+        expect(success).not.toHaveBeenCalled();
+        expect(wrapper).toHaveBeenCalled();
+      });
+    });
+  });
 });
