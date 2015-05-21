@@ -33,7 +33,7 @@ describe('validators.datetime', function() {
       }).toThrow();
     });
 
-    function runParseTestsForValidStrings() {
+    function runParseTestsForValidDates() {
         // 2013-10-25 00:00:00 UTC
         expect(parse("2013-10-26", {})).toEqual(1382745600000);
 
@@ -44,6 +44,10 @@ describe('validators.datetime', function() {
         expect(parse("2013-10-26T10:35:24", {})).toEqual(1382783724000);
         // PDT
         expect(parse("2013-10-26T10:35:24-0700", {})).toEqual(1382808924000);
+
+        // PDT
+        var date = new Date("2013-10-26T10:35:24-0700");
+        expect(parse(date, {})).toEqual(date.getTime());
     }
 
     function runNaNTests() {
@@ -56,7 +60,7 @@ describe('validators.datetime', function() {
       });
 
       it("returns the millis since epoch for valid strings", function() {
-        runParseTestsForValidStrings();
+        runParseTestsForValidDates();
       });
 
       it("returns NaN for invalid dates", function() {
@@ -71,7 +75,7 @@ describe('validators.datetime', function() {
       });
 
       it("returns the millis since epoch for valid strings", function() {
-        runParseTestsForValidStrings();
+        runParseTestsForValidDates();
         expect(moment.utc).toHaveBeenCalled();
       });
 
@@ -154,6 +158,10 @@ describe('validators.datetime', function() {
 
   it("allows valid dates", function() {
     expect(datetime("2013-10-26 13:47:00", {})).not.toBeDefined();
+  });
+
+  it("allows date objects", function() {
+    expect(datetime(new Date(), {})).not.toBeDefined();
   });
 
   it("doesn't allow invalid dates", function() {
