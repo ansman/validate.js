@@ -849,7 +849,9 @@ describe("validate", function() {
         '  <option>' +
         '  <option value="option1">' +
         '  <option value="option2">' +
-        '</select>';
+        '</select>' + 
+        '<textarea name="textarea-ignored" data-ignored>the textarea</textarea>'+
+        '<textarea name="textarea">the textarea</textarea>';
 
       expect(validate.collectFormValues(form)).toEqual({
         text: "example text",
@@ -867,8 +869,9 @@ describe("validate", function() {
         "checked-radio": "radio2",
         "unchecked-radio": null,
         "selected-dropdown": "option2",
-        "unselected-dropdown": null
-      });
+        "unselected-dropdown": null,
+        "textarea": "the textarea"
+        });
     });
 
     it("has an option to nullify empty and trim strings", function() {
