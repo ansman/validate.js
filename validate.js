@@ -516,7 +516,7 @@
 
       options = options || {};
 
-      inputs = form.querySelectorAll("input[name]");
+      inputs = form.querySelectorAll("input[name], textarea[name]");
       for (i = 0; i < inputs.length; ++i) {
         input = inputs.item(i);
 
@@ -550,19 +550,6 @@
         values[input.name] = value;
       }
 
-      // include textarea in form value collection, too
-      inputs = form.querySelectorAll("textarea[name]");
-      for (i = 0; i < inputs.length; ++i) {
-        input = inputs.item(i);
-
-        if (v.isDefined(input.getAttribute("data-ignored"))) {
-          continue;
-        }
-
-        value = v.sanitizeFormValue(input.value, options);
-        values[input.name] = value;
-      }
-      
       return values;
     },
 
