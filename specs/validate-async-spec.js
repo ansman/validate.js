@@ -15,6 +15,14 @@ describe("validate.async", function() {
       });
     };
 
+    validate.validators.asyncFailResolve = function() {
+      return new validate.Promise(function(resolve, reject) {
+        setTimeout(function() {
+          resolve("failz");
+        }, 1);
+      });
+    };
+
     validate.validators.asyncSuccess = function() {
       return new validate.Promise(function(resolve, reject) {
         setTimeout(function() {
@@ -26,6 +34,7 @@ describe("validate.async", function() {
 
   afterEach(function() {
     delete validate.validators.asyncFail;
+    delete validate.validators.asyncFailResolve;
     delete validate.validators.asyncSuccess;
     delete validate.validators.asyncError;
     delete validate.async.options;
@@ -84,6 +93,19 @@ describe("validate.async", function() {
     });
   });
 
+  it.promise('handles validators resolving a promise with error', function() {
+    var c = {
+      name: {
+        asyncFailResolve: true
+      }
+    };
+    return validate.async({}, c).then(success, error).then(function() {
+      expect(error).toHaveBeenCalledWith({
+        name: ["Name failz"]
+      });
+    });
+  });
+
   it.promise("supports fullMessages: false", function() {
     var c = {name: {presence: true}};
     return validate.async({}, c, {fullMessages: false}).then(success, error).then(function() {
@@ -113,7 +135,7 @@ describe("validate.async", function() {
       });
     });
 
-    it.promise("handles results with no promises", function() {
+    it.promise("handles results with promises", function() {
       var results = [{
         attribute: "foo",
         error: new validate.Promise(function(resolve, reject) {
