@@ -39,7 +39,7 @@
   // Copies over attributes from one or more sources to a single destination.
   // Very much similar to underscore's extend.
   // The first argument is the target object and the remaining arguments will be
-  // used as targets.
+  // used as sources.
   v.extend = function(obj) {
     [].slice.call(arguments, 1).forEach(function(source) {
       for (var attr in source) {
