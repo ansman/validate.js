@@ -228,8 +228,8 @@
 
         return memo.then(function() {
           return result.error.then(
-            function() {
-              result.error = null;
+            function(validationResult) {
+              result.error = validationResult || null;
             },
             function(error) {
               // If for some reason the validator promise was rejected but no
