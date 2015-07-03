@@ -649,7 +649,7 @@ validate({creditCardNumber: "340000000000000"}, constraints);
             For the format of the <b>constraints</b> see the <a href="#constraints">constraints section</a>.
           </p>
           <p class="description">
-            If the <b>attributes</b> objects is an HTML/DOM element
+            If the <b>attributes</b> objects is an HTML/DOM/jQuery element
             <a href="#utilities-collect-form-values"><code>collectFormValues</code></a>
             is called before validating.
           </p>
@@ -1708,6 +1708,10 @@ validate.cleanAttributes(attributes, constraints);
               name attribute) and collect their values.
             </p>
             <p>
+              The given element can be a regular DOM or jQuery element and can
+              be doesn't have to be a form element.
+            </p>
+            <p>
               The following options exists:
             </p>
             <dl class="dl-horizontal">
@@ -1896,6 +1900,9 @@ validate.isDefined(undefined);
               element. It also checks that the object supports
               <code>querySelector</code> and <code>querySelectorAll</code> which
               is used in the project.
+            </p>
+            <p>
+              Things like jQuery elements are not considered DOM elements.
             </p>
             <pre><code class="javascript">validate.isDomElement({});
 // =&gt; false
@@ -2107,6 +2114,9 @@ validate.result("foo".toUpperCase);
               <b>WIP</b>
             </h3>
             <ul>
+              <li>
+                <code>collectFormValues</code> now accepts jQuery elements.
+              </li>
               <li>
                 <code>collectFormValues</code> now collects values from
                 textareas too.

@@ -811,6 +811,7 @@ describe("validate", function() {
   });
 
   describe("collectFormValues", function() {
+
     it("handles empty input", function() {
       expect(validate.collectFormValues()).toEqual({});
     });
@@ -849,7 +850,7 @@ describe("validate", function() {
         '  <option>' +
         '  <option value="option1">' +
         '  <option value="option2">' +
-        '</select>' + 
+        '</select>' +
         '<textarea name="textarea-ignored" data-ignored>the textarea</textarea>'+
         '<textarea name="textarea">the textarea</textarea>';
 
@@ -923,6 +924,17 @@ describe("validate", function() {
         checked: true,
         unchecked: false
       });
+    });
+
+    it("accepts jquery elements", function() {
+      var $form = $('<form><input value="foobar" name="input" /></form>');
+      expect(validate.collectFormValues($form)).toEqual({
+        input: "foobar"
+      });
+    });
+
+    it("empty jquery collections return empty objects", function() {
+      expect(validate.collectFormValues($())).toEqual({});
     });
   });
 

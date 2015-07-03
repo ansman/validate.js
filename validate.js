@@ -77,7 +77,6 @@
     // If moment is used in node, browserify etc please set this attribute
     // like this: `validate.moment = require("moment");
     moment: typeof moment !== "undefined" ? moment : /* istanbul ignore next */ null,
-
     XDate: typeof XDate !== "undefined" ? XDate : /* istanbul ignore next */ null,
 
     EMPTY_STRING_REGEXP: /^\s*$/,
@@ -95,7 +94,7 @@
         , validatorOptions
         , error;
 
-      if (v.isDomElement(attributes)) {
+      if (v.isDomElement(attributes) || v.isJqueryElement(attributes)) {
         attributes = v.collectFormValues(attributes);
       }
 
@@ -298,6 +297,10 @@
     // function is considered a promise.
     isPromise: function(p) {
       return !!p && v.isFunction(p.then);
+    },
+
+    isJqueryElement: function(o) {
+      return o && v.isString(o.jquery);
     },
 
     isDomElement: function(o) {
@@ -509,6 +512,10 @@
         , input
         , inputs
         , value;
+
+      if (v.isJqueryElement(form)) {
+        form = form[0];
+      }
 
       if (!form) {
         return values;

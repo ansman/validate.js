@@ -198,15 +198,26 @@ describe("validate", function() {
       expect(pass).not.toHaveBeenCalled();
     });
 
-    it("calls collectFormValues if the attributes is a DOM element", function() {
-      var form = document.createElement("div");
+    it("calls collectFormValues if the attributes is a DOM or jQuery element", function() {
+      var form = document.createElement("div")
+        , $form = $(form);
       form.innerHTML = '<input type="text" name="foo" value="bar">';
       spyOn(validate, "collectFormValues").and.callThrough();
       spyOn(validate.validators, "presence").and.callThrough();
       var constraints = {foo: {presence: true}};
+
       validate(form, constraints);
 
       expect(validate.collectFormValues).toHaveBeenCalledWith(form);
+      expect(validate.validators.presence).toHaveBeenCalledWith(
+        "bar",
+        true,
+        "foo",
+        {foo: "bar"}
+      );
+
+      validate($form, constraints);
+      expect(validate.collectFormValues).toHaveBeenCalledWith($form);
       expect(validate.validators.presence).toHaveBeenCalledWith(
         "bar",
         true,
