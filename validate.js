@@ -227,17 +227,15 @@
 
         return memo.then(function() {
           return result.error.then(
-            function(validationResult) {
-              result.error = validationResult || null;
+            function(error) {
+              result.error = error || null;
             },
             function(error) {
-              // If for some reason the validator promise was rejected but no
-              // error was specified.
-              if (!error) {
-                v.warn("Validator promise was rejected but didn't return an error");
-              } else if (error instanceof Error) {
+              if (error instanceof Error) {
                 throw error;
               }
+              console.log("Foo");
+              v.error("[validate.js] Rejecting promises with the result is deprecated. Please use the resolve callback instead.");
               result.error = error;
             }
           );
@@ -719,13 +717,13 @@
 
     warn: function(msg) {
       if (typeof console !== "undefined" && console.warn) {
-        console.warn(msg);
+        console.warn("[validate.js] " + msg);
       }
     },
 
     error: function(msg) {
       if (typeof console !== "undefined" && console.error) {
-        console.error(msg);
+        console.error("[validate.js] " + msg);
       }
     }
   });

@@ -7,7 +7,7 @@ describe("validate.async", function() {
     success = jasmine.createSpy("success");
     error = jasmine.createSpy("error");
 
-    validate.validators.asyncFail = function() {
+    validate.validators.asyncFailReject = function() {
       return new validate.Promise(function(resolve, reject) {
         setTimeout(function() {
           reject("failz");
@@ -15,7 +15,7 @@ describe("validate.async", function() {
       });
     };
 
-    validate.validators.asyncFailResolve = function() {
+    validate.validators.asyncFail = function() {
       return new validate.Promise(function(resolve, reject) {
         setTimeout(function() {
           resolve("failz");
@@ -33,8 +33,8 @@ describe("validate.async", function() {
   });
 
   afterEach(function() {
+    delete validate.validators.asyncFailReject;
     delete validate.validators.asyncFail;
-    delete validate.validators.asyncFailResolve;
     delete validate.validators.asyncSuccess;
     delete validate.validators.asyncError;
     delete validate.async.options;
@@ -96,7 +96,7 @@ describe("validate.async", function() {
   it.promise('handles validators resolving a promise with error', function() {
     var c = {
       name: {
-        asyncFailResolve: true
+        asyncFail: true
       }
     };
     return validate.async({}, c).then(success, error).then(function() {
@@ -165,20 +165,20 @@ describe("validate.async", function() {
       });
     });
 
-    it.promise("warns if a promise is rejected without an error", function() {
-      spyOn(validate, "warn");
+    it.promise("still works with rejecting with an error but logs an error", function() {
+      spyOn(validate, "error");
 
       var results = [{
         attribute: "foo",
-        error: new validate.Promise(function(resolve, reject) { reject(); })
+        error: new validate.Promise(function(resolve, reject) { reject("foo"); })
       }];
 
       return validate.waitForResults(results).then(function() {
         expect(results).toEqual([{
           attribute: "foo",
-          error: undefined
+          error: "foo"
         }]);
-        expect(validate.warn).toHaveBeenCalled();
+        expect(validate.error).toHaveBeenCalled();
       });
     });
 

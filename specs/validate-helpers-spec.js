@@ -667,7 +667,7 @@ describe("validate", function() {
         warn: jasmine.createSpy("warn")
       };
       validate.warn("Msg");
-      expect(window.console.warn).toHaveBeenCalledWith("Msg");
+      expect(window.console.warn).toHaveBeenCalledWith("[validate.js] Msg");
     });
   });
 
@@ -687,7 +687,7 @@ describe("validate", function() {
         error: jasmine.createSpy("error")
       };
       validate.error("Msg");
-      expect(window.console.error).toHaveBeenCalledWith("Msg");
+      expect(window.console.error).toHaveBeenCalledWith("[validate.js] Msg");
     });
   });
 
