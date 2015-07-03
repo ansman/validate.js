@@ -106,7 +106,7 @@ The options are the following:</p>
               <p>Copies over attributes from one or more sources to a single destination.
 Very much similar to underscore’s extend.
 The first argument is the target object and the remaining arguments will be
-used as targets.</p>
+used as sources.</p>
 
             </div>
             
@@ -137,9 +137,9 @@ The toString function will allow it to be coerced into a string</p>
             
             <div class="content"><div class='highlight'><pre>    version: {
       major: <span class="hljs-number">0</span>,
-      minor: <span class="hljs-number">7</span>,
-      patch: <span class="hljs-number">1</span>,
-      metadata: <span class="hljs-literal">null</span>,
+      minor: <span class="hljs-number">8</span>,
+      patch: <span class="hljs-number">0</span>,
+      metadata: <span class="hljs-string">""</span>,
       toString: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
         <span class="hljs-keyword">var</span> version = v.format(<span class="hljs-string">"%{major}.%{minor}.%{patch}"</span>, v.version);
         <span class="hljs-keyword">if</span> (!v.isEmpty(v.version.metadata)) {
@@ -195,7 +195,6 @@ like this: `validate.moment = require(“moment”);</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    moment: <span class="hljs-keyword">typeof</span> moment !== <span class="hljs-string">"undefined"</span> ? moment : <span class="hljs-comment">/* istanbul ignore next */</span> <span class="hljs-literal">null</span>,
-
     XDate: <span class="hljs-keyword">typeof</span> XDate !== <span class="hljs-string">"undefined"</span> ? XDate : <span class="hljs-comment">/* istanbul ignore next */</span> <span class="hljs-literal">null</span>,
 
     EMPTY_STRING_REGEXP: <span class="hljs-regexp">/^\s*$/</span>,</pre></div></div>
@@ -225,7 +224,7 @@ Will return an array of the format:
         , validatorOptions
         , error;
 
-      <span class="hljs-keyword">if</span> (v.isDomElement(attributes)) {
+      <span class="hljs-keyword">if</span> (v.isDomElement(attributes) || v.isJqueryElement(attributes)) {
         attributes = v.collectFormValues(attributes);
       }</pre></div></div>
             
@@ -384,13 +383,35 @@ It can be called even if no validations returned a promise.</p>
             
             <div class="content"><div class='highlight'><pre>    async: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(attributes, constraints, options)</span> </span>{
       options = v.extend({}, v.async.options, options);
+
+      <span class="hljs-keyword">var</span> WrapErrors = options.wrapErrors || <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(errors)</span> </span>{
+        <span class="hljs-keyword">return</span> errors;
+      };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Removes unknown attributes</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (options.cleanAttributes !== <span class="hljs-literal">false</span>) {
+        attributes = v.cleanAttributes(attributes, constraints);
+      }
+
       <span class="hljs-keyword">var</span> results = v.runValidations(attributes, constraints, options);
 
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> v.Promise(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(resolve, reject)</span> </span>{
         v.waitForResults(results).then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
           <span class="hljs-keyword">var</span> errors = v.processValidationResults(results, options);
           <span class="hljs-keyword">if</span> (errors) {
-            reject(errors);
+            reject(<span class="hljs-keyword">new</span> WrapErrors(errors, options, attributes, constraints));
           } <span class="hljs-keyword">else</span> {
             resolve(attributes);
           }
@@ -411,11 +432,11 @@ It can be called even if no validations returned a promise.</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Returns a promise that is resolved when all promises in the results array
 are settled. The promise returned from this function is always resolved,
@@ -430,11 +451,11 @@ with the value returned from the promise.</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>Create a sequence of all the results starting with a resolved promise.</p>
 
@@ -445,11 +466,11 @@ with the value returned from the promise.</p>
         </li>
         
         
-        <li id="section-18">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>If this result isn’t a promise skip it in the sequence.</p>
 
@@ -461,30 +482,15 @@ with the value returned from the promise.</p>
 
         <span class="hljs-keyword">return</span> memo.then(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
           <span class="hljs-keyword">return</span> result.error.then(
-            <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-              result.error = <span class="hljs-literal">null</span>;
+            <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error)</span> </span>{
+              result.error = error || <span class="hljs-literal">null</span>;
             },
-            <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error)</span> </span>{</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-19">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
-              </div>
-              <p>If for some reason the validator promise was rejected but no
-error was specified.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>              <span class="hljs-keyword">if</span> (!error) {
-                v.warn(<span class="hljs-string">"Validator promise was rejected but didn't return an error"</span>);
-              } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (error <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Error</span>) {
+            <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error)</span> </span>{
+              <span class="hljs-keyword">if</span> (error <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Error</span>) {
                 <span class="hljs-keyword">throw</span> error;
               }
+              <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Foo"</span>);
+              v.error(<span class="hljs-string">"Rejecting promises with the result is deprecated. Please use the resolve callback instead."</span>);
               result.error = error;
             }
           );
@@ -638,6 +644,10 @@ function is considered a promise.</p>
             
             <div class="content"><div class='highlight'><pre>    isPromise: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(p)</span> </span>{
       <span class="hljs-keyword">return</span> !!p &amp;&amp; v.isFunction(p.then);
+    },
+
+    isJqueryElement: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(o)</span> </span>{
+      <span class="hljs-keyword">return</span> o &amp;&amp; v.isString(o.jquery);
     },
 
     isDomElement: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(o)</span> </span>{
@@ -981,8 +991,8 @@ camel case words.</p>
       <span class="hljs-keyword">return</span> value <span class="hljs-keyword">in</span> obj;
     },
 
-    getDeepObjectValue: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj, keypath)</span> </span>{
-      <span class="hljs-keyword">if</span> (!v.isObject(obj) || !v.isString(keypath)) {
+    forEachKeyInKeypath: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(object, keypath, callback)</span> </span>{
+      <span class="hljs-keyword">if</span> (!v.isString(keypath)) {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
       }
 
@@ -996,11 +1006,9 @@ camel case words.</p>
             <span class="hljs-keyword">if</span> (<span class="hljs-built_in">escape</span>) {
               <span class="hljs-built_in">escape</span> = <span class="hljs-literal">false</span>;
               key += <span class="hljs-string">'.'</span>;
-            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (key <span class="hljs-keyword">in</span> obj) {
-              obj = obj[key];
-              key = <span class="hljs-string">""</span>;
             } <span class="hljs-keyword">else</span> {
-              <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+              object = callback(object, key, <span class="hljs-literal">false</span>);
+              key = <span class="hljs-string">""</span>;
             }
             <span class="hljs-keyword">break</span>;
 
@@ -1020,11 +1028,19 @@ camel case words.</p>
         }
       }
 
-      <span class="hljs-keyword">if</span> (v.isDefined(obj) &amp;&amp; key <span class="hljs-keyword">in</span> obj) {
-        <span class="hljs-keyword">return</span> obj[key];
-      } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">return</span> callback(object, key, <span class="hljs-literal">true</span>);
+    },
+
+    getDeepObjectValue: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj, keypath)</span> </span>{
+      <span class="hljs-keyword">if</span> (!v.isObject(obj)) {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
       }
+
+      <span class="hljs-keyword">return</span> v.forEachKeyInKeypath(obj, keypath, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(obj, key)</span> </span>{
+        <span class="hljs-keyword">if</span> (v.isObject(obj)) {
+          <span class="hljs-keyword">return</span> obj[key];
+        }
+      });
     },</pre></div></div>
             
         </li>
@@ -1052,13 +1068,17 @@ would return:
         , inputs
         , value;
 
+      <span class="hljs-keyword">if</span> (v.isJqueryElement(form)) {
+        form = form[<span class="hljs-number">0</span>];
+      }
+
       <span class="hljs-keyword">if</span> (!form) {
         <span class="hljs-keyword">return</span> values;
       }
 
       options = options || {};
 
-      inputs = form.querySelectorAll(<span class="hljs-string">"input[name]"</span>);
+      inputs = form.querySelectorAll(<span class="hljs-string">"input[name], textarea[name]"</span>);
       <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; inputs.length; ++i) {
         input = inputs.item(i);
 
@@ -1260,6 +1280,56 @@ Out:
       <span class="hljs-keyword">return</span> errors.map(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(error)</span> </span>{ <span class="hljs-keyword">return</span> error.error; });
     },
 
+    cleanAttributes: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(attributes, whitelist)</span> </span>{
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">whitelistCreator</span><span class="hljs-params">(obj, key, last)</span> </span>{
+        <span class="hljs-keyword">if</span> (v.isObject(obj[key])) {
+          <span class="hljs-keyword">return</span> obj[key];
+        }
+        <span class="hljs-keyword">return</span> (obj[key] = last ? <span class="hljs-literal">true</span> : {});
+      }
+
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">buildObjectWhitelist</span><span class="hljs-params">(whitelist)</span> </span>{
+        <span class="hljs-keyword">var</span> ow = {}
+          , lastObject
+          , attr;
+        <span class="hljs-keyword">for</span> (attr <span class="hljs-keyword">in</span> whitelist) {
+          <span class="hljs-keyword">if</span> (!whitelist[attr]) {
+            <span class="hljs-keyword">continue</span>;
+          }
+          v.forEachKeyInKeypath(ow, attr, whitelistCreator);
+        }
+        <span class="hljs-keyword">return</span> ow;
+      }
+
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">cleanRecursive</span><span class="hljs-params">(attributes, whitelist)</span> </span>{
+        <span class="hljs-keyword">if</span> (!v.isObject(attributes)) {
+          <span class="hljs-keyword">return</span> attributes;
+        }
+
+        <span class="hljs-keyword">var</span> ret = v.extend({}, attributes)
+          , w
+          , attribute;
+
+        <span class="hljs-keyword">for</span> (attribute <span class="hljs-keyword">in</span> attributes) {
+          w = whitelist[attribute];
+
+          <span class="hljs-keyword">if</span> (v.isObject(w)) {
+            ret[attribute] = cleanRecursive(ret[attribute], w);
+          } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!w) {
+            <span class="hljs-keyword">delete</span> ret[attribute];
+          }
+        }
+        <span class="hljs-keyword">return</span> ret;
+      }
+
+      <span class="hljs-keyword">if</span> (!v.isObject(whitelist) || !v.isObject(attributes)) {
+        <span class="hljs-keyword">return</span> {};
+      }
+
+      whitelist = buildObjectWhitelist(whitelist);
+      <span class="hljs-keyword">return</span> cleanRecursive(attributes, whitelist);
+    },
+
     exposeModule: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(validate, root, exports, module, define)</span> </span>{
       <span class="hljs-keyword">if</span> (exports) {
         <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span> &amp;&amp; <span class="hljs-built_in">module</span>.exports) {
@@ -1276,13 +1346,13 @@ Out:
 
     warn: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(msg)</span> </span>{
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> <span class="hljs-built_in">console</span> !== <span class="hljs-string">"undefined"</span> &amp;&amp; <span class="hljs-built_in">console</span>.warn) {
-        <span class="hljs-built_in">console</span>.warn(msg);
+        <span class="hljs-built_in">console</span>.warn(<span class="hljs-string">"[validate.js] "</span> + msg);
       }
     },
 
     error: <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(msg)</span> </span>{
       <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> <span class="hljs-built_in">console</span> !== <span class="hljs-string">"undefined"</span> &amp;&amp; <span class="hljs-built_in">console</span>.error) {
-        <span class="hljs-built_in">console</span>.error(msg);
+        <span class="hljs-built_in">console</span>.error(<span class="hljs-string">"[validate.js] "</span> + msg);
       }
     }
   });
@@ -1615,7 +1685,7 @@ output.</p>
 
         <span class="hljs-keyword">if</span> (v.isFunction(v.XDate)) {
           format = format || (options.dateOnly ? <span class="hljs-string">"yyyy-MM-dd"</span> : <span class="hljs-string">"yyyy-MM-dd HH:mm:ss"</span>);
-          <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> XDate(date, <span class="hljs-literal">true</span>).toString(format);
+          <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> v.XDate(date, <span class="hljs-literal">true</span>).toString(format);
         }
 
         <span class="hljs-keyword">if</span> (v.isDefined(v.moment)) {

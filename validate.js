@@ -54,9 +54,9 @@
     // The toString function will allow it to be coerced into a string
     version: {
       major: 0,
-      minor: 7,
-      patch: 1,
-      metadata: "development",
+      minor: 8,
+      patch: 0,
+      metadata: "",
       toString: function() {
         var version = v.format("%{major}.%{minor}.%{patch}", v.version);
         if (!v.isEmpty(v.version.metadata)) {
