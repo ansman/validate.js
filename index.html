@@ -227,7 +227,7 @@
       font-size: 18px;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 945px) {
       body {
         padding-left: 0;
       }
@@ -1002,14 +1002,19 @@ validate({foo: "some value"}, {foo: {custom: "some options"}});
               (usually a <code>validate.Promise</code> instance).
             </p>
             <p class="description">
-              The promise should be resolved if the validation passed and rejected
-              if it fails giving the message as the first argument:
+              The promise should be resolved with the error (if any) as its only
+              argument when it's complete.
+            </p>
+            <p>
+              If the validation could not be completed or if an error occurs
+              you can call the reject handler with an <code>Error</code>
+              which will make the whole validation fail and be rejected.
             </p>
             <pre><code class="javascript">validate.validators.myAsyncValidator = function(value) {
-  return validate.Promise(function(resolve, reject) {
+  return new validate.Promise(function(resolve, reject) {
     setTimeout(function() {
       if (value === "foo") resolve();
-      else reject("is not foo");
+      else resolve("is not foo");
     }, 100);
   });
 };
