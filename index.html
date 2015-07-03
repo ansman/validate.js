@@ -2148,6 +2148,13 @@ validate.result("foo".toUpperCase);
                 <a href="https://github.com/ansman/validate.js/pull/57" target="_blank">Kristijan Sedlak</a>
                 for suggesting and implementing this.
               </li>
+              <li>
+                <b>Breaking:</b> Async validators should now pass errors using
+                the resolve callback. Rejecting with an error still works but
+                will cause a warning. Thanks
+                <a href="https://github.com/ansman/validate.js/pull/61" target="_blank">Timothy Moran</a>
+                for suggesting and implementing this.
+              </li>
             </ul>
           </div>
           <div id="changelog-0-7-1">

@@ -235,7 +235,7 @@
                 throw error;
               }
               console.log("Foo");
-              v.error("[validate.js] Rejecting promises with the result is deprecated. Please use the resolve callback instead.");
+              v.error("Rejecting promises with the result is deprecated. Please use the resolve callback instead.");
               result.error = error;
             }
           );
