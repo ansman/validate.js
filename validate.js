@@ -131,8 +131,12 @@
             value: value,
             validator: validatorName,
             options: validatorOptions,
-            error: validator.call(validator, value, validatorOptions, attr,
-                                  attributes)
+            error: validator.call(validator,
+                value,
+                validatorOptions,
+                attr,
+                attributes,
+                options)
           });
         }
       }

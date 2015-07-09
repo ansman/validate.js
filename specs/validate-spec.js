@@ -100,15 +100,17 @@ describe("validate", function() {
       expect(pass).toHaveBeenCalledWithContext(pass);
     });
 
-    it("calls the validator with the val, opts, key and attributes", function() {
+    it("calls the validator with the val, opts, key, attributes and global options", function() {
       var options = {someOption: true}
         , attributes = {someAttribute: 'some value'}
-        , constraints = {someAttribute: {pass: options}};
-      validate.runValidations(attributes, constraints, {});
+        , constraints = {someAttribute: {pass: options}}
+        , globalOptions = {someOption: 'some value'};
+      validate.runValidations(attributes, constraints, globalOptions);
       expect(pass).toHaveBeenCalledWith('some value',
                                         options,
                                         'someAttribute',
-                                        attributes);
+                                        attributes,
+                                        globalOptions);
     });
 
     it("returns an array of results", function() {
@@ -179,7 +181,7 @@ describe("validate", function() {
         , globalOptions = {foo: "bar"};
       validate.runValidations(attrs, constraints, globalOptions);
       expect(spy).toHaveBeenCalledWith("Nicklas", attrs, "name", globalOptions, constraints);
-      expect(pass).toHaveBeenCalledWith("Nicklas", options.pass, "name", attrs);
+      expect(pass).toHaveBeenCalledWith("Nicklas", options.pass, "name", attrs, globalOptions);
     });
 
     it("allows the options for a validator to be a function", function() {
@@ -190,7 +192,7 @@ describe("validate", function() {
         , globalOptions = {foo: "bar"};
       validate.runValidations(attrs, constraints, globalOptions);
       expect(spy).toHaveBeenCalledWith("Nicklas", attrs, "name", globalOptions, constraints);
-      expect(pass).toHaveBeenCalledWith("Nicklas", options, "name", attrs);
+      expect(pass).toHaveBeenCalledWith("Nicklas", options, "name", attrs, globalOptions);
     });
 
     it("doesnt run the validations if the options are falsy", function() {
@@ -213,7 +215,8 @@ describe("validate", function() {
         "bar",
         true,
         "foo",
-        {foo: "bar"}
+        {foo: "bar"},
+        {}
       );
 
       validate($form, constraints);
@@ -222,7 +225,8 @@ describe("validate", function() {
         "bar",
         true,
         "foo",
-        {foo: "bar"}
+        {foo: "bar"},
+        {}
       );
     });
   });

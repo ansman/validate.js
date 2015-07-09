@@ -401,6 +401,7 @@
       <li>
         <a href="#changelog">Changelog</a>
         <ul>
+          <li><a href="#changelog-wip">WIP</a></li>
           <li><a href="#changelog-0-8-0">0.8.0</a></li>
           <li><a href="#changelog-0-7-1">0.7.1</a></li>
           <li><a href="#changelog-0-7-0">0.7.0</a></li>
@@ -971,6 +972,10 @@ validate({format: "grouped"}, {});
             </li>
             <li>
               <b>attributes</b> - The entire attributes object.
+            </li>
+            <li>
+              <b>globalOptions</b> - The options passed when calling
+              <code>validate</code> (will always be an object, non null).
             </li>
           </ol>
           <p class="description">
@@ -2114,6 +2119,17 @@ validate.result("foo".toUpperCase);
         </div>
         <div id="changelog">
           <h2>Changelog</h2>
+          <div id="changelog-wip">
+            <h3>
+              <b class="version">WIP</b>
+            </h3>
+            <ul>
+              <li>
+                The global validation options are now passed to custom
+                validators.
+              </li>
+            </ul>
+          </div>
           <div id="changelog-0-8-0">
             <h3>
               <b class="version">0.8.0</b>
