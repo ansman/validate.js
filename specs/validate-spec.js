@@ -171,6 +171,25 @@ describe("validate", function() {
       ]);
     });
 
+    it("allows skipPresence option", function () {
+      var constraints = {
+        attr1: {pass: true, presence: true},
+        attr2: {presence: true},
+      };
+      spyOn(validate.validators, "presence").and.callThrough();
+      expect(validate.runValidations({}, constraints, {skipPresence: true})).toHaveItems([
+        {
+          attribute: 'attr1',
+          value: undefined,
+          validator: 'pass',
+          options: true,
+          error: undefined
+        }
+      ]);
+      expect(validate.validators.presence).not.toHaveBeenCalledWith('attr1');
+      expect(validate.validators.presence).not.toHaveBeenCalledWith('attr2');
+    });
+
     it("allows the options for an attribute to be a function", function() {
       var options = {pass: {option1: "value1"}}
         , attrs = {name: "Nicklas"}

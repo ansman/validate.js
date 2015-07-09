@@ -116,6 +116,10 @@
             throw new Error(error);
           }
 
+          if (options.skipPresence && validatorName === 'presence') {
+            continue;
+          }
+
           validatorOptions = validators[validatorName];
           // This allows the options to be a function. The function will be
           // called with the value, attribute name, the complete dict of
