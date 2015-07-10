@@ -936,6 +936,18 @@ describe("validate", function() {
     it("empty jquery collections return empty objects", function() {
       expect(validate.collectFormValues($())).toEqual({});
     });
+
+    it("handles empty and invalid numeric inputs", function() {
+      var form = document.createElement("form");
+      form.innerHTML = '' +
+        '<input type="number" name="emptyNumber">' +
+        '<input type="number" name="invalidNumber" value="abc">';
+
+      expect(validate.collectFormValues(form)).toEqual({
+        emptyNumber: null,
+        invalidNumber: null
+      });
+    });
   });
 
   describe("isDomElement", function() {

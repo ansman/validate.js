@@ -535,7 +535,7 @@
 
         value = v.sanitizeFormValue(input.value, options);
         if (input.type === "number") {
-          value = +value;
+          value = value ? +value : null;
         } else if (input.type === "checkbox") {
           if (input.attributes.value) {
             if (!input.checked) {
