@@ -371,6 +371,7 @@
           <li><a href="#validators-length">Length</a></li>
           <li><a href="#validators-numericality">Numericality</a></li>
           <li><a href="#validators-presence">Presence</a></li>
+          <li><a href="#validators-url">URL</a></li>
         </ul>
       </li>
       <li>
@@ -1627,6 +1628,64 @@ validate({}, {username: {presence: true}});
 // =&gt; {"username": ["Username is required"]}
 </code></pre>
           </div>
+          <div id="validators-url">
+            <div class="signature"><b>url</b></div>
+            <p class="description">
+            The URL validator ensures that the input is a valid URL. Validating
+            URLs are pretty tricky but this validator follows a gist that can
+            be found
+            <a href="https://gist.github.com/dperini/729294" target="_blank">here</a>.
+            </p>
+            <p class="description">
+              The following options are supported:
+            </p>
+            <ul>
+              <li>
+                <b>message</b> - The message if the validator fails. Defaults to
+                <i>is not a valid url</i>
+              </li>
+              <li>
+                <b>schemes</b> - A list of schemes to allow. If you want to
+                support any scheme you can use a regexp here (for example
+                <code>[".+"]</code>). The default value is
+                <code>["http", "https"]</code>.
+              </li>
+              <li>
+                <b>allowLocal</b> - A boolean that if <code>true</code> allows
+                local hostnames such as <code>10.0.1.1</code> or
+                <code>localhost</code>. The default is <code>false</code>.
+              </li>
+            </ul>
+            <pre><code class="javascript">validate({website: "http://google.com"}, {website: {url: true}});
+// =&gt; undefined
+
+validate({website: "google.com"}, {website: {url: true}});
+// =&gt; {"website": ["Website is not a valid url"]}
+
+validate({website: "ftp://google.com"}, {website: {url: true}});
+// =&gt; {"website": ["Website is not a valid url"]}
+
+validate({website: "ftp://google.com"}, {
+  website: {
+    url: {
+      schemes: ["ftp"]
+    }
+  }
+});
+// =&gt; undefined
+
+validate({website: "http://localhost"}, {website: {url: true}});
+// =&gt; {"website": ["Website is not a valid url"]}
+
+validate({website: "http://localhost"}, {
+  website: {
+    url: {
+      allowLocal: true
+    }
+  }
+});
+// =&gt; undefined</code></pre>
+          </div>
         </div>
         <div id="utilities">
           <h2>Utilities</h2>
@@ -2133,6 +2192,11 @@ validate.result("foo".toUpperCase);
                 Fix a bug where <code>collectFormValues</code> would return
                 <code>0</code> for number inputs that had empty or invalid
                 values.
+              </li>
+              <li>
+                A validator for validating URLs has now been added. Thanks to
+                <a href="https://github.com/ansman/validate.js/pull/64" target="_blank">andban</a>
+                for implementing this.
               </li>
             </ul>
           </div>

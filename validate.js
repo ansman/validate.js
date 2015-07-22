@@ -1025,12 +1025,23 @@
         return v.format(message, {attribute: v.prettify(options.attribute)});
       }
     },
+
+    // A URL validator that is used to validate URLs with the ability to
+    // restrict schemes and some domains.
     url: function(value, options) {
+      if (v.isEmpty(value)) {
+        return;
+      }
+
       options = v.extend({}, this.options, options);
 
       var message = options.message || this.message || "is not a valid url"
         , schemes = options.schemes || this.schemes || ['http', 'https']
         , allowLocal = options.allowLocal || this.allowLocal || false;
+
+      if (!v.isString(value)) {
+        return message;
+      }
 
       // https://gist.github.com/dperini/729294
       var regex =
@@ -1077,13 +1088,6 @@
         "$";
 
       var PATTERN = new RegExp(regex, 'i');
-
-      if (v.isEmpty(value)) {
-        return;
-      }
-      if (!v.isString(value)) {
-        return message;
-      }
       if (!PATTERN.exec(value)) {
         return message;
       }
