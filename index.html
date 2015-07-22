@@ -543,6 +543,13 @@ validate.Promise = Q.Promise;</code></pre>
             the <code>allow_nil</code> option. I find it quite common that you
             want to have constraints on an optional attribute.<br>
           </p>
+          <p>
+            One core value of this library is that nothing should be private or
+            inaccessable. If you want to modify which values are considered
+            empty for example you can simply overwrite
+            <code>validate.isEmpty</code>, this way you don't have to wait for
+            a pull request to be accepted or create a fork.
+          </p>
           <div id="supported-runtimes">
             <h3>Supported runtimes</h3>
             <p>
