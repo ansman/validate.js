@@ -61,6 +61,7 @@ describe("validators.url", function() {
     expect(url("http://www.foo.bar./", {})).toBeDefined();
     expect(url("http://.www.foo.bar./", {})).toBeDefined();
     expect(url("http://10.1.1.1", {})).toBeDefined();
+    expect(url("http://localhost", {})).toBeDefined();
   });
 
   it("allows valid urls", function() {
@@ -105,6 +106,9 @@ describe("validators.url", function() {
     expect(url("http://10.1.1.1", {allowLocal: true})).not.toBeDefined();
     expect(url("http://172.16.1.123", {allowLocal: true})).not.toBeDefined();
     expect(url("http://192.168.1.123", {allowLocal: true})).not.toBeDefined();
+    expect(url("http://localhost/foo", {allowLocal: true})).not.toBeDefined();
+    expect(url("http://localhost:4711/foo", {allowLocal: true})).not.toBeDefined();
+    expect(url("http://nicklas:password@localhost:4711/foo", {allowLocal: true})).not.toBeDefined();
   });
 
   it("allows custom schemes option is set", function() {
