@@ -1,4 +1,4 @@
-//     Validate.js 0.7.1
+//     Validate.js 0.8.0
 
 //     (c) 2013-2015 Nicklas Ansman, 2013 Wrapp
 //     Validate.js may be freely distributed under the MIT license.
