@@ -96,10 +96,12 @@ module.exports = function(grunt) {
     uglify: {
       options: {
         report: 'gzip',
-        banner: '// <%= pkg.name %> <%= pkg.version %>\n' +
-                '// http://validatejs.org/\n' +
-                '// (c) 2013-2015 Nicklas Ansman, 2013 Wrapp\n' +
-                '// <%= pkg.name %> may be freely distributed under the MIT license.\n'
+        banner: '/*!\n' +
+                ' * <%= pkg.name %> <%= pkg.version %>\n' +
+                ' * http://validatejs.org/\n' +
+                ' * (c) 2013-2015 Nicklas Ansman, 2013 Wrapp\n' +
+                ' * <%= pkg.name %> may be freely distributed under the MIT license.\n' +
+                '*/\n'
       },
       dist: {
         src: "<%= pkg.name %>",
