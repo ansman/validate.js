@@ -831,7 +831,7 @@
           // This picks the default message if specified
           // For example the greaterThan check uses the message from
           // this.notGreaterThan so we capitalize the name and prepend "not"
-          var msg = this["not" + v.capitalize(name)] ||
+          var msg = options["not" + v.capitalize(name)] ||
             "must be %{type} %{count}";
 
           errors.push(v.format(msg, {
