@@ -43,4 +43,11 @@ describe('validator.presence', function() {
     expect(validate.validators.presence.options).toEqual({message: "barfoo"});
     expect(options).toEqual({message: "foobar"});
   });
+
+  it("allows functions as messages", function() {
+    var message = function() { return "foo"; };
+    var options = {message: message}
+      , value = null;
+    expect(presence(value, options)).toBe(message);
+  });
 });

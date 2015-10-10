@@ -61,4 +61,11 @@ describe("validators.inclusion", function() {
     });
     expect(options).toEqual({message: "foobar"});
   });
+
+  it("allows functions as messages", function() {
+    var message = function() { return "foo"; };
+    var options = {message: message, within: ["bar"]}
+      , value = "foo";
+    expect(inclusion(value, options)).toBe(message);
+  });
 });

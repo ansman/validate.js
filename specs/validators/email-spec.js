@@ -61,4 +61,11 @@ describe('validators.email', function() {
     expect(validate.validators.email.options).toEqual({message: "barfoo"});
     expect(options).toEqual({message: "foobar"});
   });
+
+  it("allows functions as messages", function() {
+    var message = function() { return "foo"; };
+    var options = {message: message}
+      , value = "foo";
+    expect(email(value, options)).toBe(message);
+  });
 });

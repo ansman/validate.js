@@ -132,6 +132,8 @@
             attribute: attr,
             value: value,
             validator: validatorName,
+            globalOptions: options,
+            attributes: attributes,
             options: validatorOptions,
             error: validator.call(validator,
                 value,
@@ -379,6 +381,9 @@
     // prefix it with % like this `Foo: %%{foo}` and it will be returned
     // as `"Foo: %{foo}"`
     format: v.extend(function(str, vals) {
+      if (!v.isString(str)) {
+        return str;
+      }
       return str.replace(v.format.FORMAT_REGEXP, function(m0, m1, m2) {
         if (m1 === '%') {
           return "%{" + m2 + "}";
@@ -617,7 +622,17 @@
 
       var ret = [];
       errors.forEach(function(errorInfo) {
-        var error = errorInfo.error;
+        var error = v.result(errorInfo.error,
+            errorInfo.value,
+            errorInfo.attribute,
+            errorInfo.options,
+            errorInfo.attributes,
+            errorInfo.globalOptions);
+
+        if (!v.isString(error)) {
+          ret.push(errorInfo);
+          return;
+        }
 
         if (error[0] === '^') {
           error = error.slice(1);

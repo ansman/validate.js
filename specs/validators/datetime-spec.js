@@ -311,6 +311,17 @@ describe('validators.datetime', function() {
       .toEqual({message: "barfoo", earliest: "2013-10-26 00:00:00"});
     expect(options).toEqual({message: "foobar"});
   });
+
+  it("allows functions as messages", function() {
+    var message = function() { return "foo"; };
+    var options = {
+          earliest: '2013-10-26 00:00:00',
+          latest: '2013-10-24 00:00:00',
+          message: message
+        }
+      , value = "2013-10-25 00:00:00";
+    expect(datetime(value, options)).toBe(message);
+  });
 });
 
 describe('validators.date', function() {

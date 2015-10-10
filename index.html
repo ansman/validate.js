@@ -596,6 +596,13 @@ validate.Promise = Q.Promise;</code></pre>
             prepended to the error message.
           </p>
           <p class="description">
+            The message can also be a function which will be called to retrieve
+            the message, besides this it is treated like a normal message (the
+            attribute name is prepended etc).<br>
+            If the message is not a function and not a string it is simply
+            returned as is.
+          </p>
+          <p class="description">
             Sometimes it's nice to be able validate field differently depending
             on the input itself.
             validate.js allows the validators object and validator options to be
@@ -606,7 +613,11 @@ validate.Promise = Q.Promise;</code></pre>
     presence: true,
     format: {
       pattern: /^(34|37|4|5[1-5]).*$/,
-      message: "must be a valid Amex, Visa or Mastercard number"
+      message: function(value, attribute, validatorOptions, attributes, globalOptions) {
+        return validate.format("^%{num} is not a valid credit card number", {
+          num: value
+        });
+      }
     },
     length: function(value, attributes, attributeName, options, constraints) {
       if (value) {
@@ -622,7 +633,7 @@ validate.Promise = Q.Promise;</code></pre>
   creditCardZip: function(value, attributes, attributeName, options, constraints) {
     if (!(/^(34|37).*$/).test(attributes.creditCardNumber)) return null;
     return {
-      presence: true,
+      presence: {message: "is required when using AMEX"},
       length: {is: 5}
     };
   }
@@ -631,11 +642,14 @@ validate.Promise = Q.Promise;</code></pre>
 validate({creditCardNumber: "4"}, constraints);
 // =&gt; {"creditCardNumber": ["Credit card number is the wrong length (should be 16 characters)"]}
 
+validate({creditCardNumber: "9999999999999999"}, constraints);
+// =&gt; {"creditCardNumber": ["9999999999999999 is not a valid credit card number"]}
+
 validate({creditCardNumber: "4242424242424242"}, constraints);
 // =&gt; undefined
 
 validate({creditCardNumber: "340000000000000"}, constraints);
-// =&gt; {"creditCardZip": ["Credit card zip can't be blank"]}</code></pre>
+// =&gt; {"creditCardZip": ["Credit card zip is required when using AMEX"]}</code></pre>
 
           <p class="description">
             If you don't want to give any options to a validator you may pass
@@ -2204,6 +2218,11 @@ validate.result("foo".toUpperCase);
                 A validator for validating URLs has now been added. Thanks to
                 <a href="https://github.com/ansman/validate.js/pull/64" target="_blank">andban</a>
                 for implementing this.
+              </li>
+              <li>
+                Validation messages can now be functions or objects. Thanks to
+                <a href="https://github.com/ansman/validate.js/issues/76" target="_blank">Christian Petersen</a>
+                for suggesting this.
               </li>
             </ul>
           </div>

@@ -134,4 +134,11 @@ describe("validators.url", function() {
     expect(validate.validators.url.options).toEqual({message: "barfoo", allowLocal: true, schemes: ['myscheme']});
     expect(options).toEqual({message: "foobar", allowLocal: true, schemes: ['myscheme']});
   });
+
+  it("allows functions as messages", function() {
+    var message = function() { return "foo"; };
+    var options = {message: message}
+      , value = "foo";
+    expect(url(value, options)).toBe(message);
+  });
 });

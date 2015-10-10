@@ -61,4 +61,11 @@ describe("validators.exclusion", function() {
     });
     expect(options).toEqual({message: "foobar"});
   });
+
+  it("allows functions as messages", function() {
+    var message = function() { return "foo"; };
+    var options = {message: message, within: ["foo"]}
+      , value = "foo";
+    expect(exclusion(value, options)).toBe(message);
+  });
 });

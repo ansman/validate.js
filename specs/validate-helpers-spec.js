@@ -125,6 +125,11 @@ describe("validate", function() {
       var actual = validate.format("Foo is %%{foo}", {foo: "foo"});
       expect(actual).toEqual("Foo is %{foo}");
     });
+
+    it("handles non strings as the message", function() {
+      var obj = {foo: "bar"};
+      expect(validate.format(obj, {attr: "value"})).toBe(obj);
+    });
   });
 
   describe("stringifyValue", function() {
