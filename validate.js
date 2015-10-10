@@ -240,7 +240,6 @@
               if (error instanceof Error) {
                 throw error;
               }
-              console.log("Foo");
               v.error("Rejecting promises with the result is deprecated. Please use the resolve callback instead.");
               result.error = error;
             }
