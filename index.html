@@ -12,7 +12,7 @@
   <script>hljs.initHighlightingOnLoad();</script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/bluebird/2.9.25/bluebird.min.js" async></script>
-  <script src="https://cdn.jsdelivr.net/xdate/0.8/xdate.min.js" async></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.js" async></script>
   <script src="validate.js" async></script>
   <style>
     html, body {
@@ -1077,14 +1077,20 @@ validate.async({name: "bar"}, constraints).then(success, error);</code></pre>
             <div class="signature"><b>datetime</b></div>
             <p class="description">
               This datetime validator can be used to validate dates and times.
-              The default implementation supports <a href="http://arshaw.com/xdate/" target="_blank">XDate</a>
-              and <a href="http://momentjs.com/">moment.js</a> but it's easy to use any
-              date library (see example below).
+              Since date parsing in javascript is very poor some additional work
+              is required to make this work.
             </p>
             <p class="description">
-              Validate.js looks for moment and XDate in the global scope, if it
-              isn't found you can set <code>validate.moment</code> and
-              <code>validate.XDate</code> manually.
+              Before this validator can be used the parse and format functions
+              needs to be set. The parse function should take the value to parse
+              (non null but otherwise untouched) and return the unix timestamp
+              for that date or <code>NaN</code> if it's invalid.<br>
+              It's important to mention that the constraints (earliest, latest)
+              will also be parsed using this method.
+            </p>
+            <p class="description">
+              The format function should take a unix timestamp and format it
+              in a user friendly way.
             </p>
             <p class="description">
               You can specify the follow constraints:
@@ -1107,12 +1113,6 @@ validate.async({name: "bar"}, constraints).then(success, error);</code></pre>
                 If true, only dates (not datetimes) will be allowed.
                 The default error is <i>must be a valid date</i>
               </dd>
-              <dt>dateFormat</dt>
-              <dd>
-                The format for dates. The values for this will be different
-                depending on which date library is used. Check the XDate or
-                moment.js documentation for more information.
-              </dd>
             </dl>
             <p class="description">
               You can change the default message by setting any of these settings
@@ -1123,61 +1123,45 @@ validate.async({name: "bar"}, constraints).then(success, error);</code></pre>
               <li><code>tooEarly</code></li>
               <li><code>tooLate</code></li>
             </ul>
-            <p class="description">
-              If you want to use some other library you can override the
-              <code>parse</code> and <code>format</code> functions:
-            </p>
-            <pre><code class="javascript">validate({}, {departure: {datetime: true}});
+            <pre><code class="javascript">// Before using it we must add the parse and format functions
+// Here is a sample implementation using moment.js
+validate.extend(validate.validators.datetime, {
+  // The value is guaranteed not to be null or undefined but otherwise it
+  // could be anything.
+  parse: function(value, options) {
+    return +moment.utc(value);
+  },
+  // Input is a unix timestamp
+  format: function(value, options) {
+    var format = options.dateOnly ? "YYYY-MM-DD" : "YYYY-MM-DD hh:mm:ss";
+    return moment.utc(value).format(format);
+  }
+});
+
+validate({}, {departure: {datetime: true}});
 // =&gt; undefined
 
 validate({departure: "foobar"}, {departure: {datetime: true}});
 // =&gt; {"departure": ["Departure must be a valid date"]}
 
-validate({departure: "2013-12-11 10:09:08", {departure: {datetime: true}}});
+validate({departure: "2013-12-11 10:09:08"}, {departure: {datetime: true}});
 // =&gt; undefined
+
+validate({departure: "2013-12-11 10:09:08"}, {departure: {datetime: {dateOnly: true}}});
+// =&gt; {"departure": ["Departure must be valid date"]}
 
 var constraints = {
   birthday: {
     datetime: {
       dateOnly: true,
-      latest: XDate.today().addYears(-18),
+      latest: moment.utc().subtract(18, 'years'),
       message: "^You need to be atleast 18 years old"
     }
   }
 };
 
-validate({birthday: "3013-11-14 22:34:52"}, constraints);
-// =&gt; {"birthday": ["Birthday must be a valid date"]}
-
 validate({birthday: "3013-11-14"}, constraints);
-// =&gt; {"birthday": ["You need to be atleast 18 years old"]}
-
-
-// If you want to use another library override the two methods below:
-
-// Value will be the input (guaranteed not to be null or undefined) and options
-// are options given to the validator.
-// This function should return the number of milliseconds since the UTC epoch
-// or NaN if it's not a valid date.
-validate.validators.datetime.parse = function(value, options) {
-  return new XDate(value, true).getTime();
-};
-
-// This function is only used when formatting dates for error messages.
-// Value is the number of milliseconds since the UTC epoch.
-// You should return a formatted strings of the given date.
-// Make sure to check options.dateOnly and options.dateFormat when formatting.
-validate.validators.datetime.format = function(value, options) {
-  var format = options.dateFormat || (options.dateOnly ? "yyyy-MM-dd" : "u");
-  return new XDate(date, true).toString(format);
-};</code></pre>
-            <p class="notes">
-              You may also want to override the <code>format</code> function in order to
-              customize the formatting of dates which are formatted as
-              <a href="https://en.wikipedia.org/wiki/ISO8601" target="_blank">ISO8601</a> per default.<br>
-              If you want to change the parsing but keep using XDate you can
-              create a <a href="https://gist.github.com/arshaw/1221373" target="_blank">custom XDate parser</a>.
-            </p>
+// =&gt; {"birthday": ["You need to be atleast 18 years old"]}</code></pre>
           </div>
           <div id="validators-email">
             <div class="signature"><b>email</b></div>
@@ -2206,6 +2190,12 @@ validate.result("foo".toUpperCase);
               <b class="version">WIP</b>
             </h3>
             <ul>
+              <li>
+                <b>Breaking:</b> No parse or format function is included
+                with validate.js any more and will throw and error if used
+                without first creating them. See the datetime validator example
+                for an implementation.
+              </li>
               <li>
                 The global validation options are now passed to custom
                 validators.

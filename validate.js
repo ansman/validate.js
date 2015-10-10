@@ -76,11 +76,6 @@
     // Since jQuery promises aren't A+ compatible they won't work.
     Promise: typeof Promise !== "undefined" ? Promise : /* istanbul ignore next */ null,
 
-    // If moment is used in node, browserify etc please set this attribute
-    // like this: `validate.moment = require("moment");
-    moment: typeof moment !== "undefined" ? moment : /* istanbul ignore next */ null,
-    XDate: typeof XDate !== "undefined" ? XDate : /* istanbul ignore next */ null,
-
     EMPTY_STRING_REGEXP: /^\s*$/,
 
     // Runs the validators specified by the constraints object.
@@ -867,6 +862,10 @@
       }
     },
     datetime: v.extend(function(value, options) {
+      if (!v.isFunction(this.parse) || !v.isFunction(this.format)) {
+        throw new Error("Both the parse and format functions needs to be set to use the datetime/date validator");
+      }
+
       // Empty values are fine
       if (v.isEmpty(value)) {
         return;
@@ -903,38 +902,8 @@
         return options.message || errors;
       }
     }, {
-      // This is the function that will be used to convert input to the number
-      // of millis since the epoch.
-      // It should return NaN if it's not a valid date.
-      parse: function(value, options) {
-        if (v.isFunction(v.XDate)) {
-          return new v.XDate(value, true).getTime();
-        }
-
-        if (v.isDefined(v.moment)) {
-          return +v.moment.utc(value);
-        }
-
-        throw new Error("Neither XDate or moment.js was found");
-      },
-      // Formats the given timestamp. Uses ISO8601 to format them.
-      // If options.dateOnly is true then only the year, month and day will be
-      // output.
-      format: function(date, options) {
-        var format = options.dateFormat;
-
-        if (v.isFunction(v.XDate)) {
-          format = format || (options.dateOnly ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss");
-          return new v.XDate(date, true).toString(format);
-        }
-
-        if (v.isDefined(v.moment)) {
-          format = format || (options.dateOnly ? "YYYY-MM-DD" : "YYYY-MM-DD HH:mm:ss");
-          return v.moment.utc(date).format(format);
-        }
-
-        throw new Error("Neither XDate or moment.js was found");
-      }
+      parse: null,
+      format: null
     }),
     date: function(value, options) {
       options = v.extend({}, options, {dateOnly: true});
