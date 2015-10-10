@@ -1561,8 +1561,8 @@ validate(values, constraints);
             </dl>
             <p class="description">
               If you want a custom error message you may specify it using the
-              <b>message</b> option or by settings one of the following default
-              messages on the <code>validate.validators.numericality</code> object:
+              <b>message</b> option or by settings specifying of the following
+              messages:
             </p>
             <ul>
               <li><code>notValid</code></li>
@@ -1594,7 +1594,8 @@ var constraints = {
       onlyInteger: true,
       greaterThan: 0,
       lessThanOrEqualTo: 30,
-      even: true
+      even: true,
+      notEven: "must be evenly divisible by two"
     }
   }
 };
@@ -1606,7 +1607,7 @@ validate({duration: 4711}, constraints);
 // =&gt; {
 //   "duration": [
 //     "Duration must be less than or equal to 30",
-//     "Duration must be even"
+//     "Duration must be evenly divisible by two"
 //   ]
 // }</code></pre>
           </div>
@@ -2223,6 +2224,13 @@ validate.result("foo".toUpperCase);
                 Validation messages can now be functions or objects. Thanks to
                 <a href="https://github.com/ansman/validate.js/issues/76" target="_blank">Christian Petersen</a>
                 for suggesting this.
+              </li>
+              <li>
+                The numericality validator now supports specific messages
+                (notEven etc) on a per attribute basis rather than just custom
+                default messages.
+                Thanks <a href="https://github.com/ansman/validate.js/pull/35" target="_blank">Chris Oliver</a>
+                for implementing this.
               </li>
             </ul>
           </div>
