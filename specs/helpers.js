@@ -26,13 +26,21 @@ beforeEach(function() {
           if (actual.length != expected.length) {
             return {pass: false};
           }
-          return {
-            pass: actual.every(function(a) {
-              return expected.some(function(item) {
-                return JSON.stringify(item) === JSON.stringify(a);
-              });
-            })
-          };
+
+          var ret = {};
+          ret.pass = actual.every(function(a) {
+            var passed = expected.some(function(e) {
+              return util.equals(a, e, customEqualityTesters);
+            });
+            if (!passed) {
+              ret.message = "Object wasn't found:\n" +
+                JSON.stringify(a, null, 2) + "\n\nExpected:\n" +
+                JSON.stringify(expected, null, 2);
+            }
+            return passed;
+          });
+
+          return ret;
         }
       };
     },

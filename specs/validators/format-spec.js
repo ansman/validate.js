@@ -78,4 +78,11 @@ describe("validators.format", function() {
     });
     expect(options).toEqual({message: "foobar"});
   });
+
+  it("allows functions as messages", function() {
+    var message = function() { return "foo"; };
+    var options = {message: message, pattern: /bar/}
+      , value = "foo";
+    expect(format(value, options)).toBe(message);
+  });
 });

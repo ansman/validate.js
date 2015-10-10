@@ -172,4 +172,11 @@ describe('validator.length', function() {
     });
     expect(options).toEqual({message: "foobar"});
   });
+
+  it("allows functions as messages", function() {
+    var message = function() { return "foo"; };
+    var options = {message: message, minimum: 10}
+      , value = "foo";
+    expect(length(value, options)).toBe(message);
+  });
 });

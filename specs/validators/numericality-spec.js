@@ -47,6 +47,12 @@ describe("validators.numericality", function() {
     expect(numericality("foo", {message: "my message"})).toEqual("my message");
   });
 
+  it("uses the custom message if specified", function() {
+    var expected = "default message";
+    expect(numericality("foo", {notValid: expected})).toEqual("default message");
+    expect(numericality("foo", {message: "my message"})).toEqual("my message");
+  });
+
   describe("onlyInteger", function() {
     it("allows integers", function() {
       expect(numericality(1, {onlyInteger: true})).not.toBeDefined();
@@ -66,6 +72,11 @@ describe("validators.numericality", function() {
       opts.message = "my message";
       expect(numericality(3.14, opts)).toEqual("my message");
     });
+
+    it("uses the custom message if specified", function() {
+      var opts = {onlyInteger: true, notInteger: "default message" };
+      expect(numericality(3.14, opts)).toEqual("default message");
+    });
   });
 
   describe("greaterThan", function() {
@@ -77,6 +88,11 @@ describe("validators.numericality", function() {
       var expected = ["must be greater than 3.14"];
       expect(numericality(3.14, {greaterThan: 3.14})).toEqual(expected);
       expect(numericality(2.72, {greaterThan: 3.14})).toEqual(expected);
+    });
+
+    it("allows for a custom message", function() {
+      var expected = "custom message";
+      expect(numericality(3.14, {greaterThan: 3.14, notGreaterThan: expected})).toEqual([expected]);
     });
 
     it("allows for a default message", function() {
@@ -95,6 +111,11 @@ describe("validators.numericality", function() {
     it("doesn't allow numbers that are smaller than", function() {
       var expected = ["must be greater than or equal to 3.14"];
       expect(numericality(2.72, {greaterThanOrEqualTo: 3.14})).toEqual(expected);
+    });
+
+    it("allows for a custom message", function() {
+      var expected = "custom message";
+      expect(numericality(3.13, {greaterThanOrEqualTo: 3.14, notGreaterThanOrEqualTo: expected})).toEqual([expected]);
     });
 
     it("allows for a default message", function() {
@@ -119,6 +140,11 @@ describe("validators.numericality", function() {
       validate.validators.numericality.notEqualTo = expected;
       expect(numericality(3.13, {equalTo: 3.14})).toEqual([expected]);
     });
+
+    it("allows for a custom message", function() {
+      var expected = "custom message";
+      expect(numericality(3.13, {equalTo: 3.14, notEqualTo:expected})).toEqual([expected]);
+    });
   });
 
   describe("lessThan", function() {
@@ -137,6 +163,11 @@ describe("validators.numericality", function() {
       validate.validators.numericality.notLessThan = expected;
       expect(numericality(3.14, {lessThan: 3.14})).toEqual([expected]);
     });
+
+    it("allows for a custom message", function() {
+      var expected = "custom message";
+      expect(numericality(3.14, {lessThan: 3.14, notLessThan: expected})).toEqual([expected]);
+    });
   });
 
   describe("lessThanOrEqualTo", function() {
@@ -154,6 +185,11 @@ describe("validators.numericality", function() {
       var expected = "default message";
       validate.validators.numericality.notLessThanOrEqualTo = expected;
       expect(numericality(3.15, {lessThanOrEqualTo: 3.14})).toEqual([expected]);
+    });
+
+    it("allows for a custom message", function() {
+      var expected = "custom message";
+      expect(numericality(3.15, {lessThanOrEqualTo: 3.14, notLessThanOrEqualTo: expected})).toEqual([expected]);
     });
   });
 
@@ -176,6 +212,11 @@ describe("validators.numericality", function() {
       validate.validators.numericality.notOdd = expected;
       expect(numericality(2, {odd: true})).toEqual([expected]);
     });
+
+    it("allows for a custom message", function() {
+      var expected = "custom message";
+      expect(numericality(2, {odd: true, notOdd: expected})).toEqual([expected]);
+    });
   });
 
   describe("even", function() {
@@ -196,6 +237,11 @@ describe("validators.numericality", function() {
       var expected = "default message";
       validate.validators.numericality.notEven = expected;
       expect(numericality(3, {even: true})).toEqual([expected]);
+    });
+
+    it("allows for a custom message", function() {
+      var expected = "custom message";
+      expect(numericality(3, {even: true, notEven: expected})).toEqual([expected]);
     });
   });
 
@@ -239,5 +285,12 @@ describe("validators.numericality", function() {
       message: "barfoo"
     });
     expect(options).toEqual({message: "foobar"});
+  });
+
+  it("allows functions as messages", function() {
+    var message = function() { return "foo"; };
+    var options = {message: message}
+      , value = "foo";
+    expect(numericality(value, options)).toBe(message);
   });
 });

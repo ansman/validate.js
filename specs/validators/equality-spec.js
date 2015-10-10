@@ -94,4 +94,11 @@ describe('validators.equality', function() {
     comparator.and.returnValue(false);
     expect(validate(attributes, constraints)).toBeDefined();
   });
+
+  it("allows functions as messages", function() {
+    var message = function() { return "foo"; };
+    var options = {message: message, attribute: "bar"}
+      , value = "foo";
+    expect(equality(value, options)).toBe(message);
+  });
 });

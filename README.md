@@ -39,5 +39,5 @@ Before opening a pull request please make sure your changes follow the
 Users of validate.js
 ---
 If your site, library or application uses validate.js and would like to be shown
-here please feel free to email <a href="mailto:validate@ansman.se">validate@ansman.se</a>
+here please feel free to email <a href="mailto:info@validatejs.org">info@validatejs.org</a>
 with the name and optionally a URL to the project and it will be added here.

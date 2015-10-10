@@ -357,7 +357,10 @@
           // You need to confirm your password
           presence: true,
           // and it needs to be equal to the other password
-          equality: "password"
+          equality: {
+            attribute: "password",
+            message: "^The passwords does not match"
+          }
         },
         username: {
           // You need to pick a username too
@@ -401,8 +404,8 @@
           }
         },
         "number-of-children": {
-          // You don't have to input the number of children but it you do
-          // you need to input an integer > 0
+          presence: true,
+          // Number of children has to be an integer >= 0
           numericality: {
             onlyInteger: true,
             greaterThanOrEqualTo: 0
@@ -411,20 +414,26 @@
       };
 
       // Hook up the form so we can prevent it from being posted
-      document.querySelector("form#main")
-        .addEventListener("submit", function(ev) {
-          ev.preventDefault();
-          handleFormSubmit(this);
-        });
+      var form = document.querySelector("form#main");
+      form.addEventListener("submit", function(ev) {
+        ev.preventDefault();
+        handleFormSubmit(form);
+      });
 
-      function handleFormSubmit(form) {
-        // First we gather the values from the form
-        var values = validate.collectFormValues(form);
-        // then we validate them against the constraints
-        var errors = validate(values, constraints);
+      // Hook up the inputs to validate on the fly
+      var inputs = document.querySelectorAll("input, textarea, select")
+      for (var i = 0; i < inputs.length; ++i) {
+        inputs.item(i).addEventListener("change", function(ev) {
+          var errors = validate(form, constraints) || {};
+          showErrorsForInput(this, errors[this.name])
+        });
+      }
+
+      function handleFormSubmit(form, input) {
+        // validate the form aainst the constraints
+        var errors = validate(form, constraints);
         // then we update the form to reflect the results
         showErrors(form, errors || {});
-        // And if all constraints pass we let the user know
         if (!errors) {
           showSuccess();
         }

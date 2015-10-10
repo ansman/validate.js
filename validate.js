@@ -1,9 +1,11 @@
-//     Validate.js 0.8.0
-
-//     (c) 2013-2015 Nicklas Ansman, 2013 Wrapp
-//     Validate.js may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://validatejs.org/
+/*!
+ * validate.js 0.9.0
+ *
+ * (c) 2013-2015 Nicklas Ansman, 2013 Wrapp
+ * Validate.js may be freely distributed under the MIT license.
+ * For all details and documentation:
+ * http://validatejs.org/
+ */
 
 (function(exports, module, define) {
   "use strict";
@@ -54,9 +56,9 @@
     // The toString function will allow it to be coerced into a string
     version: {
       major: 0,
-      minor: 8,
+      minor: 9,
       patch: 0,
-      metadata: "",
+      metadata: null,
       toString: function() {
         var version = v.format("%{major}.%{minor}.%{patch}", v.version);
         if (!v.isEmpty(v.version.metadata)) {
@@ -73,11 +75,6 @@
     // override this attribute to be the constructor of that promise.
     // Since jQuery promises aren't A+ compatible they won't work.
     Promise: typeof Promise !== "undefined" ? Promise : /* istanbul ignore next */ null,
-
-    // If moment is used in node, browserify etc please set this attribute
-    // like this: `validate.moment = require("moment");
-    moment: typeof moment !== "undefined" ? moment : /* istanbul ignore next */ null,
-    XDate: typeof XDate !== "undefined" ? XDate : /* istanbul ignore next */ null,
 
     EMPTY_STRING_REGEXP: /^\s*$/,
 
@@ -130,9 +127,15 @@
             attribute: attr,
             value: value,
             validator: validatorName,
+            globalOptions: options,
+            attributes: attributes,
             options: validatorOptions,
-            error: validator.call(validator, value, validatorOptions, attr,
-                                  attributes)
+            error: validator.call(validator,
+                value,
+                validatorOptions,
+                attr,
+                attributes,
+                options)
           });
         }
       }
@@ -234,7 +237,6 @@
               if (error instanceof Error) {
                 throw error;
               }
-              console.log("Foo");
               v.error("Rejecting promises with the result is deprecated. Please use the resolve callback instead.");
               result.error = error;
             }
@@ -374,6 +376,9 @@
     // prefix it with % like this `Foo: %%{foo}` and it will be returned
     // as `"Foo: %{foo}"`
     format: v.extend(function(str, vals) {
+      if (!v.isString(str)) {
+        return str;
+      }
       return str.replace(v.format.FORMAT_REGEXP, function(m0, m1, m2) {
         if (m1 === '%') {
           return "%{" + m2 + "}";
@@ -531,7 +536,7 @@
 
         value = v.sanitizeFormValue(input.value, options);
         if (input.type === "number") {
-          value = +value;
+          value = value ? +value : null;
         } else if (input.type === "checkbox") {
           if (input.attributes.value) {
             if (!input.checked) {
@@ -612,7 +617,17 @@
 
       var ret = [];
       errors.forEach(function(errorInfo) {
-        var error = errorInfo.error;
+        var error = v.result(errorInfo.error,
+            errorInfo.value,
+            errorInfo.attribute,
+            errorInfo.options,
+            errorInfo.attributes,
+            errorInfo.globalOptions);
+
+        if (!v.isString(error)) {
+          ret.push(errorInfo);
+          return;
+        }
 
         if (error[0] === '^') {
           error = error.slice(1);
@@ -810,13 +825,13 @@
 
       // If it's not a number we shouldn't continue since it will compare it.
       if (!v.isNumber(value)) {
-        return options.message || this.notValid || "is not a number";
+        return options.message || options.notValid || this.notValid || "is not a number";
       }
 
       // Same logic as above, sort of. Don't bother with comparisons if this
       // doesn't pass.
       if (options.onlyInteger && !v.isInteger(value)) {
-        return options.message || this.notInteger  || "must be an integer";
+        return options.message || options.notInteger || this.notInteger  || "must be an integer";
       }
 
       for (name in checks) {
@@ -825,8 +840,8 @@
           // This picks the default message if specified
           // For example the greaterThan check uses the message from
           // this.notGreaterThan so we capitalize the name and prepend "not"
-          var msg = this["not" + v.capitalize(name)] ||
-            "must be %{type} %{count}";
+          var key = "not" + v.capitalize(name);
+          var msg = options[key] || this[key] || "must be %{type} %{count}";
 
           errors.push(v.format(msg, {
             count: count,
@@ -836,10 +851,10 @@
       }
 
       if (options.odd && value % 2 !== 1) {
-        errors.push(this.notOdd || "must be odd");
+        errors.push(options.notOdd || this.notOdd || "must be odd");
       }
       if (options.even && value % 2 !== 0) {
-        errors.push(this.notEven || "must be even");
+        errors.push(options.notEven || this.notEven || "must be even");
       }
 
       if (errors.length) {
@@ -847,6 +862,10 @@
       }
     },
     datetime: v.extend(function(value, options) {
+      if (!v.isFunction(this.parse) || !v.isFunction(this.format)) {
+        throw new Error("Both the parse and format functions needs to be set to use the datetime/date validator");
+      }
+
       // Empty values are fine
       if (v.isEmpty(value)) {
         return;
@@ -883,38 +902,8 @@
         return options.message || errors;
       }
     }, {
-      // This is the function that will be used to convert input to the number
-      // of millis since the epoch.
-      // It should return NaN if it's not a valid date.
-      parse: function(value, options) {
-        if (v.isFunction(v.XDate)) {
-          return new v.XDate(value, true).getTime();
-        }
-
-        if (v.isDefined(v.moment)) {
-          return +v.moment.utc(value);
-        }
-
-        throw new Error("Neither XDate or moment.js was found");
-      },
-      // Formats the given timestamp. Uses ISO8601 to format them.
-      // If options.dateOnly is true then only the year, month and day will be
-      // output.
-      format: function(date, options) {
-        var format = options.dateFormat;
-
-        if (v.isFunction(v.XDate)) {
-          format = format || (options.dateOnly ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss");
-          return new v.XDate(date, true).toString(format);
-        }
-
-        if (v.isDefined(v.moment)) {
-          format = format || (options.dateOnly ? "YYYY-MM-DD" : "YYYY-MM-DD HH:mm:ss");
-          return v.moment.utc(date).format(format);
-        }
-
-        throw new Error("Neither XDate or moment.js was found");
-      }
+      parse: null,
+      format: null
     }),
     date: function(value, options) {
       options = v.extend({}, options, {dateOnly: true});
@@ -1019,6 +1008,73 @@
 
       if (!comparator(value, otherValue, options, attribute, attributes)) {
         return v.format(message, {attribute: v.prettify(options.attribute)});
+      }
+    },
+
+    // A URL validator that is used to validate URLs with the ability to
+    // restrict schemes and some domains.
+    url: function(value, options) {
+      if (v.isEmpty(value)) {
+        return;
+      }
+
+      options = v.extend({}, this.options, options);
+
+      var message = options.message || this.message || "is not a valid url"
+        , schemes = options.schemes || this.schemes || ['http', 'https']
+        , allowLocal = options.allowLocal || this.allowLocal || false;
+
+      if (!v.isString(value)) {
+        return message;
+      }
+
+      // https://gist.github.com/dperini/729294
+      var regex =
+        "^" +
+          // schemes
+          "(?:(?:" + schemes.join("|") + "):\\/\\/)" +
+          // credentials
+          "(?:\\S+(?::\\S*)?@)?";
+
+      regex += "(?:";
+
+      var hostname =
+          "(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)" +
+          "(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*" +
+          "(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))";
+
+      // This ia a special case for the localhost hostname
+      if (allowLocal) {
+        hostname = "(?:localhost|" + hostname + ")";
+      } else {
+          // private & local addresses
+          regex +=
+              "(?!10(?:\\.\\d{1,3}){3})" +
+              "(?!127(?:\\.\\d{1,3}){3})" +
+              "(?!169\\.254(?:\\.\\d{1,3}){2})" +
+              "(?!192\\.168(?:\\.\\d{1,3}){2})" +
+              "(?!172" +
+                "\\.(?:1[6-9]|2\\d|3[0-1])" +
+                "(?:\\.\\d{1,3})" +
+              "{2})";
+      }
+
+      // reserved addresses
+      regex +=
+          "(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
+          "(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
+          "(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
+        "|" +
+          hostname +
+          // port number
+          "(?::\\d{2,5})?" +
+          // path
+          "(?:\\/[^\\s]*)?" +
+        "$";
+
+      var PATTERN = new RegExp(regex, 'i');
+      if (!PATTERN.exec(value)) {
+        return message;
       }
     }
   };

@@ -125,6 +125,11 @@ describe("validate", function() {
       var actual = validate.format("Foo is %%{foo}", {foo: "foo"});
       expect(actual).toEqual("Foo is %{foo}");
     });
+
+    it("handles non strings as the message", function() {
+      var obj = {foo: "bar"};
+      expect(validate.format(obj, {attr: "value"})).toBe(obj);
+    });
   });
 
   describe("stringifyValue", function() {
@@ -765,7 +770,6 @@ describe("validate", function() {
     });
 
     it("returns false for non dates", function() {
-      expect(validate.isDate(new XDate())).toBe(false);
       expect(validate.isDate(Date.now())).toBe(false);
       expect(validate.isDate({})).toBe(false);
     });
@@ -935,6 +939,18 @@ describe("validate", function() {
 
     it("empty jquery collections return empty objects", function() {
       expect(validate.collectFormValues($())).toEqual({});
+    });
+
+    it("handles empty and invalid numeric inputs", function() {
+      var form = document.createElement("form");
+      form.innerHTML = '' +
+        '<input type="number" name="emptyNumber">' +
+        '<input type="number" name="invalidNumber" value="abc">';
+
+      expect(validate.collectFormValues(form)).toEqual({
+        emptyNumber: null,
+        invalidNumber: null
+      });
     });
   });
 

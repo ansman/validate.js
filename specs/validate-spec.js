@@ -100,15 +100,17 @@ describe("validate", function() {
       expect(pass).toHaveBeenCalledWithContext(pass);
     });
 
-    it("calls the validator with the val, opts, key and attributes", function() {
+    it("calls the validator with the val, opts, key, attributes and global options", function() {
       var options = {someOption: true}
         , attributes = {someAttribute: 'some value'}
-        , constraints = {someAttribute: {pass: options}};
-      validate.runValidations(attributes, constraints, {});
+        , constraints = {someAttribute: {pass: options}}
+        , globalOptions = {someOption: 'some value'};
+      validate.runValidations(attributes, constraints, globalOptions);
       expect(pass).toHaveBeenCalledWith('some value',
                                         options,
                                         'someAttribute',
-                                        attributes);
+                                        attributes,
+                                        globalOptions);
     });
 
     it("returns an array of results", function() {
@@ -117,26 +119,34 @@ describe("validate", function() {
       pass.and.returnValue(null);
 
       var options = {someOption: true}
-        , constraints = {name: {fail: options, fail2: true, pass: true}};
-      var result = validate.runValidations({name: "test"}, constraints, {});
+        , globalOptions = {globalOption: "globalValue"}
+        , constraints = {name: {fail: options, fail2: true, pass: true}}
+        , attributes = {name: "test"};
+      var result = validate.runValidations(attributes, constraints, globalOptions);
 
       expect(result).toHaveItems([{
         attribute: "name",
         value: "test",
         validator: "fail",
         options: options,
+        attributes: attributes,
+        globalOptions: globalOptions,
         error: "foobar"
       }, {
         attribute: "name",
         value: "test",
         validator: "fail2",
         options: true,
+        attributes: attributes,
+        globalOptions: globalOptions,
         error: ["foo", "bar"]
       }, {
         attribute: "name",
         value: "test",
         validator: "pass",
         options: true,
+        attributes: attributes,
+        globalOptions: globalOptions,
         error: null
       }]);
     });
@@ -154,18 +164,24 @@ describe("validate", function() {
           value: undefined,
           validator: "pass",
           options: {foo: "bar"},
+          attributes: {},
+          globalOptions: {},
           error: undefined
         }, {
           attribute: "attr2",
           value: undefined,
           validator: "fail",
           options: true,
+          attributes: {},
+          globalOptions: {},
           error: "error"
         }, {
           attribute: "attr3",
           value: undefined,
           validator: "fail",
           options: true,
+          attributes: {},
+          globalOptions: {},
           error: "error"
         }
       ]);
@@ -179,7 +195,7 @@ describe("validate", function() {
         , globalOptions = {foo: "bar"};
       validate.runValidations(attrs, constraints, globalOptions);
       expect(spy).toHaveBeenCalledWith("Nicklas", attrs, "name", globalOptions, constraints);
-      expect(pass).toHaveBeenCalledWith("Nicklas", options.pass, "name", attrs);
+      expect(pass).toHaveBeenCalledWith("Nicklas", options.pass, "name", attrs, globalOptions);
     });
 
     it("allows the options for a validator to be a function", function() {
@@ -190,7 +206,7 @@ describe("validate", function() {
         , globalOptions = {foo: "bar"};
       validate.runValidations(attrs, constraints, globalOptions);
       expect(spy).toHaveBeenCalledWith("Nicklas", attrs, "name", globalOptions, constraints);
-      expect(pass).toHaveBeenCalledWith("Nicklas", options, "name", attrs);
+      expect(pass).toHaveBeenCalledWith("Nicklas", options, "name", attrs, globalOptions);
     });
 
     it("doesnt run the validations if the options are falsy", function() {
@@ -213,7 +229,8 @@ describe("validate", function() {
         "bar",
         true,
         "foo",
-        {foo: "bar"}
+        {foo: "bar"},
+        {}
       );
 
       validate($form, constraints);
@@ -222,7 +239,8 @@ describe("validate", function() {
         "bar",
         true,
         "foo",
-        {foo: "bar"}
+        {foo: "bar"},
+        {}
       );
     });
   });
@@ -275,7 +293,8 @@ describe("validate", function() {
             }
           }
         };
-        expect(validate(attributes, c, {format: "detailed"})).toHaveItems([{
+        var options = {format: "detailed"};
+        expect(validate(attributes, c, options)).toHaveItems([{
             attribute: "foo",
             value: "foo",
             validator: "length",
@@ -284,6 +303,8 @@ describe("validate", function() {
               message: "^foobar",
               someOption: "someValue"
             },
+            attributes: attributes,
+            globalOptions: options,
             error: "foobar"
           }, {
             attribute: "bar",
@@ -293,6 +314,8 @@ describe("validate", function() {
               lessThan: 5,
               greaterThan: 15
             },
+            attributes: attributes,
+            globalOptions: options,
             error: "Bar must be greater than 15"
           }, {
             attribute: "bar",
@@ -302,9 +325,37 @@ describe("validate", function() {
               lessThan: 5,
               greaterThan: 15
             },
+            attributes: attributes,
+            globalOptions: options,
             error: "Bar must be less than 5"
         }]);
       });
+    });
+  });
+
+  it("allows validators to return functions as messages", function() {
+    var message = jasmine.createSpy("message").and.returnValue("some message")
+      , validatorOptions = {validatorOption: "validatorValue"}
+      , options = {option: "value"}
+      , constraints = { foo: { fail: validatorOptions } }
+      , attributes = {foo: "bar"};
+    fail.and.returnValue(message);
+    expect(validate(attributes, constraints, options)).toEqual({
+      foo: ["Foo some message"]
+    });
+    expect(message).toHaveBeenCalledWith(
+        "bar",
+        "foo",
+        validatorOptions,
+        attributes,
+        options);
+  });
+
+  it("allows validators to return objects as messages", function() {
+    var message = {foo: "bar"};
+    fail.and.returnValue(message);
+    expect(validate({}, {foo: {fail: true}})).toEqual({
+      foo: [message]
     });
   });
 
