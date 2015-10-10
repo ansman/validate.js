@@ -830,13 +830,13 @@
 
       // If it's not a number we shouldn't continue since it will compare it.
       if (!v.isNumber(value)) {
-        return options.message || this.notValid || "is not a number";
+        return options.message || options.notValid || this.notValid || "is not a number";
       }
 
       // Same logic as above, sort of. Don't bother with comparisons if this
       // doesn't pass.
       if (options.onlyInteger && !v.isInteger(value)) {
-        return options.message || this.notInteger  || "must be an integer";
+        return options.message || options.notInteger || this.notInteger  || "must be an integer";
       }
 
       for (name in checks) {
@@ -845,8 +845,8 @@
           // This picks the default message if specified
           // For example the greaterThan check uses the message from
           // this.notGreaterThan so we capitalize the name and prepend "not"
-          var msg = this["not" + v.capitalize(name)] ||
-            "must be %{type} %{count}";
+          var key = "not" + v.capitalize(name);
+          var msg = options[key] || this[key] || "must be %{type} %{count}";
 
           errors.push(v.format(msg, {
             count: count,
@@ -856,10 +856,10 @@
       }
 
       if (options.odd && value % 2 !== 1) {
-        errors.push(this.notOdd || "must be odd");
+        errors.push(options.notOdd || this.notOdd || "must be odd");
       }
       if (options.even && value % 2 !== 0) {
-        errors.push(this.notEven || "must be even");
+        errors.push(options.notEven || this.notEven || "must be even");
       }
 
       if (errors.length) {
