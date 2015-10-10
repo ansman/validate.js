@@ -1,21 +1,33 @@
 {
   "name": "validate",
+  "description": "Declarative validations for JavaScript",
   "main": "validate.js",
   "version": "0.9.0",
-  "ignore": [
-    "**/.*",
-    "CNAME",
-    "docs",
-    "spec",
-    "*.md",
-    "*.html",
-    "Gruntfile.js",
-    "package.json",
-    "bower.json"
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
   ],
   "keywords": [
     "validation",
     "javascript",
     "library"
+  ],
+  "authors": [
+    "Nicklas Ansman"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "CNAME",
+    "docs",
+    "specs",
+    "CONTRIBUTING.md",
+    "*.html",
+    "Gruntfile.js",
+    "package.json",
+    "component.json",
+    "favicon.png",
+    "RELEASING.txt"
   ]
 }
