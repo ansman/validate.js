@@ -500,15 +500,11 @@
           </div>
           <h2 id="dependencies">Dependencies</h2>
           <p class="dependencies">
-            There are no required external dependencies but the default parser and
-            formatter for the datetime and date validator requires <a href="http://arshaw.com/xdate/">XDate</a> or
-            <a href="http://momentjs.com/">moment.js</a>.<br>
-            Validate.js will pick them up if they are in the global scope, otherwise
-            you can set <code>validate.moment</code> and <code>validate.XDate</code>
-            manually, for example like this if using a require based system:
+            There are no required external dependencies at all! Though for the
+            datetime and date validator to you need to specify a parse and format
+            function and for that you most likely will want to use a library,
+            moment.js is highly recommended.
           </p>
-          <pre><code class="javascript">var validate = require("validate.js");
-validate.moment = require("moment");</code></pre>
           <p class="dependencies">
             If you want to use async validation you need to use a runtime that
             supports <a href="http://www.html5rocks.com/en/tutorials/es6/promises/" target="_blank">Promises</a>.<br>
