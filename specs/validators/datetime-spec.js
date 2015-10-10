@@ -104,7 +104,7 @@ describe('validators.datetime', function() {
 
     it("parses the earliest value using the parse function", function() {
       var options = {earliest: 'foobar'}
-        , value = XDate.today()
+        , value = moment.utc().startOf('day')
         , spy = spyOn(validate.validators.datetime, 'parse').and.returnValue(value);
       datetime(value, options);
       expect(spy).toHaveBeenCalledWith('foobar', options);
@@ -149,7 +149,7 @@ describe('validators.datetime', function() {
 
     it("parses the latest value using the parse function", function() {
       var options = {latest: 'foobar'}
-        , value = XDate.today()
+        , value = moment.utc().startOf('day')
         , spy = spyOn(validate.validators.datetime, 'parse').and.returnValue(value);
       datetime(value, options);
       expect(spy).toHaveBeenCalledWith('foobar', options);

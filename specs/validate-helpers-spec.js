@@ -770,7 +770,6 @@ describe("validate", function() {
     });
 
     it("returns false for non dates", function() {
-      expect(validate.isDate(new XDate())).toBe(false);
       expect(validate.isDate(Date.now())).toBe(false);
       expect(validate.isDate({})).toBe(false);
     });
