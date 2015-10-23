@@ -738,13 +738,13 @@ validate({username: "nick", password: "better"}, constraints);
 validate({username: "nicklas", password: "better"}, constraints);
 // =&gt; {"username": ["Username 'nicklas' is not allowed"]}
 
-validate({password: "better"}, constraints, {fullMessages: false})
+validate({password: "better"}, constraints, {fullMessages: false});
 // =&gt; {"username": ["can't be blank"]}
 
-validate({}, constraints, {format: "flat"})
+validate({}, constraints, {format: "flat"});
 // =&gt; ["Username can't be blank", "Password can't be blank"]
 
-validate({username: "nicklas", password: "bad"}, constraints, {format: "detailed"})
+validate({username: "nicklas", password: "bad"}, constraints, {format: "detailed"});
 // =&gt; [
 //   {
 //     "attribute": "username",
@@ -1644,13 +1644,13 @@ validate({duration: 4711}, constraints);
               <b>Important!</b> All other values are considered valid (including functions)!
             </p>
 
-            <pre><code class="javascript">validate({}, {username: {presence: true}})
+            <pre><code class="javascript">validate({}, {username: {presence: true}});
 // =&gt; {"username": ["Username can't be blank"]}
 
-validate({username: "ansman"}, {username: {presence: true}})
+validate({username: "ansman"}, {username: {presence: true}});
 // =&gt; undefined
 
-validate({}, {username: {presence: {message: "is required"}}})
+validate({}, {username: {presence: {message: "is required"}}});
 // =&gt; {"username": ["Username is required"]}
 
 validate.validators.presence.message = "is required";
