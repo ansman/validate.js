@@ -745,16 +745,44 @@ validate({}, constraints, {format: "flat"})
 // =&gt; ["Username can't be blank", "Password can't be blank"]
 
 validate({username: "nicklas", password: "bad"}, constraints, {format: "detailed"})
-// =&gt; [{
-//   attribute: "password",
-//   error: "Password must be at least 6 characters",
-//   options: {
-//     minimum: 6,
-//     message: "must be at least 6 characters"
+// =&gt; [
+//   {
+//     "attribute": "username",
+//     "value": "nicklas",
+//     "validator": "exclusion",
+//     "globalOptions": {
+//       "format": "detailed"
+//     },
+//     "attributes": {
+//       "username": "nicklas",
+//       "password": "bad"
+//     },
+//     "options": {
+//       "within": [
+//         "nicklas"
+//       ],
+//       "message": "'%{value}' is not allowed"
+//     },
+//     "error": "Username 'nicklas' is not allowed"
 //   },
-//   validator: "length",
-//   value: "bad"
-// }]
+//   {
+//     "attribute": "password",
+//     "value": "bad",
+//     "validator": "length",
+//     "globalOptions": {
+//       "format": "detailed"
+//     },
+//     "attributes": {
+//       "username": "nicklas",
+//       "password": "bad"
+//     },
+//     "options": {
+//       "minimum": 6,
+//       "message": "must be at least 6 characters"
+//     },
+//     "error": "Password must be at least 6 characters"
+//   }
+// ]
 
 validate({}, {username: {presence: {message: "^You must pick a username"}}});
 // =&gt; {"username": ["You must pick a username"]}</code></pre>
