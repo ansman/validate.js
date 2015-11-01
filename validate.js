@@ -549,6 +549,10 @@
           if (!input.checked) {
             value = values[input.name] || null;
           }
+        } else if (input.type === 'file') {
+          if (input.files.length > 0) {
+            value = (input.multiple) ? input.files : input.files[0];
+          }
         }
         values[input.name] = value;
       }
