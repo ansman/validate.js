@@ -1085,4 +1085,30 @@ describe("validate", function() {
       });
     });
   });
+
+  describe("unique", function() {
+    it("handles empty and single value arrays", function() {
+      expect(validate.unique(null)).toEqual(null);
+      expect(validate.unique([])).toEqual([]);
+      expect(validate.unique([1])).toEqual([1]);
+      expect(validate.unique(["foo"])).toEqual(["foo"]);
+      expect(validate.unique("foo")).toEqual("foo");
+    });
+
+    it("filters non unique values", function() {
+      expect(validate.unique(["foo", "bar", "bar", "foo", "baz"]))
+        .toEqual(["foo", "bar", "baz"]);
+
+      expect(validate.unique(["foo", "foo", "foo"]))
+        .toEqual(["foo"]);
+
+      expect(validate.unique([1, 2, 3, 3, 2, 1]))
+        .toEqual([1, 2, 3]);
+    });
+
+    it("returns a copy", function() {
+      var a = ["foo"];
+      expect(validate.unique(a)).not.toBe(a);
+    });
+  });
 });

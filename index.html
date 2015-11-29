@@ -402,6 +402,7 @@
       <li>
         <a href="#changelog">Changelog</a>
         <ul>
+          <li><a href="#changelog-wip">WIP</a></li>
           <li><a href="#changelog-0-9-0">0.9.0</a></li>
           <li><a href="#changelog-0-8-0">0.8.0</a></li>
           <li><a href="#changelog-0-7-1">0.7.1</a></li>
@@ -1139,14 +1140,19 @@ validate.async({name: "bar"}, constraints).then(success, error);</code></pre>
               </dd>
             </dl>
             <p class="description">
-              You can change the default message by setting any of these settings
-              on the <code>validate.validators.datetime</code> object:
+              You can change the messages by setting any of these settings
+              on the <code>validate.validators.datetime</code> object or on the
+              options for the validator:
             </p>
             <ul>
               <li><code>notValid</code></li>
               <li><code>tooEarly</code></li>
               <li><code>tooLate</code></li>
             </ul>
+            <p class="description">
+              You can use the placeholders <code>%{value}</code> and
+              <code>%{date}</code> in the messages.
+            </p>
             <pre><code class="javascript">// Before using it we must add the parse and format functions
 // Here is a sample implementation using moment.js
 validate.extend(validate.validators.datetime, {
@@ -2209,6 +2215,21 @@ validate.result("foo".toUpperCase);
         </div>
         <div id="changelog">
           <h2>Changelog</h2>
+          <div id="changelog-wip">
+            <h3>
+              <b class="version">WIP</b>
+            </h3>
+            <ul>
+              <li>
+                The date and datetime validators now allows <code>tooLate</code>,
+                <code>tooEarly</code> and <code>notValid</code> in its options.
+              </li>
+              <li>
+                The messages for date and datetime now supports replacing
+                <code>%{value}</code> with the user inputted value.
+              </li>
+            </ul>
+          </div>
           <div id="changelog-0-9-0">
             <h3>
               <b class="version">0.9.0</b>

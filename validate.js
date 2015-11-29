@@ -451,6 +451,15 @@
       return value in obj;
     },
 
+    unique: function(array) {
+      if (!v.isArray(array)) {
+        return array;
+      }
+      return array.filter(function(el, index, array) {
+        return array.indexOf(el) == index;
+      });
+    },
+
     forEachKeyInKeypath: function(object, keypath, callback) {
       if (!v.isString(keypath)) {
         return undefined;
@@ -883,23 +892,39 @@
       // 86400000 is the number of seconds in a day, this is used to remove
       // the time from the date
       if (isNaN(value) || options.dateOnly && value % 86400000 !== 0) {
-        return options.message || this.notValid || "must be a valid date";
+        err = options.notValid ||
+          options.message ||
+          this.notValid ||
+          "must be a valid date";
+        return v.format(err, {value: arguments[0]});
       }
 
       if (!isNaN(earliest) && value < earliest) {
-        err = this.tooEarly || "must be no earlier than %{date}";
-        err = v.format(err, {date: this.format(earliest, options)});
+        err = options.tooEarly ||
+          options.message ||
+          this.tooEarly ||
+          "must be no earlier than %{date}";
+        err = v.format(err, {
+          value: this.format(value, options),
+          date: this.format(earliest, options)
+        });
         errors.push(err);
       }
 
       if (!isNaN(latest) && value > latest) {
-        err = this.tooLate || "must be no later than %{date}";
-        err = v.format(err, {date: this.format(latest, options)});
+        err = options.tooLate ||
+          options.message ||
+          this.tooLate ||
+          "must be no later than %{date}";
+        err = v.format(err, {
+          date: this.format(latest, options),
+          value: this.format(value, options)
+        });
         errors.push(err);
       }
 
       if (errors.length) {
-        return options.message || errors;
+        return v.unique(errors);
       }
     }, {
       parse: null,

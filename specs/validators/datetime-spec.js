@@ -8,7 +8,11 @@ describe('validators.datetime', function() {
       return +moment.utc(value);
     };
     validate.validators.datetime.format = function(value, options) {
-      return moment.utc(value).format("YYYY-MM-DD HH:mm:ss");
+      var format = "YYYY-MM-DD";
+      if (!options.dateOnly) {
+        format += " HH:mm:ss";
+      }
+      return moment.utc(value).format(format);
     };
   });
 
@@ -76,6 +80,37 @@ describe('validators.datetime', function() {
     expect(datetime("foobar", opts)).toEqual("my other message");
   });
 
+  it("allows tooLate, tooEarly and notValid messages", function() {
+    var options = {
+      tooLate: "%{value} is later than %{date}",
+      tooEarly: "%{value} is earlier than %{date}",
+      notValid: "%{value} is not valid",
+      message: "fail",
+      earliest: "2015-01-01",
+      latest: "2015-12-31",
+      dateOnly: true
+    };
+    expect(datetime("foobar", options)).toEqual("foobar is not valid");
+    expect(datetime("2014-01-01", options))
+      .toEqual(["2014-01-01 is earlier than 2015-01-01"]);
+    expect(datetime("2016-01-01", options))
+      .toEqual(["2016-01-01 is later than 2015-12-31"]);
+  });
+
+  it("message overrides global messages", function() {
+    var options = {
+      message: "some message",
+      earliest: "2016-01-01",
+      latest: "2015-12-30",
+      dateOnly: true
+    };
+    validate.validators.datetime.notValid = "notValid";
+    validate.validators.datetime.tooEarly = "tooEarly";
+    validate.validators.datetime.tooLate = "tooLate";
+    expect(datetime("foobar", options)).toEqual("some message");
+    expect(datetime("2015-12-31", options)).toEqual(["some message"]);
+  });
+
   describe("earliest", function() {
     it("doesn't allow earlier dates", function() {
       var options = {earliest: '2013-10-26 00:00:00'}
@@ -118,7 +153,7 @@ describe('validators.datetime', function() {
       expect(datetime(value, options)).toEqual(["default message"]);
 
       options.message = "overridden";
-      expect(datetime(value, options)).toEqual("overridden");
+      expect(datetime(value, options)).toEqual(["overridden"]);
     });
   });
 
@@ -163,7 +198,7 @@ describe('validators.datetime', function() {
       expect(datetime(value, options)).toEqual(["default message"]);
 
       options.message = "overridden";
-      expect(datetime(value, options)).toEqual("overridden");
+      expect(datetime(value, options)).toEqual(["overridden"]);
     });
   });
 
@@ -186,7 +221,7 @@ describe('validators.datetime', function() {
           message: 'foobar'
         }
       , value = "2013-10-25 00:00:00";
-    expect(datetime(value, options)).toEqual('foobar');
+    expect(datetime(value, options)).toEqual(['foobar']);
   });
 
   it("supports default options", function() {
@@ -194,8 +229,8 @@ describe('validators.datetime', function() {
       {message: "barfoo", earliest: "2013-10-26 00:00:00"};
     var options = {message: 'foobar'}
       , value = "2013-10-25 00:00:00";
-    expect(datetime(value, options)).toEqual('foobar');
-    expect(datetime(value, {})).toEqual('barfoo');
+    expect(datetime(value, options)).toEqual(['foobar']);
+    expect(datetime(value, {})).toEqual(['barfoo']);
     expect(validate.validators.datetime.options)
       .toEqual({message: "barfoo", earliest: "2013-10-26 00:00:00"});
     expect(options).toEqual({message: "foobar"});
@@ -209,7 +244,7 @@ describe('validators.datetime', function() {
           message: message
         }
       , value = "2013-10-25 00:00:00";
-    expect(datetime(value, options)).toBe(message);
+    expect(datetime(value, options)).toEqual([message]);
   });
 });
 
