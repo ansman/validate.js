@@ -108,6 +108,8 @@ describe("validators.url", function() {
     expect(url("http://192.168.1.123", {allowLocal: true})).not.toBeDefined();
     expect(url("http://localhost/foo", {allowLocal: true})).not.toBeDefined();
     expect(url("http://localhost:4711/foo", {allowLocal: true})).not.toBeDefined();
+    // Issue #95
+    expect(url("http://servername01:8153/go/cctray.xml", {allowLocal: true})).not.toBeDefined();
     expect(url("http://nicklas:password@localhost:4711/foo", {allowLocal: true})).not.toBeDefined();
   });
 
