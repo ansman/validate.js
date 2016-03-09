@@ -429,6 +429,14 @@
         .toLowerCase();
     },
 
+    attributeLabel: function(attribute, options) {
+        var label = v.isObject(options) &&
+          v.isObject(options.labels) &&
+          options.labels[attribute];
+
+        return label || v.prettify(attribute);
+    },
+
     stringifyValue: function(value) {
       return v.prettify(value);
     },
@@ -641,7 +649,8 @@
         if (error[0] === '^') {
           error = error.slice(1);
         } else if (options.fullMessages !== false) {
-          error = v.capitalize(v.prettify(errorInfo.attribute)) + " " + error;
+		  var label = v.attributeLabel(errorInfo.attribute, options);
+          error = v.capitalize(label) + " " + error;
         }
         error = error.replace(/\\\^/g, "^");
         error = v.format(error, {value: v.stringifyValue(errorInfo.value)});
@@ -1009,7 +1018,7 @@
     }, {
       PATTERN: /^[a-z0-9\u007F-\uffff!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9\u007F-\uffff!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/i
     }),
-    equality: function(value, options, attribute, attributes) {
+    equality: function(value, options, attribute, attributes, globalOptions) {
       if (v.isEmpty(value)) {
         return;
       }
@@ -1032,7 +1041,7 @@
         };
 
       if (!comparator(value, otherValue, options, attribute, attributes)) {
-        return v.format(message, {attribute: v.prettify(options.attribute)});
+        return v.format(message, {attribute: v.attributeLabel(options.attribute, globalOptions)});
       }
     },
 
