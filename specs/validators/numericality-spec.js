@@ -293,4 +293,30 @@ describe("validators.numericality", function() {
       , value = "foo";
     expect(numericality(value, options)).toBe(message);
   });
+
+  describe("noExtraZero", function() {
+    it("disallows extra zeros", function () {
+        expect(numericality("1.0000000", {noExtraZero: true})).toBe(
+            "must be no extra zeros"
+        );
+        expect(numericality("1.00", {noExtraZero: true})).toBe(
+            "must be no extra zeros"
+        );
+        expect(numericality("01.0000000", {noExtraZero: true})).toBe(
+            "must be no extra zeros"
+        );
+        expect(numericality("0001.0000000", {noExtraZero: true})).toBe(
+            "must be no extra zeros"
+        );
+        expect(numericality("020", {noExtraZero: true})).toBe(
+            "must be no extra zeros"
+        );
+        expect(numericality("1.0", {noExtraZero: true})).toBe(
+            "must be no extra zeros"
+        );
+        expect(numericality(10, {noExtraZero: true})).not.toBeDefined();
+        expect(numericality("10", {noExtraZero: true})).not.toBeDefined();
+        expect(numericality("0.1", {noExtraZero: true})).not.toBeDefined();
+    });
+  });
 });
