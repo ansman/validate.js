@@ -838,6 +838,19 @@
             lessThanOrEqualTo:    function(v, c) { return v <= c; }
           };
 
+      // Strict will check that it is a valid looking number
+      if (v.isString(value) && options.strict) {
+        var pattern = "^(0|[1-9]\\d*)";
+        if (!options.onlyInteger) {
+          pattern += "(\\.\\d+)?";
+        }
+        pattern += "$";
+
+        if (!(new RegExp(pattern).test(value))) {
+          return options.message || options.notValid || this.notValid || "must be a valid number";
+        }
+      }
+
       // Coerce the value to a number unless we're being strict.
       if (options.noStrings !== true && v.isString(value)) {
         value = +value;

@@ -293,4 +293,32 @@ describe("validators.numericality", function() {
       , value = "foo";
     expect(numericality(value, options)).toBe(message);
   });
+
+  describe("strict", function() {
+    it("disallows prefixed zeros", function() {
+      expect(numericality("01.0", {strict: true}))
+        .toEqual("must be a valid number");
+      expect(numericality("0001.0000000", {strict: true}))
+        .toEqual("must be a valid number");
+      expect(numericality("020", {strict: true}))
+        .toEqual("must be a valid number");
+      expect(numericality("1.00", {strict: true, onlyInteger: true}))
+        .toEqual("must be a valid number");
+      expect(numericality("1.", {strict: true}))
+        .toEqual("must be a valid number");
+      expect(numericality("1.", {strict: true, onlyInteger: true}))
+        .toEqual("must be a valid number");
+      expect(numericality(".0", {strict: true}))
+        .toEqual("must be a valid number");
+      expect(numericality(".1", {strict: true}))
+        .toEqual("must be a valid number");
+
+      expect(numericality("1.00", {strict: true})).not.toBeDefined();
+      expect(numericality("1.0", {strict: true})).not.toBeDefined();
+      expect(numericality(10, {strict: true})).not.toBeDefined();
+      expect(numericality("10", {strict: true})).not.toBeDefined();
+      expect(numericality("0.1", {strict: true})).not.toBeDefined();
+      expect(numericality("0", {strict: true})).not.toBeDefined();
+    });
+  });
 });
