@@ -225,6 +225,22 @@ describe("validate", function() {
     });
   });
 
+  describe('isHash', function() {
+    it("returns true for hashes", function() {
+      expect(validate.isHash({})).toBe(true);
+      expect(validate.isHash({foo: "bar"})).toBe(true);
+    });
+
+    it("returns false for non hashes", function() {
+      expect(validate.isHash([])).toBe(false);
+      expect(validate.isHash(function() {})).toBe(false);
+      expect(validate.isHash(null)).toBe(false);
+      expect(validate.isHash(1)).toBe(false);
+      expect(validate.isHash("")).toBe(false);
+      expect(validate.isHash(false)).toBe(false);
+    });
+  });
+
   describe('contains', function() {
     var contains = validate.contains;
 

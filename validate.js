@@ -441,6 +441,12 @@
       return {}.toString.call(value) === '[object Array]';
     },
 
+    // Checks if the object is a hash, which is equivalent to an object that
+    // is neither an array nor a function.
+    isHash: function(value) {
+      return v.isObject(value) && !v.isArray(value) && !v.isFunction(value);
+    },
+
     contains: function(obj, value) {
       if (!v.isDefined(obj)) {
         return false;
