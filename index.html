@@ -311,7 +311,7 @@
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
+sFunc
     ga('create', 'UA-45797376-1', 'validatejs.org');
     ga('require', 'displayfeatures');
     ga('send', 'pageview');
@@ -391,6 +391,7 @@
           <li><a href="#utilities-is-dom-element">isDomElement</a></li>
           <li><a href="#utilities-is-empty">isEmpty</a></li>
           <li><a href="#utilities-is-function">isFunction</a></li>
+          <li><a href="#utilities-is-hash">isHash</a></li>
           <li><a href="#utilities-is-integer">isInteger</a></li>
           <li><a href="#utilities-is-number">isNumber</a></li>
           <li><a href="#utilities-is-object">isObject</a></li>
@@ -2081,6 +2082,21 @@ validate.isEmpty({foo: "bar"});
 validate.isFunction(function() {});
 // =&gt; true</code></pre>
           </div>
+          <div id="utilities-is-hash">
+            <div class="signature">
+              <b>isHash</b>
+              <code>validate.isHash(value)</code>
+            </div>
+            <p class="description">
+              Check if the given value is a hash (a plain object, not an array
+              or function).
+            </p>
+            <pre><code class="javascript">validate.isHash([]);
+// =&gt; false
+
+validate.isHash({foo: "bar"});
+// =&gt; true</code></pre>
+          </div>
           <div id="utilities-is-integer">
             <div class="signature">
               <b>isInteger</b>
@@ -2251,6 +2267,11 @@ validate.result("foo".toUpperCase);
               <li>
                 There is now an <a href="#utilities-is-boolean"><code>isBoolean</code></a>
                 utility method. Thanks <a href="https://github.com/ansman/validate.js/pull/113" target="_blank">jpbufe3</a>
+                for suggesting an implementing this.
+              </li>
+              <li>
+                There is now an <a href="#utilities-is-hash"><code>isHash</code></a>
+                utility method. Thanks <a href="https://github.com/ansman/validate.js/pull/111" target="_blank">jpbufe3</a>
                 for suggesting an implementing this.
               </li>
             </ul>
