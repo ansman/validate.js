@@ -385,6 +385,7 @@
           <li><a href="#utilities-format">format</a></li>
           <li><a href="#utilities-get-deep-object-value">getDeepObjectValue</a></li>
           <li><a href="#utilities-is-array">isArray</a></li>
+          <li><a href="#utilities-is-boolean">isBoolean</a></li>
           <li><a href="#utilities-is-date">isDate</a></li>
           <li><a href="#utilities-is-defined">isDefined</a></li>
           <li><a href="#utilities-is-dom-element">isDomElement</a></li>
@@ -1960,6 +1961,20 @@ validate.getDeepObjectValue({"foo.bar": "baz"}, "foo\\.bar");
 validate.isArray([]);
 // =&gt; true</code></pre>
           </div>
+          <div id="utilities-is-boolean">
+            <div class="signature">
+              <b>isBoolean</b>
+              <code>validate.isBoolean(value)</code>
+            </div>
+            <p class="description">
+              Check if the given value is a boolean.
+            </p>
+            <pre><code class="javascript">validate.isBoolean("true");
+// =&gt; false
+
+validate.isBoolean(true);
+// =&gt; true</code></pre>
+          </div>
           <div id="utilities-is-date">
             <div class="signature">
               <b>isDate</b>
@@ -2232,6 +2247,11 @@ validate.result("foo".toUpperCase);
                 The URL validator now allows all domains without a TLD when
                 using the <code>allowLocal</code> option.
                 Thanks <a href="https://github.com/ansman/validate.js/issues/95" target="_blank">Ste Cowley</a> for suggesting this.
+              </li>
+              <li>
+                There is now an <a href="#utilities-is-boolean"><code>isBoolean</code></a>
+                utility method. Thanks <a href="https://github.com/ansman/validate.js/pull/113" target="_blank">jpbufe3</a>
+                for suggesting an implementing this.
               </li>
             </ul>
           </div>
