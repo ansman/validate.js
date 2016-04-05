@@ -62,6 +62,22 @@ describe("validate", function() {
     });
   });
 
+  describe('isBoolean', function() {
+    it("returns true for booleans", function() {
+      expect(validate.isBoolean(true)).toBe(true);
+      expect(validate.isBoolean(false)).toBe(true);
+    });
+
+    it("returns false for non booleans ", function() {
+      expect(validate.isBoolean(null)).toBe(false);
+      expect(validate.isBoolean({})).toBe(false);
+      expect(validate.isBoolean({foo: "bar"})).toBe(false);
+      expect(validate.isBoolean([])).toBe(false);
+      expect(validate.isBoolean("")).toBe(false);
+      expect(validate.isBoolean(function() {})).toBe(false);
+    });
+  });
+
   describe('isObject', function() {
     it("returns true for objects", function() {
       expect(validate.isObject({})).toBe(true);

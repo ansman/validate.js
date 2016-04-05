@@ -278,6 +278,11 @@
       return v.isNumber(value) && value % 1 === 0;
     },
 
+    // Checks if the value is a boolean
+    isBoolean: function(value) {
+      return typeof value === 'boolean';
+    },
+
     // Uses the `Object` function to check if the given argument is an object.
     isObject: function(obj) {
       return obj === Object(obj);
