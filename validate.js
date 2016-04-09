@@ -838,6 +838,14 @@
             lessThanOrEqualTo:    function(v, c) { return v <= c; }
           };
 
+      // Check leading zero or trailing zeros before coercion
+      if (v.isString(value) && options.strict) {
+          // Extra zeros will be disappear after coercion
+          if ((+value).toString() !== value) {
+              return options.message || options.notValid || this.notValid || 'must be no extra zeros';
+          }
+      }
+
       // Coerce the value to a number unless we're being strict.
       if (options.noStrings !== true && v.isString(value)) {
         value = +value;
