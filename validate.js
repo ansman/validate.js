@@ -1114,6 +1114,55 @@
       if (!PATTERN.exec(value)) {
         return message;
       }
+    },
+
+    // Nested values validator support
+    values: function(value, options) {
+      var internalConstraints = options
+        , internalOptions = { format: "flat" }
+        , validationResults = [];
+
+      // Internal validator runs validations and remaps attribute keys
+      function validateInternal (internalAttributes, attributeKey) {
+        var internalResults = v.runValidations({ "": internalAttributes}, { "": internalConstraints}, internalOptions);
+        return internalResults.map(function(result) {
+          result.attribute = attributeKey;  // clobber attribute key to match its real relative path
+          return result;
+        });
+      }
+
+      // Perform the sub-validations
+      if (v.isArray(value)) {
+        var i;
+        for (i=0; i<value.length; i++) {
+          validationResults = validationResults.concat(validateInternal(value[i], i));
+        }
+      } else if (v.isObject(value)) {
+        var k;
+        for (k in value) {
+          validationResults = validationResults.concat(validateInternal(value[k], k));
+        }
+      } else {
+        return "is not an array or object";
+      }
+
+      // we need to propegate promises upwards, so check for any and forward accordingly
+      var errPromiseCount = 0;
+      validationResults.forEach(function(result) {
+        if (v.isDefined(result.error) && v.isPromise(result.error)) {
+          errPromiseCount++;
+        }
+      });
+      if (errPromiseCount > 0) {
+        return new v.Promise(function(resolve, reject) {
+          v.waitForResults(validationResults).then(function() {
+            resolve(v.processValidationResults(validationResults, internalOptions));
+          });
+        });
+      }
+
+      // non-async happy path
+      return v.processValidationResults(validationResults, internalOptions);
     }
   };
 
