@@ -1560,6 +1560,8 @@ validate(values, constraints);
             <dl class="dl-horizontal">
               <dt>onlyInteger</dt>
               <dd>Real numbers won't be allowed. The error message is <i>must be an integer</i></dd>
+              <dt>strict</dt>
+              <dd>Enables more strict validation of strings. Leading zeroes won't be allowed and the number cannot be malformed.</dd>
               <dt>greaterThan</dt>
               <dd>The input has to be greater than this value. The error message is <i>must be greater than %{count}</i></dd>
               <dt>greaterThanOrEqualTo</dt>
@@ -1600,6 +1602,12 @@ validate({duration: "foobar"}, {duration: {numericality: true}});
 
 validate({duration: "3"}, {duration: {numericality: true}});
 // =&gt; undefined
+
+validate({duration: "03"}, {duration: {numericality: true}});
+// =&gt; undefined
+
+validate({duration: "03"}, {duration: {numericality: {strict: true}}});
+// =&gt; {"duration": ["Duration must be a valid number"]}
 
 validate({duration: "3"}, {duration: {numericality: {noStrings: true}}});
 // =&gt; {"duration": ["Duration is not a number"]}
@@ -2273,6 +2281,11 @@ validate.result("foo".toUpperCase);
                 There is now an <a href="#utilities-is-hash"><code>isHash</code></a>
                 utility method. Thanks <a href="https://github.com/ansman/validate.js/pull/111" target="_blank">jpbufe3</a>
                 for suggesting an implementing this.
+              </li>
+              <li>
+                Added a strict option to the<a href="#validators-numericality"><code>numericality</code></a>
+                validator. Thanks <a href="https://github.com/ansman/validate.js/pull/106" target="_blank">mondwan</a>
+                for suggesting and implementing this.
               </li>
             </ul>
           </div>
