@@ -745,7 +745,7 @@
       } else {
         root.validate = validate;
         if (validate.isFunction(define) && define.amd) {
-          define([], function () { return validate; });
+          define(function () { return validate; });
         }
       }
     },
