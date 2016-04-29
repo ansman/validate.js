@@ -1135,12 +1135,14 @@
         array:    v.isArray,
         object:   v.isObject,
         function: v.isFunction,
-        promise:  v.isPromise
+        promise:  v.isPromise,
+        hash:     v.isHash,
+        bookean:  v.isBoolean
       };
       if (!v.isObject(options)) {  // accept options as string or object
         options = { type: options };
       }
-      if (value === undefined) {  // undefined checking is already covered by 'presence'
+      if (value === undefined || value === null) {  // undefined/null checking is already covered by 'presence'
         return;
       }
       if (typeHelperMap[options.type] !== undefined) {
