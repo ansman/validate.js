@@ -193,6 +193,30 @@ describe("validators.numericality", function() {
     });
   });
 
+  describe("divisibleBy", function() {
+    it("allows numbers divisible by the value", function() {
+      expect(numericality(0, {divisibleBy: 2})).not.toBeDefined();
+      expect(numericality(5, {divisibleBy: 5})).not.toBeDefined();
+      expect(numericality(16, {divisibleBy: 8})).not.toBeDefined();
+    });
+
+    it("doesn't allow numbers that are not divisible by the given number", function() {
+      var expected = ["must be divisible by 100"];
+      expect(numericality(121, {divisibleBy: 100})).toEqual(expected);
+    });
+
+    it("allows for a default message", function() {
+      var expected = "default message";
+      validate.validators.numericality.notDivisibleBy = expected;
+      expect(numericality(161, {divisibleBy: 200})).toEqual([expected]);
+    });
+
+    it("allows for a custom message", function() {
+      var expected = "custom message";
+      expect(numericality(133, {divisibleBy: 4, notDivisibleBy: expected})).toEqual([expected]);
+    });
+  });
+
   describe("odd", function() {
     it("allows odd numbers", function() {
       expect(numericality(1, {odd: true})).not.toBeDefined();
@@ -251,11 +275,12 @@ describe("validators.numericality", function() {
       greaterThanOrEqualTo: 10,
       lessThan: 5,
       lessThanOrEqualTo: 5,
+      divisibleBy: 10,
       equalTo: 20,
       odd: true,
       even: true
     };
-    expect(numericality(7.2, options)).toHaveLength(7);
+    expect(numericality(7.2, options)).toHaveLength(8);
   });
 
   it("returns options.message only once", function() {
@@ -264,6 +289,7 @@ describe("validators.numericality", function() {
       greaterThanOrEqualTo: 10,
       lessThan: 5,
       lessThanOrEqualTo: 5,
+      divisibleBy: 10,
       equalTo: 20,
       odd: true,
       even: true,
