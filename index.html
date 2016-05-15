@@ -1572,6 +1572,8 @@ validate(values, constraints);
               <dd>The input can be this value at the most. The error message is <i>must be less than or equal to %{count}</i></dd>
               <dt>lessThan</dt>
               <dd>The input has to be less than this value. The error message is <i>must be less than %{count}</i></dd>
+              <dt>multiplesOf</dt>
+              <dd>The input has to be in multiples of this value. The error message is <i>must be multiples of %{count}</i></dd>
               <dt>odd</dt>
               <dd>The input has to be odd. The error message is <i>must be odd</i></dd>
               <dt>even</dt>
@@ -1590,6 +1592,7 @@ validate(values, constraints);
               <li><code>notEqualTo</code></li>
               <li><code>notLessThan</code></li>
               <li><code>notLessThanOrEqualTo</code></li>
+              <li><code>notMultiplesOf</code></li>
               <li><code>notOdd</code></li>
               <li><code>notEven</code></li>
             </ul>
@@ -1611,6 +1614,9 @@ validate({duration: "03"}, {duration: {numericality: {strict: true}}});
 
 validate({duration: "3"}, {duration: {numericality: {noStrings: true}}});
 // =&gt; {"duration": ["Duration is not a number"]}
+
+validate({duration: "7"}, {duration: {numericality: {multiplesOf: 3}}});
+// =&gt; {"duration": ["Duration must be multiples of 3"]}
 
 var constraints = {
   duration: {

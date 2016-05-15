@@ -835,7 +835,8 @@
             greaterThanOrEqualTo: function(v, c) { return v >= c; },
             equalTo:              function(v, c) { return v === c; },
             lessThan:             function(v, c) { return v < c; },
-            lessThanOrEqualTo:    function(v, c) { return v <= c; }
+            lessThanOrEqualTo:    function(v, c) { return v <= c; },
+            multiplesOf:          function(v, c) { return v % c === 0; }
           };
 
       // Strict will check that it is a valid looking number

@@ -193,6 +193,30 @@ describe("validators.numericality", function() {
     });
   });
 
+  describe("multiplesOf", function() {
+    it("allows multiples of a number", function() {
+      expect(numericality(0, {multiplesOf: 2})).not.toBeDefined();
+      expect(numericality(5, {multiplesOf: 5})).not.toBeDefined();
+      expect(numericality(16, {multiplesOf: 8})).not.toBeDefined();
+    });
+
+    it("doesn't allow numbers that are not multiples of given number", function() {
+      var expected = ["must be multiples of 100"];
+      expect(numericality(121, {multiplesOf: 100})).toEqual(expected);
+    });
+
+    it("allows for a default message", function() {
+      var expected = "default message";
+      validate.validators.numericality.notMultiplesOf = expected;
+      expect(numericality(161, {multiplesOf: 200})).toEqual([expected]);
+    });
+
+    it("allows for a custom message", function() {
+      var expected = "custom message";
+      expect(numericality(133, {multiplesOf: 4, notMultiplesOf: expected})).toEqual([expected]);
+    });
+  });
+
   describe("odd", function() {
     it("allows odd numbers", function() {
       expect(numericality(1, {odd: true})).not.toBeDefined();
@@ -251,11 +275,12 @@ describe("validators.numericality", function() {
       greaterThanOrEqualTo: 10,
       lessThan: 5,
       lessThanOrEqualTo: 5,
+      multiplesOf: 10,
       equalTo: 20,
       odd: true,
       even: true
     };
-    expect(numericality(7.2, options)).toHaveLength(7);
+    expect(numericality(7.2, options)).toHaveLength(8);
   });
 
   it("returns options.message only once", function() {
@@ -264,6 +289,7 @@ describe("validators.numericality", function() {
       greaterThanOrEqualTo: 10,
       lessThan: 5,
       lessThanOrEqualTo: 5,
+      multiplesOf: 10,
       equalTo: 20,
       odd: true,
       even: true,
