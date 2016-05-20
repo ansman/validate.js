@@ -13,6 +13,7 @@ describe("validators.numericality", function() {
     delete n.notEqualTo;
     delete n.notLessThan;
     delete n.notLessThanOrEqualTo;
+    delete n.notDivisibleBy;
     delete n.options;
   });
 
