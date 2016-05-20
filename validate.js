@@ -1,7 +1,7 @@
 /*!
  * validate.js 0.9.0
  *
- * (c) 2013-2015 Nicklas Ansman, 2013 Wrapp
+ * (c) 2013-2016 Nicklas Ansman, 2013 Wrapp
  * Validate.js may be freely distributed under the MIT license.
  * For all details and documentation:
  * http://validatejs.org/
