@@ -313,7 +313,7 @@
         return false;
       }
 
-      if (!v.isFunction(o.querySelectorAll) || !v.isFunction(o.querySelector)) {
+      if (!o.querySelectorAll || !o.querySelector) {
         return false;
       }
 
