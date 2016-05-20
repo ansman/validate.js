@@ -58,7 +58,7 @@
       major: 0,
       minor: 10,
       patch: 0,
-      metadata: null,
+      metadata: "development",
       toString: function() {
         var version = v.format("%{major}.%{minor}.%{patch}", v.version);
         if (!v.isEmpty(v.version.metadata)) {
@@ -229,18 +229,9 @@
         }
 
         return memo.then(function() {
-          return result.error.then(
-            function(error) {
-              result.error = error || null;
-            },
-            function(error) {
-              if (error instanceof Error) {
-                throw error;
-              }
-              v.error("Rejecting promises with the result is deprecated. Please use the resolve callback instead.");
-              result.error = error;
-            }
-          );
+          return result.error.then(function(error) {
+            result.error = error || null;
+          });
         });
       }, new v.Promise(function(r) { r(); })); // A resolved promise
     },

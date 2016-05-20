@@ -144,7 +144,7 @@ describe("validate.async", function() {
       }, {
         attribute: "bar",
         error: new validate.Promise(function(resolve, reject) {
-          setTimeout(reject.bind(this, "My error"), 1);
+          setTimeout(resolve.bind(this, "My error"), 1);
         })
       }, {
         attribute: "baz",
@@ -162,23 +162,6 @@ describe("validate.async", function() {
           attribute: "baz",
           error: 4711
         }]);
-      });
-    });
-
-    it.promise("still works with rejecting with an error but logs an error", function() {
-      spyOn(validate, "error");
-
-      var results = [{
-        attribute: "foo",
-        error: new validate.Promise(function(resolve, reject) { reject("foo"); })
-      }];
-
-      return validate.waitForResults(results).then(function() {
-        expect(results).toEqual([{
-          attribute: "foo",
-          error: "foo"
-        }]);
-        expect(validate.error).toHaveBeenCalled();
       });
     });
 
