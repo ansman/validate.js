@@ -1071,7 +1071,7 @@ validate({foo: "some value"}, {foo: {custom: "some options"}});
   return new validate.Promise(function(resolve, reject) {
     setTimeout(function() {
       if (value === "foo") resolve();
-      else resolve("is not foo");
+      else reject("is not foo");
     }, 100);
   });
 };
