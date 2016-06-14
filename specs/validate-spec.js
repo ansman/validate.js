@@ -243,6 +243,18 @@ describe("validate", function() {
         {}
       );
     });
+
+    it("supports custom validators in the constraints schema", function() {
+      var attributes = {name: "Nicklas"}
+        , customValidator = jasmine.createSpy("validator").and.returnValue("some error message")
+        , constraints = {name: {someCustomValidator: customValidator}}
+        , options = {option1: "value1"};
+
+      expect(validate(attributes, constraints, options)).toEqual(
+        {name: ["Name some error message"]}
+      );
+      expect(customValidator).toHaveBeenCalledWith("Nicklas", options, "name", attributes);
+    });
   });
 
   describe("format", function() {

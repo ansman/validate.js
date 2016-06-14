@@ -106,14 +106,13 @@
         validators = v.result(constraints[attr], value, attributes, attr, options, constraints);
 
         for (validatorName in validators) {
-          validator = v.validators[validatorName];
+          validatorOptions = validators[validatorName];
+          validator = v.validators[validatorName] || buildCustomValidator(validatorOptions);
 
           if (!validator) {
             error = v.format("Unknown validator %{name}", {name: validatorName});
             throw new Error(error);
           }
-
-          validatorOptions = validators[validatorName];
           // This allows the options to be a function. The function will be
           // called with the value, attribute name, the complete dict of
           // attributes as well as the options and constraints passed in.
@@ -1122,6 +1121,23 @@
       return errors;
     }
   };
+
+  /**
+   * Build a custom validator from the given function (if one is given)
+   *
+   * Allows for ad-hoc validators to be defined directly in the constraints
+   * schema. Please see: https://github.com/ansman/validate.js/issues/2
+   *
+   * @param  {*} fn
+   * @return {Function|undefined}
+   */
+  function buildCustomValidator(fn) {
+    if (typeof fn !== 'function') { return; }
+
+    return function(value, validatorOptions, attr, attributes, options) {
+      return fn(value, options, attr, attributes);
+    };
+  }
 
   validate.exposeModule(validate, this, exports, module, define);
 }).call(this,
