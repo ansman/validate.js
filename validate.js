@@ -146,30 +146,17 @@
     // Takes the output from runValidations and converts it to the correct
     // output format.
     processValidationResults: function(errors, options) {
-      var attr;
-
       errors = v.pruneEmptyErrors(errors, options);
       errors = v.expandMultipleErrors(errors, options);
       errors = v.convertErrorMessages(errors, options);
 
-      switch (options.format || "grouped") {
-        case "detailed":
-          // Do nothing more to the errors
-          break;
+      var format = options.format || "grouped";
 
-        case "flat":
-          errors = v.flattenErrorsToArray(errors);
-          break;
-
-        case "grouped":
-          errors = v.groupErrorsByAttribute(errors);
-          for (attr in errors) {
-            errors[attr] = v.flattenErrorsToArray(errors[attr]);
-          }
-          break;
-
-        default:
-          throw new Error(v.format("Unknown format %{format}", options));
+      if(typeof v.formatters[format] === 'function') {
+        errors = v.formatters[format](errors);
+      }
+      else {
+        throw new Error(v.format("Unknown format %{format}", options));
       }
 
       return v.isEmpty(errors) ? undefined : errors;
@@ -1119,6 +1106,20 @@
       if (!PATTERN.exec(value)) {
         return message;
       }
+    }
+  };
+
+  validate.formatters = {
+    detailed: function(errors) {return errors;},
+    flat: v.flattenErrorsToArray,
+    grouped: function(errors) {
+      var attr;
+
+      errors = v.groupErrorsByAttribute(errors);
+      for (attr in errors) {
+        errors[attr] = v.flattenErrorsToArray(errors[attr]);
+      }
+      return errors;
     }
   };
 
