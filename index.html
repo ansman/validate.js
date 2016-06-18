@@ -349,6 +349,7 @@
           <li><a href="#validate-single">Single value validation</a></li>
           <li><a href="#validate-nested">Nested validation</a></li>
           <li><a href="#validate-default-options">Default options</a></li>
+          <li><a href="#validate-error-formatting">Error formatting</a></li>
         </ul>
       </li>
       <li>
@@ -704,14 +705,10 @@ validate({creditCardNumber: "340000000000000"}, constraints);
             can just override the <code>validate.prettify</code> to your liking.
           </p>
           <p class="description">
-            There is also a <b>format</b> option which accepts the following
-            values:
+            There is also a <b>format</b> option. To see more details about this
+            option see
+            <a href="#validate-error-formatting">the section about it</a>.
           </p>
-          <ul>
-            <li><code>"grouped"</code> (default) - Returns error messages grouped by attribute.</li>
-            <li><code>"flat"</code> - Returns a flat list of error messages.</li>
-            <li><code>"detailed"</code> - Returns a list of error objects containing more info on the error (see example). Each object will only contain a single message.</li>
-          </ul>
           <pre><code class="javascript">var constraints = {
   username: {
     presence: true,
@@ -728,6 +725,7 @@ validate({creditCardNumber: "340000000000000"}, constraints);
     }
   }
 };
+
 validate({password: "bad"}, constraints);
 // =&gt; {
 //   "username": ["Username can't be blank"],
@@ -1001,6 +999,92 @@ validate({}, constraints);
 // The default options are not used if the constraints options are falsy
 validate({format: "grouped"}, {});
 // =&gt; undefined</code></pre>
+          </div>
+          <div id="validate-error-formatting">
+            <h3>Error formatting</h3>
+            <p class="description">
+              validate.js allows the result from the validate function to be
+              formatted in different ways.
+            </p>
+            <ul>
+              <li><code>"grouped"</code> (default) - Returns error messages grouped by attribute.</li>
+              <li><code>"flat"</code> - Returns a flat list of error messages.</li>
+              <li><code>"detailed"</code> - Returns a list of error objects containing more info on the error (see example). Each object will only contain a single message.</li>
+            </ul>
+            <p class="description">
+              You can also create custom formatters by adding them to the
+              <code>validate.formatters</code> object. The formatter should be
+              a function that accepts a list of errors that have the same format
+              as the detailed format.
+            </p>
+            <pre><code class="javascript">var constraints = {
+  username: {
+    presence: true,
+    exclusion: {
+      within: ["nicklas"],
+      message: "'%{value}' is not allowed"
+    }
+  },
+  password: {
+    presence: true,
+    length: {
+      minimum: 6,
+      message: "must be at least 6 characters"
+    }
+  }
+};
+
+validate({}, constraints, {format: "flat"});
+// =&gt; ["Username can't be blank", "Password can't be blank"]
+
+validate({username: "nicklas", password: "bad"}, constraints, {format: "detailed"});
+// =&gt; [
+//   {
+//     "attribute": "username",
+//     "value": "nicklas",
+//     "validator": "exclusion",
+//     "globalOptions": {
+//       "format": "detailed"
+//     },
+//     "attributes": {
+//       "username": "nicklas",
+//       "password": "bad"
+//     },
+//     "options": {
+//       "within": [
+//         "nicklas"
+//       ],
+//       "message": "'%{value}' is not allowed"
+//     },
+//     "error": "Username 'nicklas' is not allowed"
+//   },
+//   {
+//     "attribute": "password",
+//     "value": "bad",
+//     "validator": "length",
+//     "globalOptions": {
+//       "format": "detailed"
+//     },
+//     "attributes": {
+//       "username": "nicklas",
+//       "password": "bad"
+//     },
+//     "options": {
+//       "minimum": 6,
+//       "message": "must be at least 6 characters"
+//     },
+//     "error": "Password must be at least 6 characters"
+//   }
+// ]
+
+validate.formatters.custom = function(errors) {
+  return errors.map(function(error) {
+    return error.validator;
+  });
+};
+
+validate({username: "nicklas", password: "bad"}, constraints, {format: "custom"});
+// =&gt; ["exclusion", "length"];</code></pre>
           </div>
         </div>
         <div id="custom-validator">
@@ -2258,7 +2342,8 @@ validate.result("foo".toUpperCase);
           </div>
         </div>
         <div id="changelog">
-          <div id="changelog-0.10.0">
+          <h2>Changelog</h2>
+          <div id="changelog-wip">
             <h3>
               <b class="version">WIP</b>
             </h3>
@@ -2267,9 +2352,14 @@ validate.result("foo".toUpperCase);
                 <b>Breaking:</b> The ability to reject async validations with
                 a result is not removed.
               </li>
+              <li>
+                Custom error formatters can now be created. See
+                <a href="#validate-error-formattering">here</a> for more info.
+                Thanks <a href="https://github.com/ansman/validate.js/pull/138" target="_blank">Freak in a Box</a>
+                for suggesting an implementing this.
+              </li>
             </ul>
           </div>
-          <h2>Changelog</h2>
           <div id="changelog-0-10-0">
             <h3>
               <b class="version">0.10.0</b>
