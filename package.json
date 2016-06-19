@@ -4,6 +4,7 @@
   "author": "Nicklas Ansman <nicklas@ansman.se>",
   "description": "Declarative validations for JavaScript",
   "main": "validate.js",
+  "typings": "validate.d.ts",
   "homepage": "http://validatejs.org",
   "repository": {
     "type": "git",
