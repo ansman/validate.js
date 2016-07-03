@@ -510,8 +510,10 @@
     collectFormValues: function(form, options) {
       var values = {}
         , i
+        , j
         , input
         , inputs
+        , option
         , value;
 
       if (v.isJqueryElement(form)) {
@@ -554,7 +556,18 @@
       inputs = form.querySelectorAll("select[name]");
       for (i = 0; i < inputs.length; ++i) {
         input = inputs.item(i);
-        value = v.sanitizeFormValue(input.options[input.selectedIndex].value, options);
+        if (input.multiple) {
+          value = [];
+          debugger;
+          for (j in input.options) {
+            option = input.options[j];
+            if (option.selected) {
+              value.push(v.sanitizeFormValue(option.value, options));
+            }
+          }
+        } else {
+          value = v.sanitizeFormValue(input.options[input.selectedIndex].value, options);
+        }
         values[input.name] = value;
       }
 

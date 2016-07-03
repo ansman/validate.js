@@ -847,7 +847,6 @@ describe("validate", function() {
   });
 
   describe("collectFormValues", function() {
-
     it("handles empty input", function() {
       expect(validate.collectFormValues()).toEqual({});
     });
@@ -982,6 +981,34 @@ describe("validate", function() {
       expect(validate.collectFormValues(form)).toEqual({
         emptyNumber: null,
         invalidNumber: null
+      });
+    });
+
+    it("handles select tags with 'multiple'", function() {
+      var form = document.createElement("form");
+      form.innerHTML = '' +
+        '<select name="selected-dropdown" multiple>' +
+        '  <option>' +
+        '  <option value="option1">' +
+        '  <option value="option2" selected>' +
+        '  <option value="option3">' +
+        '  <option value="option4" selected>' +
+        '</select>' +
+        '<select name="unselected-dropdown" multiple>' +
+        '  <option>' +
+        '  <option value="option1">' +
+        '  <option value="option2">' +
+        '  <option value="option3">' +
+        '  <option value="option4">' +
+        '</select>' +
+        '<select name="empty-value" multiple>' +
+        '  <option selected>' +
+        '</select>';
+
+      expect(validate.collectFormValues(form)).toEqual({
+        "selected-dropdown": ["option2", "option4"],
+        "unselected-dropdown": [],
+        "empty-value": [null]
       });
     });
   });
