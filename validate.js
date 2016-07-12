@@ -558,7 +558,6 @@
         input = inputs.item(i);
         if (input.multiple) {
           value = [];
-          debugger;
           for (j in input.options) {
             option = input.options[j];
             if (option.selected) {
