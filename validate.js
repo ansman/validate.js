@@ -1121,6 +1121,9 @@
     }
   };
 
+  // Alias presence validator as 'required'
+  validate.validators.required = validate.validators.presence;
+
   validate.formatters = {
     detailed: function(errors) {return errors;},
     flat: v.flattenErrorsToArray,
