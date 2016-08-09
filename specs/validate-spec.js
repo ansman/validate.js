@@ -269,6 +269,42 @@ describe("validate", function() {
           , options = {format: "flat", fullMessages: false};
         expect(validate({}, constraints, options)).toEqual(["can't be blank"]);
       });
+
+      it("deduplicates errors", function() {
+        var c = {
+          foo: {
+            numericality: {
+              message: "some error"
+            },
+            length: {
+              is: 23,
+              wrongLength: "some error"
+            }
+          }
+        };
+        expect(validate({foo: "bar"}, c, {format: "flat"})).toHaveItems([
+          "Foo some error"
+        ]);
+      });
+    });
+
+    describe("grouped", function() {
+      it("deduplicates errors", function() {
+        var c = {
+          foo: {
+            numericality: {
+              message: "some error"
+            },
+            length: {
+              is: 23,
+              wrongLength: "some error"
+            }
+          }
+        };
+        expect(validate({foo: "bar"}, c)).toEqual({
+          foo: ["Foo some error"]
+        });
+      });
     });
 
     describe("detailedErrors", function() {

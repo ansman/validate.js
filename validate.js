@@ -672,7 +672,11 @@
     // Out:
     // ["<message 1>", "<message 2>"]
     flattenErrorsToArray: function(errors) {
-      return errors.map(function(error) { return error.error; });
+      return errors
+        .map(function(error) { return error.error; })
+        .filter(function(value, index, self) {
+          return self.indexOf(value) === index;
+        });
     },
 
     cleanAttributes: function(attributes, whitelist) {
