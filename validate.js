@@ -152,10 +152,9 @@
 
       var format = options.format || "grouped";
 
-      if(typeof v.formatters[format] === 'function') {
+      if (typeof v.formatters[format] === 'function') {
         errors = v.formatters[format](errors);
-      }
-      else {
+      } else {
         throw new Error(v.format("Unknown format %{format}", options));
       }
 
