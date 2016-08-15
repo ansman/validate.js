@@ -10,8 +10,6 @@ describe("validators.inclusion", function() {
   it("allows empty values", function() {
     expect(inclusion(null, {})).not.toBeDefined();
     expect(inclusion(undefined, {})).not.toBeDefined();
-    expect(inclusion("", {})).not.toBeDefined();
-    expect(inclusion(" ", {})).not.toBeDefined();
   });
 
   it("returns nothing if the value is allowed", function() {
@@ -23,6 +21,8 @@ describe("validators.inclusion", function() {
 
   it("returns an error if the value is not included", function() {
     var opts = {within: within};
+    expect(inclusion("", {})).toBeDefined();
+    expect(inclusion(" ", {})).toBeDefined();
     expect(inclusion("quux", opts)).toEqual("^quux is not included in the list");
     expect(inclusion(false, opts)).toEqual("^false is not included in the list");
     expect(inclusion(1, opts)).toEqual("^1 is not included in the list");

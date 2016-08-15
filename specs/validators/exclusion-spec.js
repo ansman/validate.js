@@ -10,12 +10,12 @@ describe("validators.exclusion", function() {
   it("allows empty values", function() {
     expect(exclusion(null, {})).not.toBeDefined();
     expect(exclusion(undefined, {})).not.toBeDefined();
-    expect(exclusion("", {})).not.toBeDefined();
-    expect(exclusion(" ", {})).not.toBeDefined();
   });
 
   it("returns nothing if the value is allowed", function() {
     var opts = {within: within};
+    expect(exclusion("", {})).not.toBeDefined();
+    expect(exclusion(" ", {})).not.toBeDefined();
     expect(exclusion("quux", opts)).not.toBeDefined();
     expect(exclusion(false, opts)).not.toBeDefined();
     expect(exclusion(1, opts)).not.toBeDefined();

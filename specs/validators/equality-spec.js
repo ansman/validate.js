@@ -10,11 +10,11 @@ describe('validators.equality', function() {
   it("allows empty values", function() {
     expect(equality(null, "bar", "foo", {})).not.toBeDefined();
     expect(equality(undefined, "bar", "foo", {})).not.toBeDefined();
-    expect(equality("", "bar", "foo", {})).not.toBeDefined();
-    expect(equality(" ", "bar", "foo", {})).not.toBeDefined();
   });
 
   it("supports equality with another attribute", function() {
+    expect(equality("", "bar", "foo", {foo: "foo"})).toBeDefined();
+    expect(equality("  ", "bar", "foo", {foo: "foo"})).toBeDefined();
     expect(equality("foo", "bar", "foo", {foo: "foo"})).toBeDefined();
     expect(equality("foo", "bar", "foo", {foo: "foo", bar: "bar"})).toBeDefined();
     expect(equality("foo", "bar", "foo", {foo: "foo", bar: "foo"})).not.toBeDefined();

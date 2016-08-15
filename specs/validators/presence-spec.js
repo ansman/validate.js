@@ -29,6 +29,13 @@ describe('validator.presence', function() {
     expect(msg).toEqual("can't be blank");
   });
 
+  it("has an option for allowing empty values", function() {
+    expect(presence('', {allowEmpty: true})).not.toBeDefined();
+    expect(presence('  ', {allowEmpty: true})).not.toBeDefined();
+    expect(presence([], {allowEmpty: true})).not.toBeDefined();
+    expect(presence({}, {allowEmpty: true})).not.toBeDefined();
+  });
+
   it("also allows to specify your own nice message", function() {
     validate.validators.presence.message = "default message";
     expect(presence(null, {})).toEqual("default message");

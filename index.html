@@ -1728,7 +1728,7 @@ validate({duration: 4711}, constraints);
           <div id="validators-presence">
             <div class="signature"><b>presence</b></div>
             <p class="description">
-              The presence validator validates that the value isn't empty.
+              The presence validator validates that the value isn't defined.
               This validator will probably the most used one, it corresponds to
               HTML5's required attribute.<br>
               You can use the <b>message</b> option to customize the message. The
@@ -1743,6 +1743,12 @@ validate({duration: 4711}, constraints);
               <li><code>undefined</code></li>
               <li><code>{}</code> (empty objects)</li>
               <li><code>[]</code> (empty arrays)</li>
+            </ul>
+            <p class="description">
+              You can additionally use the <code>allowEmpty</code> to also
+              reject these values:
+            </p>
+            <ul>
               <li><code>""</code> (empty string)</li>
               <li><code>" "</code> (whitespace only string)</li>
             </ul>
@@ -2381,6 +2387,13 @@ validate.result("foo".toUpperCase);
                 Fixed an issue where some URLs would be detected as invalid when
                 they weren't. Thanks <a href="github.com/ansman/validate.js/issues/153" target="_blank">huan086</a>
                 for reporting this.
+              </li>
+              <li>
+                <b>Breaking:</b> The <code>presence</code> validator no longer
+                allows empty and whitespace only strings per default. This
+                behaviour can be modified by using the
+                <code>allowEmpty</code> option.
+                Thanks <a href="https://github.com/ansman/validate.js/issues/99" target="_blank">mondwan</a> for reporting this.
               </li>
             </ul>
           </div>

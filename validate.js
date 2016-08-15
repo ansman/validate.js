@@ -760,13 +760,13 @@
     // Presence validates that the value isn't empty
     presence: function(value, options) {
       options = v.extend({}, this.options, options);
-      if (v.isEmpty(value)) {
+      if (options.allowEmpty ? !v.isDefined(value) : v.isEmpty(value)) {
         return options.message || this.message || "can't be blank";
       }
     },
     length: function(value, options, attribute) {
       // Empty values are allowed
-      if (v.isEmpty(value)) {
+      if (!v.isDefined(value)) {
         return;
       }
 
@@ -814,7 +814,7 @@
     },
     numericality: function(value, options) {
       // Empty values are fine
-      if (v.isEmpty(value)) {
+      if (!v.isDefined(value)) {
         return;
       }
 
@@ -850,7 +850,7 @@
       }
 
       // Coerce the value to a number unless we're being strict.
-      if (options.noStrings !== true && v.isString(value)) {
+      if (options.noStrings !== true && v.isString(value) && !v.isEmpty(value)) {
         value = +value;
       }
 
@@ -915,7 +915,7 @@
       }
 
       // Empty values are fine
-      if (v.isEmpty(value)) {
+      if (!v.isDefined(value)) {
         return;
       }
 
@@ -985,7 +985,7 @@
         , match;
 
       // Empty values are allowed
-      if (v.isEmpty(value)) {
+      if (!v.isDefined(value)) {
         return;
       }
       if (!v.isString(value)) {
@@ -1002,7 +1002,7 @@
     },
     inclusion: function(value, options) {
       // Empty values are fine
-      if (v.isEmpty(value)) {
+      if (!v.isDefined(value)) {
         return;
       }
       if (v.isArray(options)) {
@@ -1019,7 +1019,7 @@
     },
     exclusion: function(value, options) {
       // Empty values are fine
-      if (v.isEmpty(value)) {
+      if (!v.isDefined(value)) {
         return;
       }
       if (v.isArray(options)) {
@@ -1036,7 +1036,7 @@
       options = v.extend({}, this.options, options);
       var message = options.message || this.message || "is not a valid email";
       // Empty values are fine
-      if (v.isEmpty(value)) {
+      if (!v.isDefined(value)) {
         return;
       }
       if (!v.isString(value)) {
@@ -1049,7 +1049,7 @@
       PATTERN: /^[a-z0-9\u007F-\uffff!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9\u007F-\uffff!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/i
     }),
     equality: function(value, options, attribute, attributes) {
-      if (v.isEmpty(value)) {
+      if (!v.isDefined(value)) {
         return;
       }
 
@@ -1078,7 +1078,7 @@
     // A URL validator that is used to validate URLs with the ability to
     // restrict schemes and some domains.
     url: function(value, options) {
-      if (v.isEmpty(value)) {
+      if (!v.isDefined(value)) {
         return;
       }
 
