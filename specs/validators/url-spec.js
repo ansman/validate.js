@@ -71,6 +71,7 @@ describe("validators.url", function() {
     expect(url("http://foo.com/blah_blah_(wikipedia)_(again)", {})).not.toBeDefined();
     expect(url("http://www.example.com/wpstyle/?p=364", {})).not.toBeDefined();
     expect(url("https://www.example.com/foo/?bar=baz&inga=42&quux", {})).not.toBeDefined();
+    expect(url("https://www.example.com/foo/#bar=baz&inga=42&quux", {})).not.toBeDefined();
     expect(url("http://✪df.ws/123", {})).not.toBeDefined();
     expect(url("http://userid:password@example.com:8080", {})).not.toBeDefined();
     expect(url("http://userid:password@example.com:8080/", {})).not.toBeDefined();
