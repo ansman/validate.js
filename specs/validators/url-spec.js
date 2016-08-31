@@ -65,10 +65,14 @@ describe("validators.url", function() {
   });
 
   it("allows valid urls", function() {
+    expect(url("http://foo.com", {})).not.toBeDefined();
+    expect(url("http://foo.com/", {})).not.toBeDefined();
     expect(url("http://foo.com/blah_blah", {})).not.toBeDefined();
     expect(url("http://foo.com/blah_blah/", {})).not.toBeDefined();
     expect(url("http://foo.com/blah_blah_(wikipedia)", {})).not.toBeDefined();
     expect(url("http://foo.com/blah_blah_(wikipedia)_(again)", {})).not.toBeDefined();
+    expect(url("http://foo.com?query=bar", {})).not.toBeDefined();
+    expect(url("http://foo.com#fragment=bar", {})).not.toBeDefined();
     expect(url("http://www.example.com/wpstyle/?p=364", {})).not.toBeDefined();
     expect(url("https://www.example.com/foo/?bar=baz&inga=42&quux", {})).not.toBeDefined();
     expect(url("https://www.example.com/foo/#bar=baz&inga=42&quux", {})).not.toBeDefined();

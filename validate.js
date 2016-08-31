@@ -1135,7 +1135,7 @@
           // port number
           "(?::\\d{2,5})?" +
           // path
-          "(?:\\/[^\\s]*)?" +
+          "(?:[/?#]\\S*)?" +
         "$";
 
       var PATTERN = new RegExp(regex, 'i');
