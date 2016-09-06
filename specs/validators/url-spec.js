@@ -47,7 +47,6 @@ describe("validators.url", function() {
     expect(url("http://foo.bar/foo(bar)baz quux", {})).toBeDefined();
     expect(url("ftps://foo.bar/", {})).toBeDefined();
     expect(url("http://-error-.invalid/", {})).toBeDefined();
-    expect(url("http://a.b--c.de/", {})).toBeDefined();
     expect(url("http://-a.b.co", {})).toBeDefined();
     expect(url("http://a.b-.co", {})).toBeDefined();
     expect(url("http://0.0.0.0", {})).toBeDefined();
@@ -105,6 +104,7 @@ describe("validators.url", function() {
     expect(url("http://1337.net", {})).not.toBeDefined();
     expect(url("http://a.b-c.de", {})).not.toBeDefined();
     expect(url("http://223.255.255.254", {})).not.toBeDefined();
+    expect(url("http://a.b--c.de/", {})).not.toBeDefined();
   });
 
   it("allows local url and private networks if option is set", function() {
