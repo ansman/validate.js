@@ -433,6 +433,36 @@ describe("validate", function() {
       }]);
     });
 
+    it("use the attributes label if it's specified in options", function() {
+      var errors = [{
+        attribute: "foo",
+        error: "can't be blank",
+        someOtherProperty: "someOtherProperty",
+        value: "foobar"
+      }, {
+        attribute: "foo_bar",
+        error: "has some other problem",
+        value: "foobar"
+      }];
+
+      var options = {
+          labels: {
+              foo: 'foo label'
+          }
+      };
+
+      expect(convertErrorMessages(errors, options)).toEqual([{
+        attribute: "foo",
+        error: "Foo label can't be blank",
+        someOtherProperty: "someOtherProperty",
+        value: "foobar"
+      }, {
+        attribute: "foo_bar",
+        error: "Foo bar has some other problem",
+        value: "foobar"
+      }]);
+    });
+
     it("doesn't modify the input", function() {
       var errors = [{
         attribute: "foo",
