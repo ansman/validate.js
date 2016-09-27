@@ -1154,6 +1154,16 @@
         errors[attr] = v.flattenErrorsToArray(errors[attr]);
       }
       return errors;
+    },
+    constraint: function(errors) {
+      var attr;
+      errors = v.groupErrorsByAttribute(errors);
+      for (attr in errors) {
+        errors[attr] = errors[attr].map(function(result) {
+          return result.validator;
+        }).sort();
+      }
+      return errors;
     }
   };
 
