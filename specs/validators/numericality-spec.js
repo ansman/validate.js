@@ -382,4 +382,13 @@ describe("validators.numericality", function() {
 
     expect(numericality("foo", {message: "some error"})).toEqual("some error");
   });
+
+  it("calls custom prettify from options", function() {
+    var options = {greaterThan: 0, prettify: function() {}};
+    spyOn(options, "prettify").and.returnValue("grooter than");
+    spyOn(validate, "prettify").and.returnValue("greeter than");
+    expect(numericality(0, options)).toEqual(["must be grooter than 0"]);
+    expect(options.prettify).toHaveBeenCalledWith("greaterThan");
+    expect(validate.prettify).not.toHaveBeenCalled();
+  });
 });

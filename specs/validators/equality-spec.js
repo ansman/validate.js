@@ -101,4 +101,13 @@ describe('validators.equality', function() {
       , value = "foo";
     expect(equality(value, options)).toBe(message);
   });
+
+  it("calls custom prettify from options", function() {
+    var options = {attribute: "fooBar", prettify: function() {}};
+    spyOn(options, "prettify").and.returnValue("qux");
+    spyOn(validate, "prettify").and.returnValue("baz");
+    expect(equality("foo", options, "foo", {foo: "foo"})).toEqual("is not equal to qux");
+    expect(options.prettify).toHaveBeenCalledWith("fooBar");
+    expect(validate.prettify).not.toHaveBeenCalled();
+  });
 });
