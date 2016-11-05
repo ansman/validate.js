@@ -367,6 +367,34 @@ describe("validate", function() {
         }]);
       });
     });
+    describe("constraint", function() {
+      it("returns constraint names", function() {
+        var c = {
+          foo: {
+            numericality: true,
+            length: {
+              is: 23
+            }
+          }
+        };
+        expect(validate({foo: "bar"}, c, { format: 'constraint' })).toEqual({
+          foo: ["length", "numericality"]
+        });
+      });
+      it("sorts constraint names", function() {
+        var c = {
+          foo: {
+            numericality: true,
+            length: {
+              is: 23
+            }
+          }
+        };
+        expect(validate({foo: "bar"}, c, { format: 'constraint' })).toEqual({
+          foo: ["length", "numericality"]
+        });
+      });
+    });
   });
 
   it("allows validators to return functions as messages", function() {
