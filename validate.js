@@ -1,5 +1,5 @@
 /*!
- * validate.js 0.11.0
+ * validate.js 0.11.1
  *
  * (c) 2013-2016 Nicklas Ansman, 2013 Wrapp
  * Validate.js may be freely distributed under the MIT license.
@@ -57,7 +57,7 @@
     version: {
       major: 0,
       minor: 11,
-      patch: 0,
+      patch: 1,
       metadata: null,
       toString: function() {
         var version = v.format("%{major}.%{minor}.%{patch}", v.version);
@@ -1152,6 +1152,16 @@
       errors = v.groupErrorsByAttribute(errors);
       for (attr in errors) {
         errors[attr] = v.flattenErrorsToArray(errors[attr]);
+      }
+      return errors;
+    },
+    constraint: function(errors) {
+      var attr;
+      errors = v.groupErrorsByAttribute(errors);
+      for (attr in errors) {
+        errors[attr] = errors[attr].map(function(result) {
+          return result.validator;
+        }).sort();
       }
       return errors;
     }
