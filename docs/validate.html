@@ -31,7 +31,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*!
- * validate.js 0.11.0
+ * validate.js 0.11.1
  *
  * (c) 2013-2016 Nicklas Ansman, 2013 Wrapp
  * Validate.js may be freely distributed under the MIT license.
@@ -129,7 +129,7 @@ The toString function will allow it to be coerced into a string</p>
             <div class="content"><div class='highlight'><pre>    version: {
       major: <span class="hljs-number">0</span>,
       minor: <span class="hljs-number">11</span>,
-      patch: <span class="hljs-number">0</span>,
+      patch: <span class="hljs-number">1</span>,
       metadata: <span class="hljs-literal">null</span>,
       toString: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">var</span> version = v.format(<span class="hljs-string">"%{major}.%{minor}.%{patch}"</span>, v.version);
@@ -2084,6 +2084,16 @@ excludes network &amp; broacast addresses
       errors = v.groupErrorsByAttribute(errors);
       <span class="hljs-keyword">for</span> (attr <span class="hljs-keyword">in</span> errors) {
         errors[attr] = v.flattenErrorsToArray(errors[attr]);
+      }
+      <span class="hljs-keyword">return</span> errors;
+    },
+    constraint: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">errors</span>) </span>{
+      <span class="hljs-keyword">var</span> attr;
+      errors = v.groupErrorsByAttribute(errors);
+      <span class="hljs-keyword">for</span> (attr <span class="hljs-keyword">in</span> errors) {
+        errors[attr] = errors[attr].map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">result</span>) </span>{
+          <span class="hljs-keyword">return</span> result.validator;
+        }).sort();
       }
       <span class="hljs-keyword">return</span> errors;
     }
