@@ -58,7 +58,7 @@
       major: 0,
       minor: 11,
       patch: 0,
-      metadata: null,
+      metadata: "development",
       toString: function() {
         var version = v.format("%{major}.%{minor}.%{patch}", v.version);
         if (!v.isEmpty(v.version.metadata)) {
@@ -1152,6 +1152,16 @@
       errors = v.groupErrorsByAttribute(errors);
       for (attr in errors) {
         errors[attr] = v.flattenErrorsToArray(errors[attr]);
+      }
+      return errors;
+    },
+    constraint: function(errors) {
+      var attr;
+      errors = v.groupErrorsByAttribute(errors);
+      for (attr in errors) {
+        errors[attr] = errors[attr].map(function(result) {
+          return result.validator;
+        }).sort();
       }
       return errors;
     }
