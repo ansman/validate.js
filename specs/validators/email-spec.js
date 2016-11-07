@@ -10,6 +10,7 @@ describe('validators.email', function() {
   it("allows empty values", function() {
     expect(email(null, {})).not.toBeDefined();
     expect(email(undefined, {})).not.toBeDefined();
+    expect(email("", {})).not.toBeDefined();
   });
 
   it("doesn't allow non strings", function() {
@@ -32,7 +33,6 @@ describe('validators.email', function() {
 
   it("doesn't allow 'invalid' emails", function() {
     var expected = "is not a valid email";
-    expect(email("", {})).toEqual(expected);
     expect(email(" ", {})).toEqual(expected);
     expect(email("foobar", {})).toEqual(expected);
     expect(email("foo@bar", {})).toEqual(expected);

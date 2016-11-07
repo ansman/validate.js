@@ -44,11 +44,12 @@ describe('validators.datetime', function() {
     expect(function() { datetime(null, {}); }).not.toThrow();
   });
 
-  it("allows undefined values", function() {
+  it("allows empty values", function() {
     spyOn(validate.validators.datetime, "parse");
     spyOn(validate.validators.datetime, "format");
     expect(datetime(null, {})).not.toBeDefined();
     expect(datetime(undefined, {})).not.toBeDefined();
+    expect(datetime("", {})).not.toBeDefined();
     expect(validate.validators.datetime.parse).not.toHaveBeenCalled();
     expect(validate.validators.datetime.format).not.toHaveBeenCalled();
   });
@@ -60,7 +61,6 @@ describe('validators.datetime', function() {
   it("doesn't allow invalid dates", function() {
     var expected = "must be a valid date";
     expect(datetime("foobar", {})).toEqual(expected);
-    expect(datetime("", {})).toEqual(expected);
     expect(datetime("  ", {})).toEqual(expected);
   });
 

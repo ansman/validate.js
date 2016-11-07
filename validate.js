@@ -311,8 +311,12 @@
       }
     },
 
-    isEmpty: function(value) {
+    isEmpty: function(value, treatWhitespaceAsEmpty) {
       var attr;
+
+      if (treatWhitespaceAsEmpty === undefined) {
+        treatWhitespaceAsEmpty = true;
+      }
 
       // Null and undefined are empty
       if (!v.isDefined(value)) {
@@ -326,7 +330,11 @@
 
       // Whitespace only strings are empty
       if (v.isString(value)) {
-        return v.EMPTY_STRING_REGEXP.test(value);
+        if (treatWhitespaceAsEmpty) {
+          return v.EMPTY_STRING_REGEXP.test(value);
+        }
+
+        return value === "";
       }
 
       // For arrays we use the length property
@@ -770,7 +778,7 @@
     },
     length: function(value, options, attribute) {
       // Empty values are allowed
-      if (!v.isDefined(value)) {
+      if (v.isEmpty(value, false)) {
         return;
       }
 
@@ -818,7 +826,7 @@
     },
     numericality: function(value, options) {
       // Empty values are fine
-      if (!v.isDefined(value)) {
+      if (v.isEmpty(value, false)) {
         return;
       }
 
@@ -919,7 +927,7 @@
       }
 
       // Empty values are fine
-      if (!v.isDefined(value)) {
+      if (v.isEmpty(value, false)) {
         return;
       }
 
@@ -989,7 +997,7 @@
         , match;
 
       // Empty values are allowed
-      if (!v.isDefined(value)) {
+      if (v.isEmpty(value, false)) {
         return;
       }
       if (!v.isString(value)) {
@@ -1006,7 +1014,7 @@
     },
     inclusion: function(value, options) {
       // Empty values are fine
-      if (!v.isDefined(value)) {
+      if (v.isEmpty(value, false)) {
         return;
       }
       if (v.isArray(options)) {
@@ -1023,7 +1031,7 @@
     },
     exclusion: function(value, options) {
       // Empty values are fine
-      if (!v.isDefined(value)) {
+      if (v.isEmpty(value, false)) {
         return;
       }
       if (v.isArray(options)) {
@@ -1040,7 +1048,7 @@
       options = v.extend({}, this.options, options);
       var message = options.message || this.message || "is not a valid email";
       // Empty values are fine
-      if (!v.isDefined(value)) {
+      if (v.isEmpty(value, false)) {
         return;
       }
       if (!v.isString(value)) {
@@ -1082,7 +1090,7 @@
     // A URL validator that is used to validate URLs with the ability to
     // restrict schemes and some domains.
     url: function(value, options) {
-      if (!v.isDefined(value)) {
+      if (v.isEmpty(value, false)) {
         return;
       }
 

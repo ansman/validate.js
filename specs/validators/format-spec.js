@@ -13,6 +13,8 @@ describe("validators.format", function() {
     expect(format(null, options2)).not.toBeDefined();
     expect(format(undefined, options1)).not.toBeDefined();
     expect(format(undefined, options2)).not.toBeDefined();
+    expect(format("", options1)).not.toBeDefined();
+    expect(format("", options2)).not.toBeDefined();
   });
 
   it("allows values that matches the pattern", function() {
@@ -21,8 +23,6 @@ describe("validators.format", function() {
   });
 
   it("doesn't allow values that doesn't matches the pattern", function() {
-    expect(format("", options1)).toBeDefined("is invalid");
-    expect(format("", options2)).toBeDefined("is invalid");
     expect(format(" ", options1)).toBeDefined("is invalid");
     expect(format(" ", options2)).toBeDefined("is invalid");
     expect(format("barfoo", options1)).toEqual("is invalid");
