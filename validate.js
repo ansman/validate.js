@@ -928,7 +928,7 @@
 
       value = this.parse(value, options);
 
-      // 86400000 is the number of seconds in a day, this is used to remove
+      // 86400000 is the number of milliseconds in a day, this is used to remove
       // the time from the date
       if (isNaN(value) || options.dateOnly && value % 86400000 !== 0) {
         err = options.notValid ||
