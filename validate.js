@@ -120,7 +120,7 @@
           // This is useful when you want to have different
           // validations depending on the attribute value.
           validatorOptions = v.result(validatorOptions, value, attributes, attr, options, constraints);
-          if (!validatorOptions) {
+          if (typeof validatorOptions == 'undefined' || validatorOptions === null) {
             continue;
           }
           results.push({
