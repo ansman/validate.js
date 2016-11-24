@@ -1,7 +1,10 @@
 describe("validators.format", function() {
   var format = validate.validators.format.bind(validate.validators.format)
     , options1 = {pattern: /^foobar$/i}
-    , options2 = {pattern: "^foobar$", flags: "i"};
+    , options2 = {pattern: "^foobar$", flags: "i"}
+    , options3 = {pattern: /^foobar$/i, excludes: [function (v) {
+        return v === '';
+    }]};
 
   afterEach(function() {
     delete validate.validators.format.message;
@@ -11,13 +14,17 @@ describe("validators.format", function() {
   it("allows empty values", function() {
     expect(format(null, options1)).not.toBeDefined();
     expect(format(null, options2)).not.toBeDefined();
+    expect(format(null, options3)).not.toBeDefined();
     expect(format(undefined, options1)).not.toBeDefined();
     expect(format(undefined, options2)).not.toBeDefined();
+    expect(format(undefined, options3)).not.toBeDefined();
+    expect(format("", options3)).not.toBeDefined();
   });
 
   it("allows values that matches the pattern", function() {
     expect(format("fooBAR", options1)).not.toBeDefined();
     expect(format("fooBAR", options2)).not.toBeDefined();
+    expect(format("fooBAR", options3)).not.toBeDefined();
   });
 
   it("doesn't allow values that doesn't matches the pattern", function() {
@@ -25,21 +32,26 @@ describe("validators.format", function() {
     expect(format("", options2)).toBeDefined("is invalid");
     expect(format(" ", options1)).toBeDefined("is invalid");
     expect(format(" ", options2)).toBeDefined("is invalid");
+    expect(format(" ", options3)).toBeDefined("is invalid");
     expect(format("barfoo", options1)).toEqual("is invalid");
     expect(format("barfoo", options2)).toEqual("is invalid");
+    expect(format("barfoo", options3)).toBeDefined("is invalid");
   });
 
   it("non strings are not allowed", function() {
     var obj = {toString: function() { return "foobar"; }};
     expect(format(obj, options1)).toBeDefined();
     expect(format(obj, options2)).toBeDefined();
+    expect(format(obj, options3)).toBeDefined();
     expect(format(3, options1)).toBeDefined();
     expect(format(3, options2)).toBeDefined();
+    expect(format(3, options3)).toBeDefined();
   });
 
   it("non strings are not allowed", function() {
     expect(format(3, options1)).toBeDefined();
     expect(format(3, options2)).toBeDefined();
+    expect(format(3, options3)).toBeDefined();
   });
 
   it("doesn't allow partial matches", function() {

@@ -21,6 +21,11 @@ describe("validators.numericality", function() {
   it("allows empty values", function() {
     expect(numericality(null, {})).not.toBeDefined();
     expect(numericality(undefined, {})).not.toBeDefined();
+    expect(numericality('', {excludes: [{
+        presence: {
+            allowEmpty: true,
+        },
+    }]})).not.toBeDefined();
   });
 
   it("allows numbers", function() {

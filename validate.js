@@ -350,6 +350,29 @@
       return false;
     },
 
+    shouldValueBeExcluded: function (value, hooks) {
+      var ret = false;
+
+      for (var i = 0; i < hooks.length; i++) {
+        var hook = hooks[i];
+
+        if (v.isFunction(hook)) {
+          // Hook is a custom function
+          ret = !!hook(value); // Coerce to boolean
+        } else if (v.isObject(hook)) {
+          // Hook is a constraint
+          // Negate results from isDefined as we are talking about exclude
+          ret = !v.isDefined(v.single(value, hook));
+        }
+
+        if (ret) {
+          break;
+        }
+      }
+
+      return ret;
+    },
+
     // Formats the specified strings with the given values like so:
     // ```
     // format("Foo: %{foo}", {foo: "bar"}) // "Foo bar"
@@ -818,6 +841,13 @@
         return;
       }
 
+      // Allows users to exclude value before further processing
+      var hooks = options.excludes || [];
+      if (v.shouldValueBeExcluded(value, hooks)) {
+          // Return if given value should be exclude
+          return;
+      }
+
       options = v.extend({}, this.options, options);
 
       var errors = []
@@ -992,6 +1022,13 @@
         return message;
       }
 
+      // Allows users to exclude value before further processing
+      var hooks = options.excludes || [];
+      if (v.shouldValueBeExcluded(value, hooks)) {
+          // Return if given value should be exclude
+          return;
+      }
+
       if (v.isString(pattern)) {
         pattern = new RegExp(options.pattern, options.flags);
       }
@@ -1008,6 +1045,14 @@
       if (v.isArray(options)) {
         options = {within: options};
       }
+
+      // Allows users to exclude value before further processing
+      var hooks = options.excludes || [];
+      if (v.shouldValueBeExcluded(value, hooks)) {
+          // Return if given value should be exclude
+          return;
+      }
+
       options = v.extend({}, this.options, options);
       if (v.contains(options.within, value)) {
         return;
