@@ -1744,15 +1744,14 @@ validate({duration: 4711}, constraints);
               <li><code>undefined</code></li>
               <li><code>{}</code> (empty objects)</li>
               <li><code>[]</code> (empty arrays)</li>
+              <li><code>""</code> (empty string)</li>
+              <li><code>"  "</code> (whitespace only string)</li>
             </ul>
             <p class="description">
-              You can additionally use the <code>allowEmpty</code> to also
-              reject these values:
+              If you don't want to reject empty objects, arrays or strings
+              you can set the <code>allowEmpty</code> option to
+              <code>true</code>.
             </p>
-            <ul>
-              <li><code>""</code> (empty string)</li>
-              <li><code>" "</code> (whitespace only string)</li>
-            </ul>
             <p class="notes">
               <b>Important!</b> All other values are considered valid (including functions)!
             </p>
@@ -1761,6 +1760,12 @@ validate({duration: 4711}, constraints);
 // =&gt; {"username": ["Username can't be blank"]}
 
 validate({username: "ansman"}, {username: {presence: true}});
+// =&gt; undefined
+
+validate({input: ""}, {input: {presence: true}});
+// =&gt; {"input:" ["Input can't be blank"]}
+
+validate({input: ""}, {input: {presence: {allowEmpty: true}}});
 // =&gt; undefined
 
 validate({}, {username: {presence: {message: "is required"}}});
