@@ -555,6 +555,10 @@
       inputs = form.querySelectorAll("select[name]");
       for (i = 0; i < inputs.length; ++i) {
         input = inputs.item(i);
+        if (v.isDefined(input.getAttribute("data-ignored"))) {
+          continue;
+        }
+
         if (input.multiple) {
           value = [];
           for (j in input.options) {

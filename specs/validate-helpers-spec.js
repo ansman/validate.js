@@ -945,7 +945,11 @@ describe("validate", function() {
 
     it("has a way to ignore elements", function() {
       var form = document.createElement("form");
-      form.innerHTML = '<input type="text" name="ignored" value="ignored" data-ignored>';
+      form.innerHTML = '' +
+        '<input type="text" name="ignored" value="ignored" data-ignored>' +
+        '<select name="ignored-select" data-ignored>' +
+        '  <option value="select" selected>Select</option>' +
+        '</select>';
       expect(validate.collectFormValues(form)).toEqual({});
     });
 
