@@ -611,6 +611,11 @@
     expandMultipleErrors: function(errors) {
       var ret = [];
       errors.forEach(function(error) {
+        if (v.isFunction(error.error.expand)) {
+          error.error.expand(ret, error);
+          return;
+        }
+
         // Removes errors without a message
         if (v.isArray(error.error)) {
           error.error.forEach(function(msg) {
@@ -1144,6 +1149,68 @@
       if (!PATTERN.exec(value)) {
         return message;
       }
+    },
+
+    forEachSingle: function(value, options, attribute, attributes) {
+      if (!v.isDefined(value)) {
+        return;
+      }
+
+      var result = {
+        expand: function(ret, res) {
+          res.error.data.forEach(function(ary, i) {
+            if (ary) {
+              ary.forEach(function(r) {
+                var attribute = res.attribute + '[' + i + ']';
+                var o = v.extend({}, r, {
+                  attribute: attribute,
+                  attributes: {}
+                });
+                o.attributes[attribute] = r.attributes.single;
+                ret.push(o);
+              });
+            }
+          });
+        },
+        data: []
+      };
+      for (var i = 0; i < value.length; i++) {
+        var r = v({single: value[i]}, {single: options},
+                  {fullMessages: false, format: 'detailed'});
+        result.data.push(r);
+      }
+      return result;
+    },
+
+    forEach: function(value, options, attribute, attributes) {
+      if (!v.isDefined(value)) {
+        return;
+      }
+
+      var result = {
+        expand: function(ret, res) {
+          res.error.data.forEach(function(ary, i) {
+            if (ary) {
+              ary.forEach(function(r) {
+                var attribute = res.attribute + '[' + i + '].' + r.attribute;
+                var o = v.extend({}, r, {
+                  attribute: attribute,
+                  attributes: {}
+                });
+                o.attributes[attribute] = r.attributes;
+                ret.push(o);
+              });
+            }
+          });
+        },
+        data: []
+      };
+      for (var i = 0; i < value.length; i++) {
+        var r = v(value[i], options,
+                  {fullMessages: false, format: 'detailed'});
+        result.data.push(r);
+      }
+      return result;
     }
   };
 
