@@ -98,6 +98,7 @@
       // Loops through each constraints, finds the correct validator and run it.
       for (attr in constraints) {
         value = v.getDeepObjectValue(attributes, attr);
+
         // This allows the constraints for an attribute to be a function.
         // The function will be called with the value, attribute name, the complete dict of
         // attributes as well as the options and constraints passed in.
@@ -123,6 +124,12 @@
           if (!validatorOptions) {
             continue;
           }
+
+          var attrParts = v.splitKeypath(attr);
+          if (attrParts.length == 1) {
+              attr = attrParts[0];
+          }
+
           results.push({
             attribute: attr,
             value: value,
@@ -449,43 +456,61 @@
     },
 
     forEachKeyInKeypath: function(object, keypath, callback) {
+        var  i
+           , isLastItem;
+
       if (!v.isString(keypath)) {
         return undefined;
       }
 
-      var key = ""
-        , i
-        , escape = false;
+      var keyArray = v.splitKeypath(keypath);
 
-      for (i = 0; i < keypath.length; ++i) {
-        switch (keypath[i]) {
-          case '.':
-            if (escape) {
-              escape = false;
-              key += '.';
-            } else {
-              object = callback(object, key, false);
-              key = "";
-            }
-            break;
-
-          case '\\':
-            if (escape) {
-              escape = false;
-              key += '\\';
-            } else {
-              escape = true;
-            }
-            break;
-
-          default:
-            escape = false;
-            key += keypath[i];
-            break;
-        }
+      for (i = 0; i < keyArray.length; i++) {
+          isLastItem = i == keyArray.length - 1;
+          object = callback(object, keyArray[i], isLastItem);
       }
 
-      return callback(object, key, true);
+      return object;
+    },
+
+    splitKeypath: function(keypath) {
+        var key = ""
+          , i
+          , escape = false
+          , keyArray = [];
+
+        for (i = 0; i < keypath.length; ++i) {
+          switch (keypath[i]) {
+            case '.':
+              if (escape) {
+                escape = false;
+                key += '.';
+              } else {
+                keyArray.push(key);
+                //object = callback(object, key, false);
+                key = "";
+              }
+              break;
+
+            case '\\':
+              if (escape) {
+                escape = false;
+                key += '\\';
+              } else {
+                escape = true;
+              }
+              break;
+
+            default:
+              escape = false;
+              key += keypath[i];
+              break;
+          }
+        }
+
+        keyArray.push(key);
+
+        return keyArray;
     },
 
     getDeepObjectValue: function(obj, keypath) {
