@@ -368,6 +368,7 @@ describe("validators.numericality", function() {
       expect(numericality("10", {strict: true})).not.toBeDefined();
       expect(numericality("0.1", {strict: true})).not.toBeDefined();
       expect(numericality("0", {strict: true})).not.toBeDefined();
+      expect(numericality("-3", {strict: true})).not.toBeDefined();
     });
   });
 

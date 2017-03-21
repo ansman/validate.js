@@ -838,7 +838,7 @@
 
       // Strict will check that it is a valid looking number
       if (v.isString(value) && options.strict) {
-        var pattern = "^(0|[1-9]\\d*)";
+        var pattern = "^-?(0|[1-9]\\d*)";
         if (!options.onlyInteger) {
           pattern += "(\\.\\d+)?";
         }
