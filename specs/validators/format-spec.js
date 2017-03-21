@@ -8,7 +8,7 @@ describe("validators.format", function() {
     delete validate.validators.format.options;
   });
 
-  it("allows empty values", function() {
+  it("allows undefined values", function() {
     expect(format(null, options1)).not.toBeDefined();
     expect(format(null, options2)).not.toBeDefined();
     expect(format(undefined, options1)).not.toBeDefined();

@@ -6,13 +6,9 @@ describe('validator.presence', function() {
     delete validate.validators.presence.options;
   });
 
-  it("doesn't allow empty values", function() {
-    expect(presence('', {})).toBeDefined();
-    expect(presence('  ', {})).toBeDefined();
+  it("doesn't allow undefined values", function() {
     expect(presence(null, {})).toBeDefined();
     expect(presence(undefined, {})).toBeDefined();
-    expect(presence([], {})).toBeDefined();
-    expect(presence({}, {})).toBeDefined();
   });
 
   it("allows non empty values", function() {
@@ -22,6 +18,10 @@ describe('validator.presence', function() {
     expect(presence([null], {})).not.toBeDefined();
     expect(presence({foo: null}, {})).not.toBeDefined();
     expect(presence(function(){return null;}, {})).not.toBeDefined();
+    expect(presence('', {})).not.toBeDefined();
+    expect(presence('  ', {})).not.toBeDefined();
+    expect(presence([], {})).not.toBeDefined();
+    expect(presence({}, {})).not.toBeDefined();
   });
 
   it("has a nice default message", function() {
@@ -29,11 +29,11 @@ describe('validator.presence', function() {
     expect(msg).toEqual("can't be blank");
   });
 
-  it("has an option for allowing empty values", function() {
-    expect(presence('', {allowEmpty: true})).not.toBeDefined();
-    expect(presence('  ', {allowEmpty: true})).not.toBeDefined();
-    expect(presence([], {allowEmpty: true})).not.toBeDefined();
-    expect(presence({}, {allowEmpty: true})).not.toBeDefined();
+  it("has an option for not allowing empty values", function() {
+    expect(presence('', {allowEmpty: false})).toBeDefined();
+    expect(presence('  ', {allowEmpty: false})).toBeDefined();
+    expect(presence([], {allowEmpty: false})).toBeDefined();
+    expect(presence({}, {allowEmpty: false})).toBeDefined();
   });
 
   it("also allows to specify your own nice message", function() {

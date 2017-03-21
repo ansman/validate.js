@@ -7,7 +7,7 @@ describe('validators.email', function() {
     delete validate.validators.email.options;
   });
 
-  it("allows empty values", function() {
+  it("allows undefined values", function() {
     expect(email(null, {})).not.toBeDefined();
     expect(email(undefined, {})).not.toBeDefined();
   });

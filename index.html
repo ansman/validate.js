@@ -535,9 +535,9 @@ validate.Promise = Q.Promise;</code></pre>
           </p>
           <p>
             <b>Important!</b>
-            One thing that is a bit unorthodox is that most validators will consider
-            empty values (<code>null</code>, <code>undefined</code>, whitespace
-            only strings etc) valid values. So for example adding a constraint of
+            One thing that is a bit unorthodox is that most validators will
+            consider undefined values (<code>null</code> and <code
+            >undefined</code>,) valid values. So for example adding a constraint of
             at least 6 characters will be like saying <i>If the attribute is given
             it must be at least 6 characters</i>.<br>
             This differs from example Ruby on Rails where validators instead have
@@ -658,9 +658,10 @@ validate({creditCardNumber: "340000000000000"}, constraints);
             be run if the options are falsy.
           </p>
           <p class="notes">
-            <b>Important!</b> Most validators consider empty values (<code>null</code>, <code>undefined</code>, whitespace
-            only strings etc) valid values so make sure you use the
-            <code>presence</code> validator on attributes that are required.
+            <b>Important!</b> Most validators consider undefined values
+            (<code>null</code> and <code>undefined</code>) valid values so make
+            sure you use the <code>presence</code> validator on attributes that
+            are required.
           </p>
         </div>
 
@@ -1310,9 +1311,6 @@ validate({birthday: "3013-11-14"}, constraints);
               can override it using the <b>message</b> option or by setting
               <code>validate.validators.email.message</code>
             </p>
-            <p class="description">
-              <b>Important!</b> Besides <code>null</code> and <code>undefined</code> being valid empty strings and whitespace only strings are also valid.
-            </p>
             <pre><code class="javascript">var constraints = {
   from: {
     email: true
@@ -1322,8 +1320,8 @@ validate({birthday: "3013-11-14"}, constraints);
 validate({from: null}, constraints);
 // =&gt; undefined
 
-validate({from: "   "}, constraints);
-// =&gt; undefined
+validate({from: ""}, constraints);
+// =&gt; {"email": ["From is not a valid email"]}
 
 validate({from: "nicklas@ansman"}, constraints);
 // =&gt; {"email": ["From is not a valid email"]}
@@ -1615,7 +1613,7 @@ validate({size: "Medium"}, constraints);
 validate({}, constraints);
 // =&gt; undefined
 // This is because nil and undefined are valid values.
-// Use the presence validator if you don't want to allow empty values.
+// Use the presence validator if you don't want to allow undefined values.
 
 var values = {
   key1: "wrong length",
@@ -1742,16 +1740,16 @@ validate({duration: 4711}, constraints);
             <ul>
               <li><code>null</code></li>
               <li><code>undefined</code></li>
+            </ul>
+            <p class="description">
+              Additionally you can set the <code>allowEmpty</code> to
+              <code>false</code> to disallow the following values:
+            </p>
               <li><code>{}</code> (empty objects)</li>
               <li><code>[]</code> (empty arrays)</li>
               <li><code>""</code> (empty string)</li>
               <li><code>"  "</code> (whitespace only string)</li>
             </ul>
-            <p class="description">
-              If you don't want to reject empty objects, arrays or strings
-              you can set the <code>allowEmpty</code> option to
-              <code>true</code>.
-            </p>
             <p class="notes">
               <b>Important!</b> All other values are considered valid (including functions)!
             </p>
@@ -1763,10 +1761,10 @@ validate({username: "ansman"}, {username: {presence: true}});
 // =&gt; undefined
 
 validate({input: ""}, {input: {presence: true}});
-// =&gt; {"input:" ["Input can't be blank"]}
-
-validate({input: ""}, {input: {presence: {allowEmpty: true}}});
 // =&gt; undefined
+
+validate({input: ""}, {input: {presence: {allowEmpty: false}}});
+// =&gt; {"input:" ["Input can't be blank"]}
 
 validate({}, {username: {presence: {message: "is required"}}});
 // =&gt; {"username": ["Username is required"]}
@@ -2366,6 +2364,12 @@ validate.result("foo".toUpperCase);
                 to have no effect for select tags.
                 Thanks <a href="https://github.com/ansman/validate.js/issues/171" target="_blank">Jonathan Lister</a>
                 for reporting this.
+              </li>
+              <li>
+                <b>Breaking!</b> The presence validator no longer rejects empty
+                values (empty strings, arrays, objects etc) per default.
+                The option <code>allowEmpty</code> can be set to false to
+                start passing them through.
               </li>
             </ul>
           </div>
