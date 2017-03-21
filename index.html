@@ -1197,13 +1197,13 @@ validate.async({name: "bar"}, constraints).then(success, error);</code></pre>
               Before this validator can be used the parse and format functions
               needs to be set. The parse function should take the value to parse
               (non null but otherwise untouched) and return the unix timestamp
-              for that date or <code>NaN</code> if it's invalid.<br>
+              (in milliseconds) for that date or <code>NaN</code> if it's invalid.<br>
               It's important to mention that the constraints (earliest, latest)
               will also be parsed using this method.
             </p>
             <p class="description">
-              The format function should take a unix timestamp and format it
-              in a user friendly way.
+              The format function should take a unix timestamp (in milliseconds)
+              and format it in a user friendly way.
             </p>
             <p class="description">
               You can specify the follow constraints:
