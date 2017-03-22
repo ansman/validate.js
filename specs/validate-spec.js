@@ -243,6 +243,42 @@ describe("validate", function() {
         {}
       );
     });
+
+    describe("custom validators in the constraints schema", function() {
+      describe("grouped format", function() {
+        it("is supported", function() {
+          var attributes = {name: "Nicklas"}
+            , customValidator = jasmine.createSpy("validator").and.returnValue("some error message")
+            , constraints = {name: {someCustomValidator: customValidator}}
+            , options = {format: "grouped"};
+
+          expect(validate(attributes, constraints, options)).toEqual(
+            {name: ["Name some error message"]}
+          );
+          expect(customValidator).toHaveBeenCalledWith("Nicklas", options, "name", attributes);
+        });
+      });
+
+      describe("detailed format", function() {
+        it("is supported", function() {
+          var attributes = {name: "Nicklas"}
+            , customValidator = jasmine.createSpy("validator").and.returnValue("some error message")
+            , constraints = {name: {someCustomValidator: customValidator}}
+            , options = {format: "detailed"};
+
+          expect(validate(attributes, constraints, options)).toEqual([{
+            attribute: "name",
+            value: "Nicklas",
+            validator: "someCustomValidator",
+            globalOptions: options,
+            attributes: attributes,
+            options: "some error message", // <-- NOTE: is this expected?
+            error: "Name some error message"
+          }]);
+          expect(customValidator).toHaveBeenCalledWith("Nicklas", options, "name", attributes);
+        });
+      });
+    });
   });
 
   describe("format", function() {
