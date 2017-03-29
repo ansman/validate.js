@@ -79,6 +79,15 @@ describe("validate", function() {
     ]);
   });
 
+  it("validates nested objects as expected", function() {
+    var constraints = {
+      "foo.bar": {
+        presence: true
+      }
+    };
+    expect(validate({foo: {bar: ''}}, constraints)).toBeDefined();
+  });
+
   it("works with nested objects set to null", function() {
     var constraints = {
       "foo.bar": {
