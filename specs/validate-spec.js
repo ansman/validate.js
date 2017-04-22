@@ -243,6 +243,62 @@ describe("validate", function() {
         {}
       );
     });
+
+    it("calls custom prettify in global options", function() {
+      var constraints = {foo: {presence: true}}
+        , options = {format: "flat", prettify: function() {}};
+      spyOn(options, "prettify").and.returnValue("foobar");
+      spyOn(validate, "prettify").and.returnValue("baz");
+      expect(validate({}, constraints, options)).toEqual(["Foobar can't be blank"]);
+      expect(options.prettify).toHaveBeenCalledWith("foo");
+      expect(validate.prettify).not.toHaveBeenCalled();
+    });
+
+    it("calls custom prettify in global options inside numericality validator", function() {
+      var constraints = {foo: {numericality: {greaterThan: 0}}}
+        , options = {format: "flat", prettify: function() {}};
+      spyOn(options, "prettify").and.returnValue("foobar");
+      spyOn(validate, "prettify").and.returnValue("baz");
+      expect(validate({foo: 0}, constraints, options)).toEqual(["Foobar must be foobar 0"]);
+      var args = options.prettify.calls.allArgs();
+      expect(args).toContain(["foo"]);
+      expect(args).toContain(["greaterThan"]);
+      expect(validate.prettify).not.toHaveBeenCalled();
+    });
+
+    it("calls custom prettify in global options inside equality validator", function() {
+      var constraints = {bar: {equality: {attribute: "foo"}}}
+        , options = {format: "flat", prettify: function() {}};
+      spyOn(options, "prettify").and.returnValue("foobar");
+      spyOn(validate, "prettify").and.returnValue("baz");
+      expect(validate({foo: 'a', bar: 'b'}, constraints, options)).toEqual(["Foobar is not equal to foobar"]);
+      expect(options.prettify.calls.allArgs()).toContain(["bar"]);
+      expect(validate.prettify).not.toHaveBeenCalled();
+    });
+
+    it("calls custom prettify in numericality options", function() {
+      var constraints = {foo: {numericality: {greaterThan: 0, prettify: function() {}}}}
+        , options = {format: "flat", prettify: function() {}};
+      spyOn(options, "prettify").and.returnValue("foobar");
+      spyOn(constraints.foo.numericality, "prettify").and.returnValue("grooter than");
+      spyOn(validate, "prettify").and.returnValue("baz");
+      expect(validate({foo: 0}, constraints, options)).toEqual(["Foobar must be grooter than 0"]);
+      expect(options.prettify).toHaveBeenCalledWith("foo");
+      expect(constraints.foo.numericality.prettify).toHaveBeenCalledWith("greaterThan");
+      expect(validate.prettify).not.toHaveBeenCalled();
+    });
+
+    it("calls custom prettify in equality options", function() {
+      var constraints = {bar: {equality: {attribute: "foo", prettify: function() {}}}}
+        , options = {format: "flat", prettify: function() {}};
+      spyOn(options, "prettify").and.returnValue("foobar");
+      spyOn(constraints.bar.equality, "prettify").and.returnValue("qux");
+      spyOn(validate, "prettify").and.returnValue("baz");
+      expect(validate({foo: 'a', bar: 'b'}, constraints, options)).toEqual(["Foobar is not equal to qux"]);
+      expect(options.prettify.calls.allArgs()).toContain(["bar"]);
+      expect(constraints.bar.equality.prettify).toHaveBeenCalledWith("foo");
+      expect(validate.prettify).not.toHaveBeenCalled();
+    });
   });
 
   describe("format", function() {

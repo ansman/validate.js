@@ -411,8 +411,9 @@
         .toLowerCase();
     },
 
-    stringifyValue: function(value) {
-      return v.prettify(value);
+    stringifyValue: function(value, options) {
+      var prettify = options && options.prettify || v.prettify;
+      return prettify(value);
     },
 
     isString: function(value) {
@@ -628,7 +629,8 @@
     convertErrorMessages: function(errors, options) {
       options = options || {};
 
-      var ret = [];
+      var ret = []
+        , prettify = options.prettify || v.prettify;
       errors.forEach(function(errorInfo) {
         var error = v.result(errorInfo.error,
             errorInfo.value,
@@ -645,10 +647,12 @@
         if (error[0] === '^') {
           error = error.slice(1);
         } else if (options.fullMessages !== false) {
-          error = v.capitalize(v.prettify(errorInfo.attribute)) + " " + error;
+          error = v.capitalize(prettify(errorInfo.attribute)) + " " + error;
         }
         error = error.replace(/\\\^/g, "^");
-        error = v.format(error, {value: v.stringifyValue(errorInfo.value)});
+        error = v.format(error, {
+          value: v.stringifyValue(errorInfo.value, options)
+        });
         ret.push(v.extend({}, errorInfo, {error: error}));
       });
       return ret;
@@ -816,7 +820,7 @@
         return options.message || errors;
       }
     },
-    numericality: function(value, options) {
+    numericality: function(value, options, attribute, attributes, globalOptions) {
       // Empty values are fine
       if (!v.isDefined(value)) {
         return;
@@ -834,7 +838,10 @@
             lessThan:             function(v, c) { return v < c; },
             lessThanOrEqualTo:    function(v, c) { return v <= c; },
             divisibleBy:          function(v, c) { return v % c === 0; }
-          };
+          }
+        , prettify = options.prettify ||
+          (globalOptions && globalOptions.prettify) ||
+          v.prettify;
 
       // Strict will check that it is a valid looking number
       if (v.isString(value) && options.strict) {
@@ -891,7 +898,7 @@
 
           errors.push(v.format(msg, {
             count: count,
-            type: v.prettify(name)
+            type: prettify(name)
           }));
         }
       }
@@ -1052,7 +1059,7 @@
     }, {
       PATTERN: /^[a-z0-9\u007F-\uffff!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9\u007F-\uffff!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/i
     }),
-    equality: function(value, options, attribute, attributes) {
+    equality: function(value, options, attribute, attributes, globalOptions) {
       if (!v.isDefined(value)) {
         return;
       }
@@ -1072,10 +1079,13 @@
       var otherValue = v.getDeepObjectValue(attributes, options.attribute)
         , comparator = options.comparator || function(v1, v2) {
           return v1 === v2;
-        };
+        }
+        , prettify = options.prettify ||
+          (globalOptions && globalOptions.prettify) ||
+          v.prettify;
 
       if (!comparator(value, otherValue, options, attribute, attributes)) {
-        return v.format(message, {attribute: v.prettify(options.attribute)});
+        return v.format(message, {attribute: prettify(options.attribute)});
       }
     },
 

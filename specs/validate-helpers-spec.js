@@ -154,6 +154,15 @@ describe("validate", function() {
       expect(validate.stringifyValue("barfoo")).toEqual("foobar");
       expect(validate.prettify).toHaveBeenCalledWith("barfoo");
     });
+
+    it("calls custom prettify from options", function() {
+      var options = {prettify: function() {}};
+      spyOn(options, "prettify").and.returnValue("foobar");
+      spyOn(validate, "prettify").and.returnValue("baz");
+      expect(validate.stringifyValue("barfoo", options)).toEqual("foobar");
+      expect(options.prettify).toHaveBeenCalledWith("barfoo");
+      expect(validate.prettify).not.toHaveBeenCalled();
+    });
   });
 
   describe('prettify', function() {
@@ -431,6 +440,19 @@ describe("validate", function() {
         error: "Foo bar has some other problem",
         value: "foobar"
       }]);
+    });
+
+    it("calls custom prettify from options", function() {
+      var errors = [{
+          attribute: "foo",
+          error: "can't be blank"
+        }]
+        , options = {prettify: function() {}};
+      spyOn(options, "prettify").and.returnValue("foobar");
+      spyOn(validate, "prettify").and.returnValue("baz");
+      expect(convertErrorMessages(errors, options)[0].error).toEqual("Foobar can't be blank");
+      expect(options.prettify).toHaveBeenCalledWith("foo");
+      expect(validate.prettify).not.toHaveBeenCalled();
     });
 
     it("doesn't modify the input", function() {
