@@ -57,4 +57,11 @@ describe('validator.presence', function() {
       , value = null;
     expect(presence(value, options)).toBe(message);
   });
+
+  it("is aliased as 'required'", function() {
+    var required = validate.validators.required.bind(validate.validators.required);
+    var msg = required(null, {});
+    expect(validate.validators.required).toEqual(validate.validators.presence);
+    expect(msg).toEqual("can't be blank");
+  });
 });
