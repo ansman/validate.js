@@ -561,12 +561,23 @@
         }
 
         if (input.multiple) {
+
           value = [];
-          for (j in input.options) {
-            option = input.options[j];
-            if (option.selected) {
-              value.push(v.sanitizeFormValue(option.value, options));
-            }
+
+          // selectedOptions is extension that enable to work with validate.js and multi select element in internet explorer.
+          // it's require to load docs/HTMLSelectElement.prototype.selectedOptions.js before validate.js library (more details- https://gist.github.com/brettz9/4212217)
+          if(typeof input.selectedOptions != 'undefined'){
+              for (var opt = 0; opt < input.selectedOptions.length; opt++) {
+                  value.push(v.sanitizeFormValue(input.selectedOptions[opt].value, options));
+              }
+          // without IE extension
+          } else {
+              for (j in input.options) {
+                  option = input.options[j];
+                  if (option.selected) {
+                      value.push(v.sanitizeFormValue(option.value, options));
+                  }
+              }
           }
         } else {
           value = v.sanitizeFormValue(input.options[input.selectedIndex].value, options);
