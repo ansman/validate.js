@@ -1154,6 +1154,48 @@
       if (!PATTERN.exec(value)) {
         return message;
       }
+    },
+
+    // A type validator used to enforce generic types on data.
+    // wraps extant isThing helpers
+    type: function(value, options) {
+      // a/an selector to produce proper grammer in error messages
+      function aOrAn(nextWord) {
+        var vowels = "aeiou";
+        if (( typeof nextWord !== "string" ) || !nextWord.length) {
+          return "a";
+        }
+        return (vowels.indexOf(nextWord[0]) === -1) ? "a" : "an";
+      }
+      var typeHelperMap = {
+        number:   v.isNumber,
+        integer:  v.isInteger,
+        string:   v.isString,
+        date:     v.isDate,
+        array:    v.isArray,
+        object:   v.isObject,
+        function: v.isFunction,
+        promise:  v.isPromise,
+        hash:     v.isHash,
+        bookean:  v.isBoolean
+      };
+      if (!v.isObject(options)) {  // accept options as string or object
+        options = { type: options };
+      }
+      if (value === undefined || value === null) {  // undefined/null checking is already covered by 'presence'
+        return;
+      }
+      if (typeHelperMap[options.type] !== undefined) {
+        var isValid = typeHelperMap[options.type](value);
+        if (isValid) {
+          return;
+        } else {  // if invalid, return a format string for validate.js to fill
+          return options.message || this.message || ( "%{value} is not " + aOrAn(options.type) + " " + options.type );
+        }
+      }
+      else {  // if beyond help, produce a helpful debug message
+        return "validator configured improperly: unknown type " + options.type;
+      }
     }
   };
 
