@@ -79,13 +79,42 @@ describe("validate", function() {
     ]);
   });
 
-  it("works with nested objects set to null", function() {
+  it("fails validation when nested objects is null", function() {
     var constraints = {
       "foo.bar": {
         presence: true
       }
     };
     expect(validate({foo: null}, constraints)).toBeDefined();
+  });
+
+  it("works with nested objects", function() {
+    var constraints = {
+      "foo.bar": {
+        presence: true
+      }
+    };
+    expect(validate({foo: {bar: "test"}}, constraints)).not.toBeDefined();
+  });
+
+  it("works with dotted notation", function() {
+    var constraints = {
+      "foo\\.bar": {
+        presence: true
+      }
+    };
+    expect(validate({"foo.bar": "test"}, constraints)).not.toBeDefined();
+  });
+
+  it("formats validation entries nicely on dotted notation", function() {
+    var constraints = {
+      "foo\\.bar": {
+        presence: true
+      }
+    };
+    expect(validate({"foo.bar": null}, constraints)).toEqual({
+      "foo\\.bar": ["Foo bar can't be blank"]
+    });
   });
 
   describe("runValidations", function() {
