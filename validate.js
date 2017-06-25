@@ -564,7 +564,7 @@
           value = [];
           for (j in input.options) {
             option = input.options[j];
-            if (option.selected) {
+             if (option && option.selected) {
               value.push(v.sanitizeFormValue(option.value, options));
             }
           }
