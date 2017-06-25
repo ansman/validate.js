@@ -569,7 +569,8 @@
             }
           }
         } else {
-          value = v.sanitizeFormValue(input.options[input.selectedIndex].value, options);
+          var _val = typeof input.options[input.selectedIndex] !== 'undefined' ? input.options[input.selectedIndex].value : '';
+          value = v.sanitizeFormValue(_val, options);
         }
         values[input.name] = value;
       }
