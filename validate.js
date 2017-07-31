@@ -17,6 +17,7 @@
   //     * grouped - Returns the messages grouped by attribute (default)
   //     * detailed - Returns an array of the raw validation data
   //   - fullMessages (boolean) - If `true` (default) the attribute name is prepended to the error.
+  //   - allowPromises (boolean) - If `true` no error will be thrown if a promise is passed as an attribute.
   //
   // Please note that the options are also passed to each validator.
   var validate = function(attributes, constraints, options) {
@@ -28,7 +29,7 @@
 
     for (attr in results) {
       for (validator in results[attr]) {
-        if (v.isPromise(results[attr][validator])) {
+        if (v.isPromise(results[attr][validator]) && !options.allowPromises) {
           throw new Error("Use validate.async if you want support for promises");
         }
       }

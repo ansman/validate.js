@@ -4,3 +4,4 @@ node_modules
 lcov.info
 coverage*
 _SpecRunner.html
+*.komodoproject
