@@ -26,12 +26,8 @@
       , attr
       , validator;
 
-    for (attr in results) {
-      for (validator in results[attr]) {
-        if (v.isPromise(results[attr][validator])) {
-          throw new Error("Use validate.async if you want support for promises");
-        }
-      }
+    if (results.some(function(r) { return v.isPromise(r.error); })) {
+      throw new Error("Use validate.async if you want support for promises");
     }
     return validate.processValidationResults(results, options);
   };

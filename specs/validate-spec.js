@@ -30,6 +30,11 @@ describe("validate", function() {
     expect(function() { validate({}, constraints); }).toThrow();
   });
 
+  it("doesn't fail if the value is a promise", function() {
+    var constraints = {name: {pass: true}};
+    expect(validate({name: Promise.resolve()}, constraints)).not.toBeDefined();
+  });
+
   it("runs as expected", function() {
     var attributes = {
       name: "Nicklas Ansman",
