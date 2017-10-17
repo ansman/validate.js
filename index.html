@@ -1123,7 +1123,7 @@ validate({username: "nicklas", password: "bad"}, constraints, {format: "custom"}
             If the validator passes simply return <code>null</code> or <code>undefined</code>.
             Otherwise return a string or an array of strings containing the
             error message(s).<br>
-            Make sure not to append the key name, this will be done automatically.
+            Make sure not to prepend the key name, this will be done automatically.
           </p>
           <pre><code class="javascript">validate.validators.custom = function(value, options, key, attributes) {
   console.log(value);
@@ -1729,7 +1729,7 @@ validate({duration: 4711}, constraints);
           <div id="validators-presence">
             <div class="signature"><b>presence</b></div>
             <p class="description">
-              The presence validator validates that the value isn't defined.
+              The presence validator validates that the value is defined.
               This validator will probably the most used one, it corresponds to
               HTML5's required attribute.<br>
               You can use the <b>message</b> option to customize the message. The
