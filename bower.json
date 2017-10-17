@@ -2,7 +2,7 @@
   "name": "validate",
   "description": "Declarative validations for JavaScript",
   "main": "validate.js",
-  "version": "0.11.1",
+  "version": "0.12.0",
   "moduleType": [
     "amd",
     "globals",

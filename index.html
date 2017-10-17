@@ -404,6 +404,7 @@
       <li>
         <a href="#changelog">Changelog</a>
         <ul>
+          <li><a href="#changelog-0-12-0">0.12.0</a></li>
           <li><a href="#changelog-0-11-1">0.11.1</a></li>
           <li><a href="#changelog-0-11-0">0.11.0</a></li>
           <li><a href="#changelog-0-10-0">0.10.0</a></li>
@@ -463,15 +464,15 @@
           </p>
           <h2 id="downloads">Downloads</h2>
           <div class="download">
-            <a class="btn btn-default" download href="validate.js">Development version (0.11.1)</a>
+            <a class="btn btn-default" download href="validate.js">Development version (0.12.0)</a>
             <div class="info">
               <span class="details">33KB, uncompressed and plenty of comments</span>
             </div>
           </div>
           <div class="download">
-            <a class="btn btn-primary" download href="validate.min.js">Production version (0.11.1)</a>
+            <a class="btn btn-primary" download href="validate.min.js">Production version (0.12.0)</a>
             <div class="info">
-              <span class="details">4.56KB, minified and gzipped</span><br>
+              <span class="details">4.66KB, minified and gzipped</span><br>
               <a download href="validate.min.map">(Source map)</a>
             </div>
           </div>
@@ -490,7 +491,7 @@
           <div id="installing">
             <h2>Installing</h2>
             <b>Browser/CDN</b>
-            <pre><code class="html">&lt;script src="//cdnjs.cloudflare.com/ajax/libs/validate.js/0.11.1/validate.min.js"&gt;&lt;/script&gt;</code></pre>
+            <pre><code class="html">&lt;script src="//cdnjs.cloudflare.com/ajax/libs/validate.js/0.12.0/validate.min.js"&gt;&lt;/script&gt;</code></pre>
             <b>Require.js/AMD</b>
             <pre><code class="javascript">require(["validate.js"], function(validate) {
   // ...
@@ -705,7 +706,8 @@ validate({creditCardNumber: "340000000000000"}, constraints);
           </p>
           <p class="description">
             If you want to customize how the attribute names are prettified you
-            can just override the <code>validate.prettify</code> to your liking.
+            can either override the <code>validate.prettify</code> function
+            or you can give a function as the <b>prettify</b> option.
           </p>
           <p class="description">
             There is also a <b>format</b> option. To see more details about this
@@ -2354,9 +2356,15 @@ validate.result("foo".toUpperCase);
         </div>
         <div id="changelog">
           <h2>Changelog</h2>
-          <div id="changelog-wip">
+          <div id="changelog-0-12-0">
             <h3>
-              <b class="version">WIP</b>
+              <b class="version">0.12.0</b>
+              -
+              <span class="date">Oct 17, 2017</span>
+              -
+              <a href="http://htmlpreview.github.com/?https://raw.github.com/ansman/validate.js/0.12.0/index.html">Docs</a>
+              -
+              <a href="https://github.com/ansman/validate.js/compare/0.11.1...0.12.0">Diff</a>
             </h3>
             <ul>
               <li>
@@ -2388,6 +2396,26 @@ validate.result("foo".toUpperCase);
                 escaped.
                 Thanks <a href="https://github.com/ansman/validate.js/pull/188" target="_blank">James Tudsbury</a>
                 for reporting this.
+              </li>
+              <li>
+                Fix a bug in IE11.
+                Thanks <a href="https://github.com/ansman/validate.js/pull/183" target="_blank">Shawn Doucet</a>
+                for fixing this.
+              </li>
+              <li>
+                The typescript definitions have been updated.
+                Thanks <a href="https://github.com/ansman/validate.js/pull/185" target="_blank">jKey Lu</a>
+                for fixing this.
+              </li>
+              <li>
+                Handle select inputs without a selection when collecting form values.
+                Thanks <a href="https://github.com/ansman/validate.js/pull/202" target="_blank">johnturingan</a>
+                for fixing this.
+              </li>
+              <li>
+                You can now specify custom prettify function in the global settings.
+                Thanks <a href="https://github.com/ansman/validate.js/pull/164" target="_blank">Tim van der Horst</a>
+                for fixing this.
               </li>
             </ul>
           </div>

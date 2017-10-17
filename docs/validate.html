@@ -31,9 +31,9 @@
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-comment">/*!
- * validate.js 0.11.1
+ * validate.js 0.12.0
  *
- * (c) 2013-2016 Nicklas Ansman, 2013 Wrapp
+ * (c) 2013-2017 Nicklas Ansman, 2013 Wrapp
  * Validate.js may be freely distributed under the MIT license.
  * For all details and documentation:
  * http://validatejs.org/
@@ -73,12 +73,8 @@ The options are the following:</p>
       , attr
       , validator;
 
-    <span class="hljs-keyword">for</span> (attr <span class="hljs-keyword">in</span> results) {
-      <span class="hljs-keyword">for</span> (validator <span class="hljs-keyword">in</span> results[attr]) {
-        <span class="hljs-keyword">if</span> (v.isPromise(results[attr][validator])) {
-          <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Use validate.async if you want support for promises"</span>);
-        }
-      }
+    <span class="hljs-keyword">if</span> (results.some(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">r</span>) </span>{ <span class="hljs-keyword">return</span> v.isPromise(r.error); })) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Use validate.async if you want support for promises"</span>);
     }
     <span class="hljs-keyword">return</span> validate.processValidationResults(results, options);
   };
@@ -128,8 +124,8 @@ The toString function will allow it to be coerced into a string</p>
             
             <div class="content"><div class='highlight'><pre>    version: {
       major: <span class="hljs-number">0</span>,
-      minor: <span class="hljs-number">11</span>,
-      patch: <span class="hljs-number">1</span>,
+      minor: <span class="hljs-number">12</span>,
+      patch: <span class="hljs-number">0</span>,
       metadata: <span class="hljs-literal">null</span>,
       toString: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
         <span class="hljs-keyword">var</span> version = v.format(<span class="hljs-string">"%{major}.%{minor}.%{patch}"</span>, v.version);
@@ -932,8 +928,9 @@ camel case words.</p>
         .toLowerCase();
     },
 
-    stringifyValue: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value</span>) </span>{
-      <span class="hljs-keyword">return</span> v.prettify(value);
+    stringifyValue: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value, options</span>) </span>{
+      <span class="hljs-keyword">var</span> prettify = options &amp;&amp; options.prettify || v.prettify;
+      <span class="hljs-keyword">return</span> prettify(value);
     },
 
     isString: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value</span>) </span>{
@@ -1078,38 +1075,44 @@ would return:
           <span class="hljs-keyword">continue</span>;
         }
 
+        name = input.name.replace(<span class="hljs-regexp">/\./g</span>, <span class="hljs-string">"\\\\."</span>);
         value = v.sanitizeFormValue(input.value, options);
         <span class="hljs-keyword">if</span> (input.type === <span class="hljs-string">"number"</span>) {
           value = value ? +value : <span class="hljs-literal">null</span>;
         } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (input.type === <span class="hljs-string">"checkbox"</span>) {
           <span class="hljs-keyword">if</span> (input.attributes.value) {
             <span class="hljs-keyword">if</span> (!input.checked) {
-              value = values[input.name] || <span class="hljs-literal">null</span>;
+              value = values[name] || <span class="hljs-literal">null</span>;
             }
           } <span class="hljs-keyword">else</span> {
             value = input.checked;
           }
         } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (input.type === <span class="hljs-string">"radio"</span>) {
           <span class="hljs-keyword">if</span> (!input.checked) {
-            value = values[input.name] || <span class="hljs-literal">null</span>;
+            value = values[name] || <span class="hljs-literal">null</span>;
           }
         }
-        values[input.name] = value;
+        values[name] = value;
       }
 
       inputs = form.querySelectorAll(<span class="hljs-string">"select[name]"</span>);
       <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; inputs.length; ++i) {
         input = inputs.item(i);
+        <span class="hljs-keyword">if</span> (v.isDefined(input.getAttribute(<span class="hljs-string">"data-ignored"</span>))) {
+          <span class="hljs-keyword">continue</span>;
+        }
+
         <span class="hljs-keyword">if</span> (input.multiple) {
           value = [];
           <span class="hljs-keyword">for</span> (j <span class="hljs-keyword">in</span> input.options) {
             option = input.options[j];
-            <span class="hljs-keyword">if</span> (option.selected) {
+             <span class="hljs-keyword">if</span> (option &amp;&amp; option.selected) {
               value.push(v.sanitizeFormValue(option.value, options));
             }
           }
         } <span class="hljs-keyword">else</span> {
-          value = v.sanitizeFormValue(input.options[input.selectedIndex].value, options);
+          <span class="hljs-keyword">var</span> _val = <span class="hljs-keyword">typeof</span> input.options[input.selectedIndex] !== <span class="hljs-string">'undefined'</span> ? input.options[input.selectedIndex].value : <span class="hljs-string">''</span>;
+          value = v.sanitizeFormValue(_val, options);
         }
         values[input.name] = value;
       }
@@ -1217,7 +1220,8 @@ message is prefixed by ^</p>
             <div class="content"><div class='highlight'><pre>    convertErrorMessages: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">errors, options</span>) </span>{
       options = options || {};
 
-      <span class="hljs-keyword">var</span> ret = [];
+      <span class="hljs-keyword">var</span> ret = []
+        , prettify = options.prettify || v.prettify;
       errors.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">errorInfo</span>) </span>{
         <span class="hljs-keyword">var</span> error = v.result(errorInfo.error,
             errorInfo.value,
@@ -1234,10 +1238,12 @@ message is prefixed by ^</p>
         <span class="hljs-keyword">if</span> (error[<span class="hljs-number">0</span>] === <span class="hljs-string">'^'</span>) {
           error = error.slice(<span class="hljs-number">1</span>);
         } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (options.fullMessages !== <span class="hljs-literal">false</span>) {
-          error = v.capitalize(v.prettify(errorInfo.attribute)) + <span class="hljs-string">" "</span> + error;
+          error = v.capitalize(prettify(errorInfo.attribute)) + <span class="hljs-string">" "</span> + error;
         }
         error = error.replace(<span class="hljs-regexp">/\\\^/g</span>, <span class="hljs-string">"^"</span>);
-        error = v.format(error, {value: v.stringifyValue(errorInfo.value)});
+        error = v.format(error, {
+          value: v.stringifyValue(errorInfo.value, options)
+        });
         ret.push(v.extend({}, errorInfo, {error: error}));
       });
       <span class="hljs-keyword">return</span> ret;
@@ -1390,7 +1396,7 @@ Out:
             
             <div class="content"><div class='highlight'><pre>    presence: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value, options</span>) </span>{
       options = v.extend({}, <span class="hljs-keyword">this</span>.options, options);
-      <span class="hljs-keyword">if</span> (options.allowEmpty ? !v.isDefined(value) : v.isEmpty(value)) {
+      <span class="hljs-keyword">if</span> (options.allowEmpty !== <span class="hljs-literal">false</span> ? !v.isDefined(value) : v.isEmpty(value)) {
         <span class="hljs-keyword">return</span> options.message || <span class="hljs-keyword">this</span>.message || <span class="hljs-string">"can't be blank"</span>;
       }
     },
@@ -1467,7 +1473,7 @@ Out:
         <span class="hljs-keyword">return</span> options.message || errors;
       }
     },
-    numericality: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value, options</span>) </span>{</pre></div></div>
+    numericality: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value, options, attribute, attributes, globalOptions</span>) </span>{</pre></div></div>
             
         </li>
         
@@ -1498,7 +1504,10 @@ Out:
             lessThan:             <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">v, c</span>) </span>{ <span class="hljs-keyword">return</span> v &lt; c; },
             lessThanOrEqualTo:    <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">v, c</span>) </span>{ <span class="hljs-keyword">return</span> v &lt;= c; },
             divisibleBy:          <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">v, c</span>) </span>{ <span class="hljs-keyword">return</span> v % c === <span class="hljs-number">0</span>; }
-          };</pre></div></div>
+          }
+        , prettify = options.prettify ||
+          (globalOptions &amp;&amp; globalOptions.prettify) ||
+          v.prettify;</pre></div></div>
             
         </li>
         
@@ -1514,7 +1523,7 @@ Out:
             </div>
             
             <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">if</span> (v.isString(value) &amp;&amp; options.strict) {
-        <span class="hljs-keyword">var</span> pattern = <span class="hljs-string">"^(0|[1-9]\\d*)"</span>;
+        <span class="hljs-keyword">var</span> pattern = <span class="hljs-string">"^-?(0|[1-9]\\d*)"</span>;
         <span class="hljs-keyword">if</span> (!options.onlyInteger) {
           pattern += <span class="hljs-string">"(\\.\\d+)?"</span>;
         }
@@ -1616,7 +1625,7 @@ this.notGreaterThan so we capitalize the name and prepend “not”</p>
 
           errors.push(v.format(msg, {
             count: count,
-            type: v.prettify(name)
+            type: prettify(name)
           }));
         }
       }
@@ -1678,7 +1687,7 @@ this.notGreaterThan so we capitalize the name and prepend “not”</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-60">&#182;</a>
               </div>
-              <p>86400000 is the number of seconds in a day, this is used to remove
+              <p>86400000 is the number of milliseconds in a day, this is used to remove
 the time from the date</p>
 
             </div>
@@ -1852,7 +1861,7 @@ the time from the date</p>
     }, {
       PATTERN: <span class="hljs-regexp">/^[a-z0-9\u007F-\uffff!#$%&amp;'*+\/=?^_`{|}~-]+(?:\.[a-z0-9\u007F-\uffff!#$%&amp;'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/i</span>
     }),
-    equality: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value, options, attribute, attributes</span>) </span>{
+    equality: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value, options, attribute, attributes, globalOptions</span>) </span>{
       <span class="hljs-keyword">if</span> (!v.isDefined(value)) {
         <span class="hljs-keyword">return</span>;
       }
@@ -1872,10 +1881,13 @@ the time from the date</p>
       <span class="hljs-keyword">var</span> otherValue = v.getDeepObjectValue(attributes, options.attribute)
         , comparator = options.comparator || <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">v1, v2</span>) </span>{
           <span class="hljs-keyword">return</span> v1 === v2;
-        };
+        }
+        , prettify = options.prettify ||
+          (globalOptions &amp;&amp; globalOptions.prettify) ||
+          v.prettify;
 
       <span class="hljs-keyword">if</span> (!comparator(value, otherValue, options, attribute, attributes)) {
-        <span class="hljs-keyword">return</span> v.format(message, {attribute: v.prettify(options.attribute)});
+        <span class="hljs-keyword">return</span> v.format(message, {attribute: prettify(options.attribute)});
       }
     },</pre></div></div>
             

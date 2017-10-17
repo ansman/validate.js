@@ -5,7 +5,7 @@
   "repo"          : "ansman/validate.js",
   "main"          : "validate.js",
   "scripts"       : ["validate.js"],
-  "version"       : "0.11.1",
+  "version"       : "0.12.0",
   "license"       : "MIT"
 }
 
