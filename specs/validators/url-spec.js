@@ -10,6 +10,7 @@ describe("validators.url", function() {
   it("allows empty values", function() {
     expect(url(null, {})).not.toBeDefined();
     expect(url(undefined, {})).not.toBeDefined();
+    expect(url("", {})).not.toBeDefined();
   });
 
   it("doesn't allow non strings", function() {
@@ -21,7 +22,6 @@ describe("validators.url", function() {
   it("doesn't allow 'invalid' urls", function() {
     var expected = "is not a valid url";
 
-    expect(url("", {})).toBeDefined();
     expect(url(" ", {})).toBeDefined();
     expect(url("http://", {})).toBeDefined();
     expect(url("http://.", {})).toBeDefined();
