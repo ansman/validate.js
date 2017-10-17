@@ -530,23 +530,24 @@
           continue;
         }
 
+        name = input.name.replace(/\./g, "\\\\.");
         value = v.sanitizeFormValue(input.value, options);
         if (input.type === "number") {
           value = value ? +value : null;
         } else if (input.type === "checkbox") {
           if (input.attributes.value) {
             if (!input.checked) {
-              value = values[input.name] || null;
+              value = values[name] || null;
             }
           } else {
             value = input.checked;
           }
         } else if (input.type === "radio") {
           if (!input.checked) {
-            value = values[input.name] || null;
+            value = values[name] || null;
           }
         }
-        values[input.name] = value;
+        values[name] = value;
       }
 
       inputs = form.querySelectorAll("select[name]");

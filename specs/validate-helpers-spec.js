@@ -1037,6 +1037,15 @@ describe("validate", function() {
         "empty-value": [null]
       });
     });
+
+    it("escapes periods", function() {
+      var form = document.createElement("form");
+      form.innerHTML = '<input type="text" name="foo.bar.baz" value="quux" />';
+
+      expect(validate.collectFormValues(form)).toEqual({
+        "foo\\\\.bar\\\\.baz": "quux"
+      });
+    });
   });
 
   describe("isDomElement", function() {
