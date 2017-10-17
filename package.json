@@ -10,6 +10,13 @@
     "type": "git",
     "url": "https://github.com/ansman/validate.js.git"
   },
+  "files": [
+    "typings.json",
+    "validate.d.ts",
+    "validate.js",
+    "validate.min.js",
+    "validate.min.map"
+  ],
   "scripts": {
     "test": "grunt test",
     "build": "grunt build",
