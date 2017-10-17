@@ -1051,6 +1051,9 @@
       if (!v.isString(value)) {
         return message;
       }
+      if (v.isEmpty(value)) {
+        return;
+      }
       if (!this.PATTERN.exec(value)) {
         return message;
       }
