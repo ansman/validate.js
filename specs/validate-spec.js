@@ -105,6 +105,18 @@ describe("validate", function() {
       expect(pass).toHaveBeenCalledWithContext(pass);
     });
 
+    it("removes escaped characters from constraints attributes before running validator", function() {
+        var attributes = { "escaped.value": "some value" }
+          , constraints = { "escaped\\.value":  {pass: true}}
+          , globalOptions = {};
+        validate.runValidations(attributes, constraints, globalOptions);
+        expect(pass).toHaveBeenCalledWith('some value',
+                                          true,
+                                          'escaped.value',
+                                          attributes,
+                                          globalOptions);
+    });
+
     it("calls the validator with the val, opts, key, attributes and global options", function() {
       var options = {someOption: true}
         , attributes = {someAttribute: 'some value'}
