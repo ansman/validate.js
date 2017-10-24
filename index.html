@@ -1555,6 +1555,12 @@ validate({size: "Medium"}, constraints);
                 The value cannot be longer than this value. The default error is
                 <i>is too long (maximum is %{count} characters)</i>
               </dd>
+              <dt>allowEmpty</dt>
+              <dd>
+                Only set to <code>true</code> allows empty values. 
+                That is, without validating the <code>minimum</code> and 
+                <code>maximum</code> values in case the string is empty.
+              </dd>
             </dl>
             <p class="description">
               You can specify the error message using the <b>wrongLength</b>,
