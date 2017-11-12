@@ -95,7 +95,7 @@ describe('validator.length', function() {
     expect(length({lengthi: 10}, options)).toBeDefined();
     expect(length({length: "foo"}, options)).toBeDefined();
     expect(length(3, {})).toBeDefined();
-    expect(validate.error).toHaveBeenCalled();
+    expect(validate.error).not.toHaveBeenCalled();
   });
 
   // This test is not a real life example, specifying is with anything else

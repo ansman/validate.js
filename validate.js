@@ -788,7 +788,6 @@
       value = tokenizer(value);
       var length = value.length;
       if(!v.isNumber(length)) {
-        v.error(v.format("Attribute %{attr} has a non numeric value for `length`", {attr: attribute}));
         return options.message || this.notValid || "has an incorrect length";
       }
 

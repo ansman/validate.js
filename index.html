@@ -1557,8 +1557,10 @@ validate({size: "Medium"}, constraints);
               </dd>
             </dl>
             <p class="description">
-              You can specify the error message using the <b>wrongLength</b>,
-              <b>tooShort</b> and <b>tooLong</b> options. The default values are
+              You can specify the error message using the <b>notValid</b>,
+              <b>wrongLength</b>, <b>tooShort</b> and <b>tooLong</b> options.
+              The default values are
+              <i>has an incorrect length</i>,
               <i>is the wrong length (should be %{count} characters)</i>,
               <i>is too short (minimum is %{count} characters)</i> and
               <i>is too long (maximum is %{count} characters)</i> respectively.<br>
@@ -2363,9 +2365,16 @@ validate.result("foo".toUpperCase);
             </h3>
             <ul>
               <li>
-              Fix some issues with the email validation. Thanks
-              <a href="https://github.com/ansman/validate.js/issues/240" target="_blank">Yusuf Aji Wibowo</a>
-              for reporting it.
+                Fix some issues with the email validation. Thanks
+                <a href="https://github.com/ansman/validate.js/issues/240" target="_blank">Yusuf Aji Wibowo</a>
+                for reporting it.
+              </li>
+              <li>
+                If <code>within</code> in the exclusion validator is an object
+                the values are now used when formatting <code>${value}</code>
+                in the message. Thanks
+                <a href="https://github.com/ansman/validate.js/issues/215" target="_blank">Rhys Lloyd</a>
+                for reporting it.
               </li>
             </ul>
           </div>
