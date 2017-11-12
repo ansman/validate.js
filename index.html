@@ -1746,8 +1746,7 @@ validate({duration: 4711}, constraints);
             <p class="description">
               Additionally you can set the <code>allowEmpty</code> to
               <code>false</code> to disallow the following values:
-            </p>
-              <li><code>{}</code> (empty objects)</li>
+            </p> <li><code>{}</code> (empty objects)</li>
               <li><code>[]</code> (empty arrays)</li>
               <li><code>""</code> (empty string)</li>
               <li><code>"  "</code> (whitespace only string)</li>
@@ -2356,6 +2355,18 @@ validate.result("foo".toUpperCase);
         </div>
         <div id="changelog">
           <h2>Changelog</h2>
+          <div id="changelog-wip">
+            <h3>
+              <b class="version">WIP</b>
+            </h3>
+            <ul>
+              <li>
+              Fix some issues with the email validation. Thanks
+              <a href="https://github.com/ansman/validate.js/issues/240" target="_blank">Yusuf Aji Wibowo</a>
+              for reporting it.
+              </li>
+            </ul>
+          </div>
           <div id="changelog-0-12-0">
             <h3>
               <b class="version">0.12.0</b>
