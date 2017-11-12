@@ -1039,6 +1039,9 @@
         return;
       }
       var message = options.message || this.message || "^%{value} is restricted";
+      if (v.isString(options.within[value])) {
+        value = options.within[value];
+      }
       return v.format(message, {value: value});
     },
     email: v.extend(function(value, options) {

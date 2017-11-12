@@ -37,6 +37,15 @@ describe("validators.exclusion", function() {
     expect(exclusion("foo", opts)).toEqual("^The value foo is not valid");
   });
 
+  it("allows objects as within", function() {
+    validate.validators.exclusion.message = "^%{value} isn't great";
+    var opts = {within: {foo: "Foo"}};
+    expect(exclusion("foo", opts)).toEqual("^Foo isn't great");
+
+    opts.message = "^The value %{value} is not valid";
+    expect(exclusion("foo", opts)).toEqual("^The value Foo is not valid");
+  });
+
   it("uses the keys if the within value is an object", function() {
     expect(exclusion("foo", {within: {foo: true}})).toBeDefined();
     expect(exclusion("bar", {within: {foo: true}})).not.toBeDefined();
