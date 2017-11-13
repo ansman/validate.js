@@ -1154,6 +1154,38 @@
       if (!PATTERN.exec(value)) {
         return message;
       }
+    },
+
+    each: function(value, options) {
+      // Allow null and undefined values
+      if (!v.isDefined(value)) {
+        return;
+      }
+
+      options = v.extend({}, this.options, options);
+
+      if (!v.isArray(value)) {
+        return options.message || this.message || "must be an array";
+      }
+
+      if (!v.isFunction(options.validator)) {
+        return;
+      }
+
+      var errors = [];
+      var numErrors = 0;
+      value.forEach(function validateEach (data) {
+        var error = options.validator(data);
+        errors.push(error);
+        if (error) {
+          numErrors++;
+        }
+      });
+      if (numErrors > 0) {
+        return errors;
+      } else {
+        return;
+      }
     }
   };
 
