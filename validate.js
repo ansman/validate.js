@@ -1154,6 +1154,12 @@
       if (!PATTERN.exec(value)) {
         return message;
       }
+    },
+    boolean: function(value) {
+      if (v.isBoolean(value)) {
+        return;
+      }
+      return "is not a boolean";
     }
   };
 
