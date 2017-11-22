@@ -566,7 +566,7 @@
             }
           }
         } else {
-          var _val = typeof input.options[input.selectedIndex] !== 'undefined' ? input.options[input.selectedIndex].value : '';
+          var _val = typeof input.options[input.selectedIndex] !== 'undefined' ? input.options[input.selectedIndex].value : /* istanbul ignore next */ '';
           value = v.sanitizeFormValue(_val, options);
         }
         values[input.name] = value;
@@ -1088,7 +1088,6 @@
         return v.format(message, {attribute: prettify(options.attribute)});
       }
     },
-
     // A URL validator that is used to validate URLs with the ability to
     // restrict schemes and some domains.
     url: function(value, options) {
@@ -1154,7 +1153,61 @@
       if (!PATTERN.exec(value)) {
         return message;
       }
-    }
+    },
+    type: v.extend(function(value, originalOptions, attribute, attributes, globalOptions) {
+      if (v.isString(originalOptions)) {
+        originalOptions = {type: originalOptions};
+      }
+
+      if (!v.isDefined(value)) {
+        return;
+      }
+
+      var options = v.extend({}, this.options, originalOptions);
+
+      var type = options.type;
+      if (!v.isDefined(type)) {
+        throw new Error("No type was specified");
+      }
+
+      var check;
+      if (v.isFunction(type)) {
+        check = type;
+      } else {
+        check = this.types[type];
+      }
+
+      if (!v.isFunction(check)) {
+        throw new Error("validate.validators.type.types." + type + " must be a function.");
+      }
+
+      if (!check(value, options, attribute, attributes, globalOptions)) {
+        var message = originalOptions.message ||
+          this.messages[type] ||
+          this.message ||
+          options.message ||
+          (v.isFunction(type) ? "must be of the correct type" : "must be of type %{type}");
+
+        if (v.isFunction(message)) {
+          message = message(value, originalOptions, attribute, attributes, globalOptions);
+        }
+
+        return v.format(message, {attribute: v.prettify(attribute), type: type});
+      }
+    }, {
+      types: {
+        object: function(value) {
+          return v.isObject(value) && !v.isArray(value);
+        },
+        array: v.isArray,
+        integer: v.isInteger,
+        number: v.isNumber,
+        string: v.isString,
+        date: v.isDate,
+        boolean: v.isBoolean
+      },
+      messages: {}
+    })
   };
 
   validate.formatters = {

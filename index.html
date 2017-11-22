@@ -371,6 +371,7 @@
           <li><a href="#validators-length">Length</a></li>
           <li><a href="#validators-numericality">Numericality</a></li>
           <li><a href="#validators-presence">Presence</a></li>
+          <li><a href="#validators-type">Type</a></li>
           <li><a href="#validators-url">URL</a></li>
         </ul>
       </li>
@@ -1779,6 +1780,51 @@ validate({}, {username: {presence: true}});
 // =&gt; {"username": ["Username is required"]}
 </code></pre>
           </div>
+          <div id="validators-type">
+            <div class="signature"><b>type</b></div>
+            <p class="description">
+              The type validator ensures that the input is of the correct type. There are the following build in types.
+            </p>
+            <ul>
+              <li><code>array</code></li>
+              <li><code>integer</code></li>
+              <li><code>number</code></li>
+              <li><code>string</code></li>
+              <li><code>date</code></li>
+              <li><code>boolean</code></li>
+            </ul>
+            <p class="description">
+              In addition to these you can also create your own by adding them to
+              <code>validate.validator.type.types</code>.
+            </p>
+            <p class="description">
+              The following options are supported:
+            </p>
+            <ul>
+              <li>
+                <b>type</b> - The type to use. Can also be a function for inline type checking. The function will receive the value, options, attribute name, all attributes and the global options respectively.
+              </li>
+              <li>
+                <b>message</b> - A custom message. Can also be a function. The function will receive the value, options, attribute name, all attributes and the global options respectively.
+              </li>
+            </ul>
+            <pre><code class="javascript">validate({myAttribute: "value"}, {myAttribute: {type: "string"}});
+// =&gt; undefined
+
+validate({myAttribute: true}, {myAttribute: {type: "string"}});
+// =&gt; {"myAttribute": ["My attribute must be of type string"]}
+
+validate({myAttribute: "other"}, {myAttribute: {type: {type: function(value) { return value === "stuff"; }}}});
+// =&gt; {"myAttribute": ["My attribute must be of the correct type"]}
+
+validate.validators.type.types.customType = function (value) { return value === "stuff"; };
+validate({myAttribute: true}, {myAttribute: {type: "customType"}});
+// =&gt; {"myAttribute": ["My attribute must be of type customType"]}
+
+validate.validators.type.messages.customType = "is simply wrong";
+validate({myAttribute: true}, {myAttribute: {type: "customType"}});
+// =&gt; {"myAttribute": ["My attribute is simply wrong"]}</code></pre>
+          </div>
           <div id="validators-url">
             <div class="signature"><b>url</b></div>
             <p class="description">
@@ -2375,6 +2421,11 @@ validate.result("foo".toUpperCase);
                 in the message. Thanks
                 <a href="https://github.com/ansman/validate.js/issues/215" target="_blank">Rhys Lloyd</a>
                 for reporting it.
+              </li>
+              <li>
+                There is now a type validator that will check the value's type. Thanks
+                <a href="https://github.com/ansman/validate.js/issues/80" target="_blank">Dmitry Kirilyuk</a>
+                for suggesting this.
               </li>
             </ul>
           </div>
