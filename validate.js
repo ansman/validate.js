@@ -530,7 +530,7 @@
           continue;
         }
 
-        name = input.name.replace(/\./g, "\\\\.");
+        var name = input.name.replace(/\./g, "\\\\.");
         value = v.sanitizeFormValue(input.value, options);
         if (input.type === "number") {
           value = value ? +value : null;
