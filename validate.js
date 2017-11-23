@@ -781,6 +781,7 @@
       var is = options.is
         , maximum = options.maximum
         , minimum = options.minimum
+        , allowEmpty = options.allowEmpty
         , tokenizer = options.tokenizer || function(val) { return val; }
         , err
         , errors = [];
@@ -799,20 +800,22 @@
         errors.push(v.format(err, {count: is}));
       }
 
-      if (v.isNumber(minimum) && length < minimum) {
-        err = options.tooShort ||
-          this.tooShort ||
-          "is too short (minimum is %{count} characters)";
-        errors.push(v.format(err, {count: minimum}));
-      }
+      if (!v.isDefined(allowEmpty) || !v.isBoolean(allowEmpty) || allowEmpty === false || length !== 0) {
+        if (v.isNumber(minimum) && length < minimum) {
+          err = options.tooShort ||
+            this.tooShort ||
+            "is too short (minimum is %{count} characters)";
+          errors.push(v.format(err, {count: minimum}));
+        }
 
-      if (v.isNumber(maximum) && length > maximum) {
-        err = options.tooLong ||
-          this.tooLong ||
-          "is too long (maximum is %{count} characters)";
-        errors.push(v.format(err, {count: maximum}));
+        if (v.isNumber(maximum) && length > maximum) {
+          err = options.tooLong ||
+            this.tooLong ||
+            "is too long (maximum is %{count} characters)";
+          errors.push(v.format(err, {count: maximum}));
+        }
       }
-
+      
       if (errors.length > 0) {
         return options.message || errors;
       }
