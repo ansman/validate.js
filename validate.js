@@ -1265,18 +1265,18 @@
     validate.locales[locale] = message;
   };
 
-  validate.lang = function (langKey, locale, options) {
+  validate.lang = function (langKey, locales, options) {
     options = v.extend({}, v.options, options);
     if (!options.locale) {
       options.locale = "en";
     }
-    if (v.isString(locale)) {
-      return locale;
+    if (v.isString(locales)) {
+      return locales;
     }
-    if (v.isObject(locale)) {
-      return locale[options.locale];
+    if (v.isObject(locales)) {
+      return locales[options.locale];
     }
-    var locales = v.extend({}, v.locales["en"], v.locales[options.locale]);
+    locales = v.extend({}, v.locales["en"], v.locales[options.locale]);
 
     return v.getDeepObjectValue(locales, langKey);
   };

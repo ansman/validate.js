@@ -17,6 +17,13 @@ declare namespace validate {
     trim?: boolean;
   }
 
+  export interface ValidateLocaleOption {
+    locale?: string;
+    [property: string]: any;
+  }
+
+  export type ValidateLocale = string | { [locale: string]: any };
+
   export interface ValidateJS {
     (attributes: any, constraints: any, options?: ValidateOption): any;
     validate(attributes: any, constraints: any, options?: ValidateOption): any;
@@ -48,6 +55,8 @@ declare namespace validate {
     isString(value: any): boolean;
     prettify(value: string): string;
     result(value: any, ...args: any[]): any;
+    setLocale(locale: ValidateLocale, message?: string): void;
+    lang(langKey: string, locales?: ValidateLocale, options?: ValidateLocaleOption): void;
   }
 }
 
