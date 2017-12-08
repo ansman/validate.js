@@ -793,28 +793,22 @@
 
       // Is checks
       if (v.isNumber(is) && length !== is) {
-        err = options.wrongLength ||
-          this.wrongLength ||
-          "is the wrong length (should be %{count} characters)";
+        err = v.lang("length.wrongLength", options.wrongLength || this.wrongLength);
         errors.push(v.format(err, {count: is}));
       }
 
       if (v.isNumber(minimum) && length < minimum) {
-        err = options.tooShort ||
-          this.tooShort ||
-          "is too short (minimum is %{count} characters)";
+        err = v.lang("length.tooShort", options.tooShort || this.tooShort);
         errors.push(v.format(err, {count: minimum}));
       }
 
       if (v.isNumber(maximum) && length > maximum) {
-        err = options.tooLong ||
-          this.tooLong ||
-          "is too long (maximum is %{count} characters)";
+        err = v.lang("length.tooLong", options.tooLong || this.tooLong);
         errors.push(v.format(err, {count: maximum}));
       }
 
       if (errors.length > 0) {
-        return options.message || errors;
+        return v.lang(options.message, options) || errors;
       }
     },
     numericality: function(value, options, attribute, attributes, globalOptions) {
@@ -849,11 +843,10 @@
         pattern += "$";
 
         if (!(new RegExp(pattern).test(value))) {
-          return options.message ||
-            options.notValid ||
-            this.notValid ||
-            this.message ||
-            "must be a valid number";
+          return v.lang(
+            "numericality.notValidStrict",
+            options.message || options.notValid || this.notValid || this.message
+          );
         }
       }
 
@@ -864,21 +857,19 @@
 
       // If it's not a number we shouldn't continue since it will compare it.
       if (!v.isNumber(value)) {
-        return options.message ||
-          options.notValid ||
-          this.notValid ||
-          this.message ||
-          "is not a number";
+        return v.lang(
+          "numericality.notValid",
+          options.message || options.notValid || this.notValid || this.message
+        );
       }
 
       // Same logic as above, sort of. Don't bother with comparisons if this
       // doesn't pass.
       if (options.onlyInteger && !v.isInteger(value)) {
-        return options.message ||
-          options.notInteger ||
-          this.notInteger ||
-          this.message ||
-          "must be an integer";
+        return v.lang(
+          "numericality.notInteger",
+          options.message || options.notInteger || this.notInteger || this.message
+        );
       }
 
       for (name in checks) {
@@ -888,10 +879,14 @@
           // For example the greaterThan check uses the message from
           // this.notGreaterThan so we capitalize the name and prepend "not"
           var key = "not" + v.capitalize(name);
-          var msg = options[key] ||
-            this[key] ||
-            this.message ||
-            "must be %{type} %{count}";
+          var msg = v.lang(
+            "numericality.check",
+            options.message || options.notInteger || this.notInteger || this.message
+            )
+            || v.lang(
+              "numericality." + key,
+              options.message || options[key] || this[key] || this.message
+            );
 
           errors.push(v.format(msg, {
             count: count,
@@ -901,20 +896,14 @@
       }
 
       if (options.odd && value % 2 !== 1) {
-        errors.push(options.notOdd ||
-            this.notOdd ||
-            this.message ||
-            "must be odd");
+        errors.push(v.lang("numericality.notOdd", this.notOdd || this.message));
       }
       if (options.even && value % 2 !== 0) {
-        errors.push(options.notEven ||
-            this.notEven ||
-            this.message ||
-            "must be even");
+        errors.push(v.lang("numericality.notEven", this.notEven || this.message));
       }
 
       if (errors.length) {
-        return options.message || errors;
+        return v.lang(options.message, options) || errors;
       }
     },
     datetime: v.extend(function(value, options) {
@@ -939,18 +928,12 @@
       // 86400000 is the number of milliseconds in a day, this is used to remove
       // the time from the date
       if (isNaN(value) || options.dateOnly && value % 86400000 !== 0) {
-        err = options.notValid ||
-          options.message ||
-          this.notValid ||
-          "must be a valid date";
+        err = v.lang("datetime.notValid", options.notValid || options.message || this.notValid);
         return v.format(err, {value: arguments[0]});
       }
 
       if (!isNaN(earliest) && value < earliest) {
-        err = options.tooEarly ||
-          options.message ||
-          this.tooEarly ||
-          "must be no earlier than %{date}";
+        err = v.lang("datetime.tooEarly", options.tooEarly || options.message || this.tooEarly);
         err = v.format(err, {
           value: this.format(value, options),
           date: this.format(earliest, options)
@@ -959,10 +942,7 @@
       }
 
       if (!isNaN(latest) && value > latest) {
-        err = options.tooLate ||
-          options.message ||
-          this.tooLate ||
-          "must be no later than %{date}";
+        err = v.lang("datetime.tooLate", options.tooLate || options.message || this.tooLate);
         err = v.format(err, {
           date: this.format(latest, options),
           value: this.format(value, options)
@@ -988,7 +968,7 @@
 
       options = v.extend({}, this.options, options);
 
-      var message = options.message || this.message || "is invalid"
+      var message = v.lang("format.notValid", options.message || this.message)
         , pattern = options.pattern
         , match;
 
@@ -1020,9 +1000,7 @@
       if (v.contains(options.within, value)) {
         return;
       }
-      var message = options.message ||
-        this.message ||
-        "^%{value} is not included in the list";
+      var message = v.lang("inclusion.notValid", options.message || this.message);
       return v.format(message, {value: value});
     },
     exclusion: function(value, options) {
@@ -1037,7 +1015,7 @@
       if (!v.contains(options.within, value)) {
         return;
       }
-      var message = options.message || this.message || "^%{value} is restricted";
+      var message = v.lang("exclusion.notValid", options.message || this.message);
       if (v.isString(options.within[value])) {
         value = options.within[value];
       }
@@ -1045,7 +1023,7 @@
     },
     email: v.extend(function(value, options) {
       options = v.extend({}, this.options, options);
-      var message = options.message || this.message || "is not a valid email";
+      var message = v.lang("email.notValid", options.message || this.message);
       // Empty values are fine
       if (!v.isDefined(value)) {
         return;
@@ -1068,9 +1046,7 @@
         options = {attribute: options};
       }
       options = v.extend({}, this.options, options);
-      var message = options.message ||
-        this.message ||
-        "is not equal to %{attribute}";
+      var message = v.lang("equality.notValid", options.message || this.message);
 
       if (v.isEmpty(options.attribute) || !v.isString(options.attribute)) {
         throw new Error("The attribute must be a non empty string");
@@ -1097,7 +1073,7 @@
 
       options = v.extend({}, this.options, options);
 
-      var message = options.message || this.message || "is not a valid url"
+      var message = v.lang("url.notValid", options.message || this.message)
         , schemes = options.schemes || this.schemes || ['http', 'https']
         , allowLocal = options.allowLocal || this.allowLocal || false;
 
@@ -1232,6 +1208,77 @@
       }
       return errors;
     }
+  };
+
+  validate.locales = {
+    en: {
+      unknownValidator: "Unknown validator %{name}",
+      unknownFormat: "Unknown format %{format}",
+      length: {
+        wrongLength: "is the wrong length (should be %{count} characters)",
+        tooShort: "is too short (minimum is %{count} characters)",
+        tooLong: "is too long (maximum is %{count} characters)"
+      },
+      numericality: {
+        notValidStrict: "must be a valid number",
+        notValid: "is not a number",
+        notInteger: "must be an integer",
+        check: "must be %{type} %{count}",
+        notOdd: "must be odd",
+        notEven: "must be even"
+      },
+      datetime: {
+        notValid: "must be a valid date",
+        tooEarly: "must be no earlier than %{date}",
+        tooLate: "must be no later than %{date}"
+      },
+      format: {
+        notValid: "is invalid"
+      },
+      inclusion: {
+        notValid: "^%{value} is not included in the list"
+      },
+      exclusion: {
+        notValid: "^%{value} is restricted"
+      },
+      email: {
+        notValid: "is not a valid email"
+      },
+      equality: {
+        notValid: "is not equal to %{attribute}"
+      },
+      url: {
+        notValid: "is not a valid url"
+      }
+    }
+  };
+
+  validate.setLocale = function (locale, message) {
+    if (!message && v.isObject(locale)) {
+      for (var localeKey in locale) {
+        if(locale.hasOwnProperty(localeKey)){
+          validate.locales[localeKey] = locale[localeKey];
+        }
+      }
+      return;
+    }
+    validate.locales[locale] = message;
+  };
+
+  validate.lang = function (langKey, locale, options) {
+    options = v.extend({}, v.options, options);
+    if (!options.locale) {
+      options.locale = "en";
+    }
+    if (v.isString(locale)) {
+      return locale;
+    }
+    if (v.isObject(locale)) {
+      return locale[options.locale];
+    }
+    var locales = v.extend({}, v.locales["en"], v.locales[options.locale]);
+
+    return v.getDeepObjectValue(locales, langKey);
   };
 
   validate.exposeModule(validate, this, exports, module, define);
