@@ -663,8 +663,7 @@ describe("validate", function() {
 
     it("supports AMD", function() {
       var root = {}
-        , define = function(deps, func) {
-          expect(deps).toEqual([]);
+        , define = function(func) {
           expect(func()).toBe(validate);
         };
 
