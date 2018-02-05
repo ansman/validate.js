@@ -880,10 +880,10 @@
           // this.notGreaterThan so we capitalize the name and prepend "not"
           var key = "not" + v.capitalize(name);
           var msg = v.lang(
-            "numericality.check",
+            'numericality.check',
             options.message || options.notInteger || this.notInteger || this.message
-            )
-            || v.lang(
+            ) ||
+            v.lang(
               "numericality." + key,
               options.message || options[key] || this[key] || this.message
             );
@@ -1276,7 +1276,7 @@
     if (v.isObject(locales)) {
       return locales[options.locale];
     }
-    locales = v.extend({}, v.locales["en"], v.locales[options.locale]);
+    locales = v.extend({}, v.locales.en, v.locales[options.locale]);
 
     return v.getDeepObjectValue(locales, langKey);
   };
