@@ -6,6 +6,7 @@
  * For all details and documentation:
  * http://validatejs.org/
  */
+ var XRegExp = require('xregexp');
 
 (function(exports, module, define) {
   "use strict";
@@ -1001,7 +1002,7 @@
       }
 
       if (v.isString(pattern)) {
-        pattern = new RegExp(options.pattern, options.flags);
+        pattern = XRegExp(options.pattern, options.flags);
       }
       match = pattern.exec(value);
       if (!match || match[0].length != value.length) {
