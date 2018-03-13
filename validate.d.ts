@@ -281,13 +281,13 @@ declare namespace validate {
   }
 
   export interface ValidateJS {
+    validators: any;
+    formatters: any;
+
     (attributes: any, constraints: Constraints, options?: ValidateOption): any;
     validate(attributes: any, constraints: Constraints, options?: ValidateOption): any;
     async(attributes: any, constraints: Constraints, options?: AsyncValidateOption): Promise<any>;
     single(value: any, constraints: Constraints, options?: ValidateOption): any;
-
-    validators: any;
-    formatters: any;
 
     capitalize(value: string): string;
     cleanAttributes(attributes: any, whitelist: any): any;
