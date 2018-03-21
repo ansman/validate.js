@@ -1,5 +1,5 @@
 {
-  "name": "validate.js",
+  "name": "@mulesoft/validate.js",
   "version": "0.12.0",
   "author": "Nicklas Ansman <nicklas@ansman.se>",
   "description": "Declarative validations for JavaScript",
@@ -9,6 +9,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/ansman/validate.js.git"
+  },
+  "publishConfig": {
+	  "registry": "https://nexus3.build.msap.io/repository/npm-internal/"
   },
   "files": [
     "typings.json",
