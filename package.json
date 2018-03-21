@@ -1,5 +1,5 @@
 {
-  "name": "validate.js",
+  "name": "@danielwpz/validate.js",
   "version": "0.12.0",
   "author": "Nicklas Ansman <nicklas@ansman.se>",
   "description": "Declarative validations for JavaScript",
