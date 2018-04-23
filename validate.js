@@ -788,7 +788,7 @@
       value = tokenizer(value);
       var length = value.length;
       if(!v.isNumber(length)) {
-        return v.lang("length.notValid", options.message || this.notValid || this.message);
+        return v.lang("length.notValid", options.notValid || options.message || this.notValid || this.message);
       }
 
       // Is checks
@@ -881,11 +881,11 @@
           var key = "not" + v.capitalize(name);
           var msg = v.lang(
             "numericality." + key,
-            options.message || options[key] || this[key] || this.message
+            options[key] || options.message || this[key] || this.message
             ) ||
             v.lang(
               'numericality.check',
-              options.notInteger || options.message || this.notInteger || this.message
+              options.message || this.message
             );
 
           errors.push(v.format(msg, {
@@ -896,10 +896,10 @@
       }
 
       if (options.odd && value % 2 !== 1) {
-        errors.push(v.lang("numericality.notOdd", options.message || options.notOdd || this.notOdd || this.message));
+        errors.push(v.lang("numericality.notOdd", options.notOdd || options.message || this.notOdd || this.message));
       }
       if (options.even && value % 2 !== 0) {
-        errors.push(v.lang("numericality.notEven", options.message || options.notEven || this.notEven || this.message));
+        errors.push(v.lang("numericality.notEven", options.notEven || options.message || this.notEven || this.message));
       }
 
       if (errors.length) {
