@@ -788,27 +788,27 @@
       value = tokenizer(value);
       var length = value.length;
       if(!v.isNumber(length)) {
-        return options.message || this.notValid || "has an incorrect length";
+        return v.lang("length.notValid", options.message || this.notValid || this.message);
       }
 
       // Is checks
       if (v.isNumber(is) && length !== is) {
-        err = v.lang("length.wrongLength", options.wrongLength || this.wrongLength);
+        err = v.lang("length.wrongLength", options.wrongLength || options.message || this.wrongLength || this.message);
         errors.push(v.format(err, {count: is}));
       }
 
       if (v.isNumber(minimum) && length < minimum) {
-        err = v.lang("length.tooShort", options.tooShort || this.tooShort);
+        err = v.lang("length.tooShort", options.tooShort || options.message || this.tooShort || this.message);
         errors.push(v.format(err, {count: minimum}));
       }
 
       if (v.isNumber(maximum) && length > maximum) {
-        err = v.lang("length.tooLong", options.tooLong || this.tooLong);
+        err = v.lang("length.tooLong", options.tooLong || options.message || this.tooLong || this.message);
         errors.push(v.format(err, {count: maximum}));
       }
 
       if (errors.length > 0) {
-        return v.lang(options.message, options) || errors;
+        return v.lang("length.message", options.message || this.message) || errors;
       }
     },
     numericality: function(value, options, attribute, attributes, globalOptions) {
@@ -845,7 +845,7 @@
         if (!(new RegExp(pattern).test(value))) {
           return v.lang(
             "numericality.notValidStrict",
-            options.message || options.notValid || this.notValid || this.message
+            options.notValid || options.message || this.notValid || this.message
           );
         }
       }
@@ -859,7 +859,7 @@
       if (!v.isNumber(value)) {
         return v.lang(
           "numericality.notValid",
-          options.message || options.notValid || this.notValid || this.message
+          options.notValid || options.message || this.notValid || this.message
         );
       }
 
@@ -868,7 +868,7 @@
       if (options.onlyInteger && !v.isInteger(value)) {
         return v.lang(
           "numericality.notInteger",
-          options.message || options.notInteger || this.notInteger || this.message
+          options.notInteger || options.message || this.notInteger || this.message
         );
       }
 
@@ -880,12 +880,12 @@
           // this.notGreaterThan so we capitalize the name and prepend "not"
           var key = "not" + v.capitalize(name);
           var msg = v.lang(
-            'numericality.check',
-            options.message || options.notInteger || this.notInteger || this.message
+            "numericality." + key,
+            options.message || options[key] || this[key] || this.message
             ) ||
             v.lang(
-              "numericality." + key,
-              options.message || options[key] || this[key] || this.message
+              'numericality.check',
+              options.notInteger || options.message || this.notInteger || this.message
             );
 
           errors.push(v.format(msg, {
@@ -896,14 +896,14 @@
       }
 
       if (options.odd && value % 2 !== 1) {
-        errors.push(v.lang("numericality.notOdd", this.notOdd || this.message));
+        errors.push(v.lang("numericality.notOdd", options.message || options.notOdd || this.notOdd || this.message));
       }
       if (options.even && value % 2 !== 0) {
-        errors.push(v.lang("numericality.notEven", this.notEven || this.message));
+        errors.push(v.lang("numericality.notEven", options.message || options.notEven || this.notEven || this.message));
       }
 
       if (errors.length) {
-        return v.lang(options.message, options) || errors;
+        return v.lang("numericality.message", options.message) || errors;
       }
     },
     datetime: v.extend(function(value, options) {
@@ -928,12 +928,12 @@
       // 86400000 is the number of milliseconds in a day, this is used to remove
       // the time from the date
       if (isNaN(value) || options.dateOnly && value % 86400000 !== 0) {
-        err = v.lang("datetime.notValid", options.notValid || options.message || this.notValid);
+        err = v.lang("datetime.notValid", options.notValid || options.message || this.notValid || this.message);
         return v.format(err, {value: arguments[0]});
       }
 
       if (!isNaN(earliest) && value < earliest) {
-        err = v.lang("datetime.tooEarly", options.tooEarly || options.message || this.tooEarly);
+        err = v.lang("datetime.tooEarly", options.tooEarly || options.message || this.tooEarly || this.message);
         err = v.format(err, {
           value: this.format(value, options),
           date: this.format(earliest, options)
@@ -942,7 +942,7 @@
       }
 
       if (!isNaN(latest) && value > latest) {
-        err = v.lang("datetime.tooLate", options.tooLate || options.message || this.tooLate);
+        err = v.lang("datetime.tooLate", options.tooLate || options.message || this.tooLate || this.message);
         err = v.format(err, {
           date: this.format(latest, options),
           value: this.format(value, options)
@@ -1015,7 +1015,7 @@
       if (!v.contains(options.within, value)) {
         return;
       }
-      var message = v.lang("exclusion.notValid", options.message || this.message);
+      var message = v.lang("exclusion.notValid", options.notValid || options.message || this.message);
       if (v.isString(options.within[value])) {
         value = options.within[value];
       }
@@ -1023,7 +1023,7 @@
     },
     email: v.extend(function(value, options) {
       options = v.extend({}, this.options, options);
-      var message = v.lang("email.notValid", options.message || this.message);
+      var message = v.lang("email.notValid", options.notValid || options.message || this.message);
       // Empty values are fine
       if (!v.isDefined(value)) {
         return;
@@ -1046,7 +1046,7 @@
         options = {attribute: options};
       }
       options = v.extend({}, this.options, options);
-      var message = v.lang("equality.notValid", options.message || this.message);
+      var message = v.lang("equality.notValid", options.notValid || options.message || this.message);
 
       if (v.isEmpty(options.attribute) || !v.isString(options.attribute)) {
         throw new Error("The attribute must be a non empty string");
@@ -1073,7 +1073,7 @@
 
       options = v.extend({}, this.options, options);
 
-      var message = v.lang("url.notValid", options.message || this.message)
+      var message = v.lang("url.notValid", options.notValid || options.message || this.message)
         , schemes = options.schemes || this.schemes || ['http', 'https']
         , allowLocal = options.allowLocal || this.allowLocal || false;
 
@@ -1215,9 +1215,10 @@
       unknownValidator: "Unknown validator %{name}",
       unknownFormat: "Unknown format %{format}",
       length: {
+        notValid: "has an incorrect length",
         wrongLength: "is the wrong length (should be %{count} characters)",
         tooShort: "is too short (minimum is %{count} characters)",
-        tooLong: "is too long (maximum is %{count} characters)"
+        tooLong: "is too long (maximum is %{count} characters)",
       },
       numericality: {
         notValidStrict: "must be a valid number",
@@ -1266,12 +1267,15 @@
   };
 
   validate.lang = function (langKey, locales, options) {
-    options = v.extend({}, v.options, options);
-    if (!options.locale) {
-      options.locale = "en";
+    if (v.isFunction(locales)) {
+      return locales;
     }
     if (v.isString(locales)) {
       return locales;
+    }
+    options = v.extend({}, v.options, options);
+    if (!options.locale) {
+      options.locale = "en";
     }
     if (v.isObject(locales)) {
       return locales[options.locale];
