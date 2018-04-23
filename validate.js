@@ -22,9 +22,7 @@
   var validate = function(attributes, constraints, options) {
     options = v.extend({}, v.options, options);
 
-    var results = v.runValidations(attributes, constraints, options)
-      , attr
-      , validator;
+    var results = v.runValidations(attributes, constraints, options);
 
     if (results.some(function(r) { return v.isPromise(r.error); })) {
       throw new Error("Use validate.async if you want support for promises");
@@ -695,7 +693,6 @@
 
       function buildObjectWhitelist(whitelist) {
         var ow = {}
-          , lastObject
           , attr;
         for (attr in whitelist) {
           if (!whitelist[attr]) {
@@ -770,7 +767,7 @@
         return options.message || this.message || "can't be blank";
       }
     },
-    length: function(value, options, attribute) {
+    length: function(value, options) {
       // Empty values are allowed
       if (!v.isDefined(value)) {
         return;
