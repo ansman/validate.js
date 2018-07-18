@@ -118,6 +118,20 @@ describe("validators.url", function() {
     expect(url("http://nicklas:password@localhost:4711/foo", {allowLocal: true})).not.toBeDefined();
   });
 
+  it("allows data urls", function () {
+    //Examples from https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs
+    expect(url("data:,Hello%2C%20World!", { allowDataUrl: true })).not.toBeDefined();
+    expect(url("data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D", { allowDataUrl: true })).not.toBeDefined();
+    expect(url("data:text/html,%3Ch1%3EHello%2C%20World!%3C%2Fh1%3E", { allowDataUrl: true })).not.toBeDefined();
+  });
+
+  it("fails data urls without the option", function () {
+    //Examples from https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs
+    expect(url("data:,Hello%2C%20World!", { allowDataUrl: false })).toBeDefined();
+    expect(url("data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D", { allowDataUrl: false })).toBeDefined();
+    expect(url("data:text/html,%3Ch1%3EHello%2C%20World!%3C%2Fh1%3E", { allowDataUrl: false })).toBeDefined();
+  });
+
   it("allows custom schemes option is set", function() {
     var options = {schemes: ['ftp', 'jdbc']};
     expect(url("ftp://foo.bar.com", options)).not.toBeDefined();
