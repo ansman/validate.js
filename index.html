@@ -1852,6 +1852,11 @@ validate({myAttribute: true}, {myAttribute: {type: "customType"}});
                 local hostnames such as <code>10.0.1.1</code> or
                 <code>localhost</code>. The default is <code>false</code>.
               </li>
+              <li>
+                <b>allowDataUrl</b> - A boolean that if <code>true</code> allows
+                data URLs as defined in <a href="https://tools.ietf.org/html/rfc2397">RFC 2397</a>.
+                The default is <code>false</code>
+              </li>
             </ul>
             <pre><code class="javascript">validate({website: "http://google.com"}, {website: {url: true}});
 // =&gt; undefined
@@ -1881,6 +1886,19 @@ validate({website: "http://localhost"}, {
     }
   }
 });
+// =&gt; undefined
+
+validate({website: "data:,Hello%2C%20World!"}, {website: {url: true}});
+// =&gt; {"website": ["Website is not a valid url"]}
+
+validate({website: "data:,Hello%2C%20World!"}, {
+    website: {
+        url: {
+            allowDataUrl: true
+        }
+      }
+    }
+);
 // =&gt; undefined</code></pre>
           </div>
         </div>

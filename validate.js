@@ -1099,8 +1099,8 @@
 
       var message = options.message || this.message || "is not a valid url"
         , schemes = options.schemes || this.schemes || ['http', 'https']
-        , allowLocal = options.allowLocal || this.allowLocal || false;
-
+        , allowLocal = options.allowLocal || this.allowLocal || false
+        , allowDataUrl = options.allowDataUrl || this.allowDataUrl || false;
       if (!v.isString(value)) {
         return message;
       }
@@ -1148,6 +1148,14 @@
         // resource path
         "(?:[/?#]\\S*)?" +
       "$";
+
+      if (allowDataUrl) {
+        // RFC 2397
+        var mediaType = "\\w+\\/[-+.\\w]+(?:;[\\w=]+)*";
+        var urlchar = "[A-Za-z0-9-_.!~\\*'();\\/?:@&=+$,%]*";
+        var dataurl = "data:(?:"+mediaType+")?(?:;base64)?,"+urlchar;
+        regex = "(?:"+regex+")|(?:^"+dataurl+"$)";
+      }
 
       var PATTERN = new RegExp(regex, 'i');
       if (!PATTERN.exec(value)) {
