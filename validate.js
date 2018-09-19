@@ -96,6 +96,7 @@
       // every attribute. Nested attribute names are matched as well.
       if (options.exclusive === true) {
         for (attr in attributes) {
+          value = v.getDeepObjectValue(attributes, attr);
           var declared = false;
           for (constraint in constraints) {
             if (constraint === attr || constraint.indexOf(attr + ".") === 0) {
@@ -105,7 +106,10 @@
           if (!declared) {
             results.push({
               attribute: attr,
-              error: "is not permitted (exclusive mode)",
+              value: value,
+              globalOptions: options,
+              attributes: attributes,
+              error: options.exclusiveErrorMessage || "is not permitted (exclusive mode)",
             });
           }
         }

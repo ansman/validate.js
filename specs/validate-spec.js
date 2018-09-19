@@ -193,13 +193,24 @@ describe("validate", function() {
     });
 
     it("does not allow undeclared attributes in exclusive mode", function() {
-      var attrs = {name: "Nicklas", age: 23}
+      var attributes = {name: "Nicklas", age: 23, year: 2018}
         , globalOptions = {exclusive: true}
         , constraints = {name: true};
-      expect(validate.runValidations(attrs, constraints, globalOptions)).toHaveItems([{
-        attribute: "age",
-        error: "is not permitted (exclusive mode)"
-      }]);
+      expect(validate.runValidations(attributes, constraints, globalOptions)).toHaveItems([
+        {
+          attribute: "age",
+          value: 23,
+          globalOptions: globalOptions,
+          attributes: attributes,
+          error: "is not permitted (exclusive mode)"
+        }, {
+          attribute: "year",
+          value: 2018,
+          globalOptions: globalOptions,
+          attributes: attributes,
+          error: "is not permitted (exclusive mode)"
+        }
+      ]);
     });
 
     it("allows the options for an attribute to be a function", function() {
