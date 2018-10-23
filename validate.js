@@ -387,6 +387,10 @@
       }
 
       if (v.isObject(str)) {
+        if (!v.isDefined(str.toString)) {
+          return JSON.stringify(str);
+        }
+
         return str.toString();
       }
 
