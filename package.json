@@ -1,6 +1,6 @@
 {
   "name": "validate.js",
-  "version": "0.12.0",
+  "version": "0.13.1",
   "author": "Nicklas Ansman <nicklas@ansman.se>",
   "description": "Declarative validations for JavaScript",
   "main": "validate.js",
@@ -10,6 +10,13 @@
     "type": "git",
     "url": "https://github.com/ansman/validate.js.git"
   },
+  "files": [
+    "typings.json",
+    "validate.d.ts",
+    "validate.js",
+    "validate.min.js",
+    "validate.min.map"
+  ],
   "scripts": {
     "test": "grunt test",
     "build": "grunt build",

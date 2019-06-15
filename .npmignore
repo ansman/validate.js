@@ -1,0 +1,12 @@
+coverage
+specs
+examples.html
+index.html
+favicon.png
+CNAME
+Gruntfile.js
+RELEASING.txt
+bower.json
+component.json
+docs
+index.html

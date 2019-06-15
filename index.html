@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.8.0/styles/github.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.8.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bluebird/2.10.2/bluebird.min.js" async></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js" async></script>
   <script src="validate.js" async></script>
@@ -372,6 +372,7 @@
           <li><a href="#validators-length">Length</a></li>
           <li><a href="#validators-numericality">Numericality</a></li>
           <li><a href="#validators-presence">Presence</a></li>
+          <li><a href="#validators-type">Type</a></li>
           <li><a href="#validators-url">URL</a></li>
         </ul>
       </li>
@@ -405,6 +406,7 @@
       <li>
         <a href="#changelog">Changelog</a>
         <ul>
+		  <li><a href="https://github.com/ansman/validate.js/releases/tag/0.13.1">0.13.1</a></li>
           <li><a href="#changelog-0-12-0">0.12.0</a></li>
           <li><a href="#changelog-0-11-1">0.11.1</a></li>
           <li><a href="#changelog-0-11-0">0.11.0</a></li>
@@ -465,15 +467,15 @@
           </p>
           <h2 id="downloads">Downloads</h2>
           <div class="download">
-            <a class="btn btn-default" download href="validate.js">Development version (0.12.0)</a>
+            <a class="btn btn-default" download href="validate.js">Development version (0.13.1)</a>
             <div class="info">
-              <span class="details">36KB, uncompressed and plenty of comments</span>
+              <span class="details">38KB, uncompressed and plenty of comments</span>
             </div>
           </div>
           <div class="download">
-            <a class="btn btn-primary" download href="validate.min.js">Production version (0.12.0)</a>
+            <a class="btn btn-primary" download href="validate.min.js">Production version (0.13.1)</a>
             <div class="info">
-              <span class="details">4.66KB, minified and gzipped</span><br>
+              <span class="details">5.05KB, minified and gzipped</span><br>
               <a download href="validate.min.map">(Source map)</a>
             </div>
           </div>
@@ -492,7 +494,7 @@
           <div id="installing">
             <h2>Installing</h2>
             <b>Browser/CDN</b>
-            <pre><code class="html">&lt;script src="//cdnjs.cloudflare.com/ajax/libs/validate.js/0.12.0/validate.min.js"&gt;&lt;/script&gt;</code></pre>
+            <pre><code class="html">&lt;script src="//cdnjs.cloudflare.com/ajax/libs/validate.js/0.13.1/validate.min.js"&gt;&lt;/script&gt;</code></pre>
             <b>Require.js/AMD</b>
             <pre><code class="javascript">require(["validate.js"], function(validate) {
   // ...
@@ -919,7 +921,7 @@ validate.Promise = RSVP.Promise;</code></pre>
               verbose so there is a shorthand for this.
             </p>
             <p class="description">
-              It does little more than proxying the call do the main validation
+              It does little more than proxying the call to the main validation
               function but with the value wrapped in an object and the options
               <b>fullMessages</b> and <b>format</b> set to <code>"flat"</code>.
               This is because there is no name which means it can't produce
@@ -1276,13 +1278,13 @@ var constraints = {
     datetime: {
       dateOnly: true,
       latest: moment.utc().subtract(18, 'years'),
-      message: "^You need to be atleast 18 years old"
+      message: "^You need to be at least 18 years old"
     }
   }
 };
 
 validate({birthday: "3013-11-14"}, constraints);
-// =&gt; {"birthday": ["You need to be atleast 18 years old"]}</code></pre>
+// =&gt; {"birthday": ["You need to be at least 18 years old"]}</code></pre>
           </div>
           <div id="validators-email">
             <div class="signature"><b>email</b></div>
@@ -1438,7 +1440,7 @@ var constraints = {
 };
 
 validate({subdomain: "jp"}, constraints);
-// =&gt; {"subdomain": ["We don't support jp right now, sorry"]}
+// =&gt; {"subdomain": ["We don't support Japan right now, sorry"]}
 
 validate({subdomain: "com"}, constraints);
 // =&gt; undefined</code></pre>
@@ -1558,8 +1560,10 @@ validate({size: "Medium"}, constraints);
               </dd>
             </dl>
             <p class="description">
-              You can specify the error message using the <b>wrongLength</b>,
-              <b>tooShort</b> and <b>tooLong</b> options. The default values are
+              You can specify the error message using the <b>notValid</b>,
+              <b>wrongLength</b>, <b>tooShort</b> and <b>tooLong</b> options.
+              The default values are
+              <i>has an incorrect length</i>,
               <i>is the wrong length (should be %{count} characters)</i>,
               <i>is too short (minimum is %{count} characters)</i> and
               <i>is too long (maximum is %{count} characters)</i> respectively.<br>
@@ -1778,6 +1782,51 @@ validate({}, {username: {presence: true}});
 // =&gt; {"username": ["Username is required"]}
 </code></pre>
           </div>
+          <div id="validators-type">
+            <div class="signature"><b>type</b></div>
+            <p class="description">
+              The type validator ensures that the input is of the correct type. There are the following build in types.
+            </p>
+            <ul>
+              <li><code>array</code></li>
+              <li><code>integer</code></li>
+              <li><code>number</code></li>
+              <li><code>string</code></li>
+              <li><code>date</code></li>
+              <li><code>boolean</code></li>
+            </ul>
+            <p class="description">
+              In addition to these you can also create your own by adding them to
+              <code>validate.validator.type.types</code>.
+            </p>
+            <p class="description">
+              The following options are supported:
+            </p>
+            <ul>
+              <li>
+                <b>type</b> - The type to use. Can also be a function for inline type checking. The function will receive the value, options, attribute name, all attributes and the global options respectively.
+              </li>
+              <li>
+                <b>message</b> - A custom message. Can also be a function. The function will receive the value, options, attribute name, all attributes and the global options respectively.
+              </li>
+            </ul>
+            <pre><code class="javascript">validate({myAttribute: "value"}, {myAttribute: {type: "string"}});
+// =&gt; undefined
+
+validate({myAttribute: true}, {myAttribute: {type: "string"}});
+// =&gt; {"myAttribute": ["My attribute must be of type string"]}
+
+validate({myAttribute: "other"}, {myAttribute: {type: {type: function(value) { return value === "stuff"; }}}});
+// =&gt; {"myAttribute": ["My attribute must be of the correct type"]}
+
+validate.validators.type.types.customType = function (value) { return value === "stuff"; };
+validate({myAttribute: true}, {myAttribute: {type: "customType"}});
+// =&gt; {"myAttribute": ["My attribute must be of type customType"]}
+
+validate.validators.type.messages.customType = "is simply wrong";
+validate({myAttribute: true}, {myAttribute: {type: "customType"}});
+// =&gt; {"myAttribute": ["My attribute is simply wrong"]}</code></pre>
+          </div>
           <div id="validators-url">
             <div class="signature"><b>url</b></div>
             <p class="description">
@@ -1804,6 +1853,11 @@ validate({}, {username: {presence: true}});
                 <b>allowLocal</b> - A boolean that if <code>true</code> allows
                 local hostnames such as <code>10.0.1.1</code> or
                 <code>localhost</code>. The default is <code>false</code>.
+              </li>
+              <li>
+                <b>allowDataUrl</b> - A boolean that if <code>true</code> allows
+                data URLs as defined in <a href="https://tools.ietf.org/html/rfc2397">RFC 2397</a>.
+                The default is <code>false</code>
               </li>
             </ul>
             <pre><code class="javascript">validate({website: "http://google.com"}, {website: {url: true}});
@@ -1834,6 +1888,19 @@ validate({website: "http://localhost"}, {
     }
   }
 });
+// =&gt; undefined
+
+validate({website: "data:,Hello%2C%20World!"}, {website: {url: true}});
+// =&gt; {"website": ["Website is not a valid url"]}
+
+validate({website: "data:,Hello%2C%20World!"}, {
+    website: {
+        url: {
+            allowDataUrl: true
+        }
+      }
+    }
+);
 // =&gt; undefined</code></pre>
           </div>
         </div>
@@ -2358,6 +2425,18 @@ validate.result("foo".toUpperCase);
         </div>
         <div id="changelog">
           <h2>Changelog</h2>
+          <div id="changelog-0-13-0">
+            <h3>
+              <b class="version">0.13.1</b>
+              -
+              <span class="date">Jun 15, 2018</span>
+              -
+              <a href="http://htmlpreview.github.com/?https://raw.github.com/ansman/validate.js/0.13.1/index.html">Docs</a>
+              -
+              <a href="https://github.com/ansman/validate.js/compare/0.12.0...0.13.1">Diff</a>
+            </h3>
+            See https://github.com/ansman/validate.js/releases/tag/0.13.1 for the changelog.
+          </div>
           <div id="changelog-0-12-0">
             <h3>
               <b class="version">0.12.0</b>
@@ -2379,7 +2458,7 @@ validate.result("foo".toUpperCase);
                 <b>Breaking!</b> The presence validator no longer rejects empty
                 values (empty strings, arrays, objects etc) per default.
                 The option <code>allowEmpty</code> can be set to false to
-                start passing them through.
+                prevent passing them through.
               </li>
               <li>
                 The numericality validator now allows negative numbers in strict

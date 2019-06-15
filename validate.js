@@ -1,7 +1,7 @@
 /*!
- * validate.js 0.12.0
+ * validate.js 0.13.1
  *
- * (c) 2013-2017 Nicklas Ansman, 2013 Wrapp
+ * (c) 2013-2019 Nicklas Ansman, 2013 Wrapp
  * Validate.js may be freely distributed under the MIT license.
  * For all details and documentation:
  * http://validatejs.org/
@@ -52,8 +52,8 @@
     // The toString function will allow it to be coerced into a string
     version: {
       major: 0,
-      minor: 12,
-      patch: 0,
+      minor: 13,
+      patch: 1,
       metadata: null,
       toString: function() {
         var version = v.format("%{major}.%{minor}.%{patch}", v.version);
@@ -387,6 +387,10 @@
       }
 
       if (v.isObject(str)) {
+        if (!v.isDefined(str.toString)) {
+          return JSON.stringify(str);
+        }
+
         return str.toString();
       }
 
@@ -530,7 +534,7 @@
           continue;
         }
 
-        name = input.name.replace(/\./g, "\\\\.");
+        var name = input.name.replace(/\./g, "\\\\.");
         value = v.sanitizeFormValue(input.value, options);
         if (input.type === "number") {
           value = value ? +value : null;
@@ -566,7 +570,7 @@
             }
           }
         } else {
-          var _val = typeof input.options[input.selectedIndex] !== 'undefined' ? input.options[input.selectedIndex].value : '';
+          var _val = typeof input.options[input.selectedIndex] !== 'undefined' ? input.options[input.selectedIndex].value : /* istanbul ignore next */ '';
           value = v.sanitizeFormValue(_val, options);
         }
         values[input.name] = value;
@@ -788,7 +792,6 @@
       value = tokenizer(value);
       var length = value.length;
       if(!v.isNumber(length)) {
-        v.error(v.format("Attribute %{attr} has a non numeric value for `length`", {attr: attribute}));
         return options.message || this.notValid || "has an incorrect length";
       }
 
@@ -1039,6 +1042,9 @@
         return;
       }
       var message = options.message || this.message || "^%{value} is restricted";
+      if (v.isString(options.within[value])) {
+        value = options.within[value];
+      }
       return v.format(message, {value: value});
     },
     email: v.extend(function(value, options) {
@@ -1055,7 +1061,7 @@
         return message;
       }
     }, {
-      PATTERN: /^[a-z0-9\u007F-\uffff!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9\u007F-\uffff!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/i
+      PATTERN: /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/i
     }),
     equality: function(value, options, attribute, attributes, globalOptions) {
       if (!v.isDefined(value)) {
@@ -1086,7 +1092,6 @@
         return v.format(message, {attribute: prettify(options.attribute)});
       }
     },
-
     // A URL validator that is used to validate URLs with the ability to
     // restrict schemes and some domains.
     url: function(value, options) {
@@ -1098,8 +1103,8 @@
 
       var message = options.message || this.message || "is not a valid url"
         , schemes = options.schemes || this.schemes || ['http', 'https']
-        , allowLocal = options.allowLocal || this.allowLocal || false;
-
+        , allowLocal = options.allowLocal || this.allowLocal || false
+        , allowDataUrl = options.allowDataUrl || this.allowDataUrl || false;
       if (!v.isString(value)) {
         return message;
       }
@@ -1148,11 +1153,73 @@
         "(?:[/?#]\\S*)?" +
       "$";
 
+      if (allowDataUrl) {
+        // RFC 2397
+        var mediaType = "\\w+\\/[-+.\\w]+(?:;[\\w=]+)*";
+        var urlchar = "[A-Za-z0-9-_.!~\\*'();\\/?:@&=+$,%]*";
+        var dataurl = "data:(?:"+mediaType+")?(?:;base64)?,"+urlchar;
+        regex = "(?:"+regex+")|(?:^"+dataurl+"$)";
+      }
+
       var PATTERN = new RegExp(regex, 'i');
       if (!PATTERN.exec(value)) {
         return message;
       }
-    }
+    },
+    type: v.extend(function(value, originalOptions, attribute, attributes, globalOptions) {
+      if (v.isString(originalOptions)) {
+        originalOptions = {type: originalOptions};
+      }
+
+      if (!v.isDefined(value)) {
+        return;
+      }
+
+      var options = v.extend({}, this.options, originalOptions);
+
+      var type = options.type;
+      if (!v.isDefined(type)) {
+        throw new Error("No type was specified");
+      }
+
+      var check;
+      if (v.isFunction(type)) {
+        check = type;
+      } else {
+        check = this.types[type];
+      }
+
+      if (!v.isFunction(check)) {
+        throw new Error("validate.validators.type.types." + type + " must be a function.");
+      }
+
+      if (!check(value, options, attribute, attributes, globalOptions)) {
+        var message = originalOptions.message ||
+          this.messages[type] ||
+          this.message ||
+          options.message ||
+          (v.isFunction(type) ? "must be of the correct type" : "must be of type %{type}");
+
+        if (v.isFunction(message)) {
+          message = message(value, originalOptions, attribute, attributes, globalOptions);
+        }
+
+        return v.format(message, {attribute: v.prettify(attribute), type: type});
+      }
+    }, {
+      types: {
+        object: function(value) {
+          return v.isObject(value) && !v.isArray(value);
+        },
+        array: v.isArray,
+        integer: v.isInteger,
+        number: v.isNumber,
+        string: v.isString,
+        date: v.isDate,
+        boolean: v.isBoolean
+      },
+      messages: {}
+    })
   };
 
   validate.formatters = {

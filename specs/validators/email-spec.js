@@ -26,7 +26,6 @@ describe('validators.email', function() {
     expect(email('a.little.lengthy.but.fine@dept.example.com', {})).not.toBeDefined();
     expect(email('disposable.style.email.with+symbol@example.com', {})).not.toBeDefined();
     expect(email('other.email-with-dash@example.com', {})).not.toBeDefined();
-    expect(email('üñîçøðé@example.com', {})).not.toBeDefined();
     expect(email("foo@some.customtld", {})).not.toBeDefined();
   });
 
@@ -36,6 +35,7 @@ describe('validators.email', function() {
     expect(email(" ", {})).toEqual(expected);
     expect(email("foobar", {})).toEqual(expected);
     expect(email("foo@bar", {})).toEqual(expected);
+    expect(email('üñîçøðé@example.com', {})).toEqual(expected);
 
     // Source: https://en.wikipedia.org/wiki/Email_address#Invalid_email_addresses
     expect(email('abc.example.com', {})).toEqual(expected);
