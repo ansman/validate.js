@@ -54,7 +54,7 @@
       major: 0,
       minor: 13,
       patch: 1,
-      metadata: null,
+      metadata: "development",
       toString: function() {
         var version = v.format("%{major}.%{minor}.%{patch}", v.version);
         if (!v.isEmpty(v.version.metadata)) {
