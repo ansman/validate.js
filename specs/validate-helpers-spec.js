@@ -202,6 +202,25 @@ describe("validate", function() {
       expect(validate.prettify(object)).toEqual("Custom string");
     });
 
+    it("tries to stringify objects that don't implement toString", function() {
+      var object = Object.create(null);
+
+      object.name = "Foo Bar";
+
+      expect(validate.prettify(object)).toEqual("{\"name\":\"Foo Bar\"}");
+    });
+
+    it("throws an error when trying to parse cyclical structures", function() {
+      var object = Object.create(null);
+
+      object.name = "Foo Bar";
+      object.cycle = object;
+
+      expect(function () { 
+        return validate.prettify(object); 
+      }).toThrow();
+    });
+
     it("doesn't allow too many decimals", function() {
       expect(validate.prettify(4711)).toEqual("4711");
       expect(validate.prettify(4711.2)).toEqual("4711.2");
