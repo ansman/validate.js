@@ -1277,13 +1277,13 @@ var constraints = {
     datetime: {
       dateOnly: true,
       latest: moment.utc().subtract(18, 'years'),
-      message: "^You need to be atleast 18 years old"
+      message: "^You need to be at least 18 years old"
     }
   }
 };
 
 validate({birthday: "3013-11-14"}, constraints);
-// =&gt; {"birthday": ["You need to be atleast 18 years old"]}</code></pre>
+// =&gt; {"birthday": ["You need to be at least 18 years old"]}</code></pre>
           </div>
           <div id="validators-email">
             <div class="signature"><b>email</b></div>
