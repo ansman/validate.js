@@ -1709,6 +1709,30 @@ validate({duration: "7"}, {duration: {numericality: {divisibleBy: 3}}});
 // =&gt; {"duration": ["Duration must be divisible by 3"]}
 
 var constraints = {
+  weight: {
+    numericality: {
+      notValid: 'is required',
+      greaterThan: 0,
+      notGreaterThan: 'must be greater than 0',
+      lessThan: 9999,
+      notLessThan: 'must be less than 9999'
+    }
+  }
+};
+
+validate({ weight: null }, constraints);
+// =&gt; undefined
+
+validate({ weight: '' }, constraints);
+// =&gt; { weight: [ 'Weight is required' ] }
+
+validate({ weight: 0 }, constraints);
+// =&gt; { weight: [ 'Weight must be greater than 0.' ] }
+
+validate({ weight: 10000 }, constraints);
+// =&gt; { weight: [ 'Weight must be less than 9999.' ] }
+
+var constraints = {
   duration: {
     numericality: {
       onlyInteger: true,
