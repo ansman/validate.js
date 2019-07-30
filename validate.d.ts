@@ -121,10 +121,12 @@ declare namespace validate {
 
   export type Schema = { [fieldName: string]: Constraints | ConstraintsFunction };
 
+  export type ValidationResult = undefined | { [fieldName: string]: any };
+
   export interface ValidateJS {
-    (attributes: any, constraints: Schema, options?: ValidateOption): { [fieldName: string]: any };
-    validate(attributes: any, constraints: Schema, options?: ValidateOption): { [fieldName: string]: any };
-    async(attributes: any, constraints: Schema, options?: AsyncValidateOption): Promise<{ [fieldName: string]: any }>;
+    (attributes: any, constraints: Schema, options?: ValidateOption): ValidationResult;
+    validate(attributes: any, constraints: Schema, options?: ValidateOption): ValidationResult;
+    async(attributes: any, constraints: Schema, options?: AsyncValidateOption): Promise<ValidationResult>;
     single(value: any, constraints: Constraints, options?: ValidateOption): any;
 
     validators: any;
