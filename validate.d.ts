@@ -25,10 +25,10 @@ declare namespace validate {
 
   export type MessageFunction = (value: any, attribute: string, validatorOptions: Constraints, attributes: any, globalOptions: ValidateOption) => string;
 
-  interface basicCostraint {
+  interface baseConstraint {
     message?: string | MessageFunction
   }
-  export interface DateTimeConstraint extends basicCostraint {
+  export interface DateTimeConstraint extends baseConstraint {
     earliest?: any;
     latest?: any;
     dateOnly?: boolean;
@@ -38,18 +38,18 @@ declare namespace validate {
     tooEarly?: string;
     tooLate?: string;
   }
-  export interface AdvancecEqualityConstraint extends basicCostraint {
+  export interface AdvancecEqualityConstraint extends baseConstraint {
     attribute: string;
     comparator: (a: any, b: any) => boolean;
   }
-  export type EmailConstraint = boolean | basicCostraint;
+  export type EmailConstraint = boolean | baseConstraint;
   export type EqualityConstraint = string | AdvancecEqualityConstraint;
-  export interface EnumConstraint extends basicCostraint {
+  export interface EnumConstraint extends baseConstraint {
     within: any[] | {
       [index: string]: any
     }
   }
-  export interface FormatConstraint extends basicCostraint {
+  export interface FormatConstraint extends baseConstraint {
     pattern: RegExp | string;
     flags?: string;
   }
@@ -60,7 +60,12 @@ declare namespace validate {
     minimum?: number;
     maximum?: number;
   }
-  export type LengthConstraint = StrictUnion<LengthIs | LengthMinMax> & basicCostraint;
+  interface LengthBaseConstraint extends baseConstraint {
+    notValid?: string;
+    tooLong?: string;
+    tooShort?: string;
+  }
+  export type LengthConstraint = StrictUnion<LengthIs | LengthMinMax> & LengthBaseConstraint;
   type NumericalityGreaterOptions = StrictUnion<{ greaterThan?: number; } | { greaterThanOrEqualTo?: number; }>;
   type NumericalityLessOptions = StrictUnion<{ lessThan?: number; } | { lessThanOrEqualTo?: number; }>;
   interface NumericalityEqualOptions {
@@ -68,7 +73,7 @@ declare namespace validate {
   }
   type NumericalityEvenOrOdd = StrictUnion<{ isEven?: boolean; } | { isOdd?: boolean; }>
   export type NumericalityRangeOptions = StrictUnion<NumericalityEqualOptions | (NumericalityGreaterOptions & NumericalityLessOptions)>;
-  interface NumericalityBaseConstraint extends basicCostraint {
+  interface NumericalityBaseConstraint extends baseConstraint {
     onlyInteger?: boolean;
     strict?: boolean;
     divisibleBy?: number;
@@ -84,10 +89,10 @@ declare namespace validate {
     notEven?: string;
   }
   export type NumericalityConstraint = NumericalityBaseConstraint & NumericalityRangeOptions & NumericalityEvenOrOdd;
-  export interface TypeConstraint extends basicCostraint {
+  export interface TypeConstraint extends baseConstraint {
     type: "array" | "integer" | "number" | "string" | "date" | "boolean";
   }
-  export interface UrlConstraint extends basicCostraint {
+  export interface UrlConstraint extends baseConstraint {
     schemes?: string[];
     allowLocal?: boolean;
     allowDataUrl?: boolean;
