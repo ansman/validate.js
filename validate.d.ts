@@ -53,11 +53,14 @@ declare namespace validate {
     pattern: RegExp | string;
     flags?: string;
   }
-  export interface LengthConstraint extends basicCostraint {
+  interface LengthIs {
     is?: number;
+  }
+  interface LengthMinMax {
     minimum?: number;
     maximum?: number;
   }
+  export type LengthConstraint = StrictUnion<LengthIs | LengthMinMax> & basicCostraint;
   type NumericalityGreaterOptions = StrictUnion<{ greaterThan?: number; } | { greaterThanOrEqualTo?: number; }>;
   type NumericalityLessOptions = StrictUnion<{ lessThan?: number; } | { lessThanOrEqualTo?: number; }>;
   interface NumericalityEqualOptions {
