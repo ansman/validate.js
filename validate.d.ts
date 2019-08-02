@@ -42,6 +42,10 @@ declare namespace validate {
     attribute: string;
     comparator: (a: any, b: any) => boolean;
   }
+  type types = "array" | "integer" | "number" | "string" | "date" | "boolean";
+  export interface AdvancedTypeConstraint extends baseConstraint {
+    type: types;
+  }
   export type EmailConstraint = boolean | baseConstraint;
   export type EqualityConstraint = string | AdvancecEqualityConstraint;
   export interface EnumConstraint extends baseConstraint {
@@ -89,9 +93,7 @@ declare namespace validate {
     notEven?: string;
   }
   export type NumericalityConstraint = NumericalityBaseConstraint & NumericalityRangeOptions & NumericalityEvenOrOdd;
-  export interface TypeConstraint extends baseConstraint {
-    type: "array" | "integer" | "number" | "string" | "date" | "boolean";
-  }
+  export type TypeConstraint = AdvancedTypeConstraint | types;
   export interface UrlConstraint extends baseConstraint {
     schemes?: string[];
     allowLocal?: boolean;
