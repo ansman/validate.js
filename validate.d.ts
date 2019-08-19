@@ -90,7 +90,7 @@ declare namespace validate {
   }
   export type NumericalityConstraint = NumericalityBaseConstraint & NumericalityRangeOptions & NumericalityEvenOrOdd;
   export interface TypeConstraint extends baseConstraint {
-    type: "array" | "integer" | "number" | "string" | "date" | "boolean";
+    type: "array" | "integer" | "number" | "string" | "date" | "boolean" | string;
   }
   export interface UrlConstraint extends baseConstraint {
     schemes?: string[];
