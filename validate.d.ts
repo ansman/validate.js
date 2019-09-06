@@ -32,8 +32,6 @@ declare namespace validate {
     earliest?: any;
     latest?: any;
     dateOnly?: boolean;
-    parse: (value: any, options: any) => Date;
-    format: (value: number, options: any) => String;
     notValid?: string;
     tooEarly?: string;
     tooLate?: string;
