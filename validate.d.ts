@@ -107,7 +107,7 @@ declare namespace validate {
     allowLocal?: boolean;
     allowDataUrl?: boolean;
   }
-  export type UrlConstraint = StrictUnion<boolean | AdvancedUrlConstraint>;
+  export type UrlConstraint = boolean | AdvancedUrlConstraint;
 
   type Constraint<T> = T | ConstraintFunction<T>;
 
