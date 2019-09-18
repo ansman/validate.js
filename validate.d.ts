@@ -1,9 +1,9 @@
-import { type } from "os";
+import { type } from 'os';
 
 //Allowe exclusive unions, as workaround for a typescript bug, see: https://stackoverflow.com/a/52678379/5796663
 type UnionKeys<T> = T extends any ? keyof T : never;
 type StrictUnionHelper<T, TAll> = T extends any ? T & Partial<Record<Exclude<UnionKeys<TAll>, keyof T>, never>> : never;
-type StrictUnion<T> = StrictUnionHelper<T, T>
+type StrictUnion<T> = StrictUnionHelper<T, T>;
 
 declare namespace validate {
   export interface ValidateOption {
@@ -23,10 +23,16 @@ declare namespace validate {
     trim?: boolean;
   }
 
-  export type MessageFunction = (value: any, attribute: string, validatorOptions: Constraints, attributes: any, globalOptions: ValidateOption) => string;
+  export type MessageFunction = (
+    value: any,
+    attribute: string,
+    validatorOptions: Constraints,
+    attributes: any,
+    globalOptions: ValidateOption,
+  ) => string;
 
   interface baseConstraint {
-    message?: string | MessageFunction
+    message?: string | MessageFunction;
   }
   export interface DateTimeConstraint extends baseConstraint {
     earliest?: any;
@@ -40,16 +46,18 @@ declare namespace validate {
     attribute: string;
     comparator: (a: any, b: any) => boolean;
   }
-  type types = "array" | "integer" | "number" | "string" | "date" | "boolean" | string;
+  type types = 'array' | 'integer' | 'number' | 'string' | 'date' | 'boolean' | string;
   export interface AdvancedTypeConstraint extends baseConstraint {
     type: types;
   }
   export type EmailConstraint = boolean | baseConstraint;
   export type EqualityConstraint = string | AdvancecEqualityConstraint;
   export interface EnumConstraint extends baseConstraint {
-    within: any[] | {
-      [index: string]: any
-    }
+    within:
+      | any[]
+      | {
+          [index: string]: any;
+        };
   }
   export interface FormatConstraint extends baseConstraint {
     pattern: RegExp | string;
@@ -68,13 +76,15 @@ declare namespace validate {
     tooShort?: string;
   }
   export type LengthConstraint = StrictUnion<LengthIs | LengthMinMax> & LengthBaseConstraint;
-  type NumericalityGreaterOptions = StrictUnion<{ greaterThan?: number; } | { greaterThanOrEqualTo?: number; }>;
-  type NumericalityLessOptions = StrictUnion<{ lessThan?: number; } | { lessThanOrEqualTo?: number; }>;
+  type NumericalityGreaterOptions = StrictUnion<{ greaterThan?: number } | { greaterThanOrEqualTo?: number }>;
+  type NumericalityLessOptions = StrictUnion<{ lessThan?: number } | { lessThanOrEqualTo?: number }>;
   interface NumericalityEqualOptions {
     equalTo?: number;
   }
-  type NumericalityEvenOrOdd = StrictUnion<{ isEven?: boolean; } | { isOdd?: boolean; }>
-  export type NumericalityRangeOptions = StrictUnion<NumericalityEqualOptions | (NumericalityGreaterOptions & NumericalityLessOptions)>;
+  type NumericalityEvenOrOdd = StrictUnion<{ isEven?: boolean } | { isOdd?: boolean }>;
+  export type NumericalityRangeOptions = StrictUnion<
+    NumericalityEqualOptions | (NumericalityGreaterOptions & NumericalityLessOptions)
+  >;
   interface NumericalityBaseConstraint extends baseConstraint {
     onlyInteger?: boolean;
     strict?: boolean;
@@ -92,18 +102,19 @@ declare namespace validate {
   }
   export type NumericalityConstraint = NumericalityBaseConstraint & NumericalityRangeOptions & NumericalityEvenOrOdd;
   export type TypeConstraint = AdvancedTypeConstraint | types;
-  export interface UrlConstraint extends baseConstraint {
+  export interface AdvancedUrlConstraint extends baseConstraint {
     schemes?: string[];
     allowLocal?: boolean;
     allowDataUrl?: boolean;
   }
+  export type UrlConstraint = StrictUnion<boolean | AdvancedUrlConstraint>;
 
-  type Constraint<T> = T | ConstraintFunction<T>
+  type Constraint<T> = T | ConstraintFunction<T>;
 
   export type Constraints = {
     date?: Constraint<DateTimeConstraint>;
     datetime?: Constraint<DateTimeConstraint>;
-    email?: Constraint<EmailConstraint>
+    email?: Constraint<EmailConstraint>;
     equality?: Constraint<EqualityConstraint>;
     exclusion?: Constraint<EnumConstraint>;
     format?: Constraint<FormatConstraint>;
@@ -113,13 +124,27 @@ declare namespace validate {
     presence?: Constraint<PresenceConstraint>;
     type?: Constraint<TypeConstraint>;
     url?: Constraint<UrlConstraint>;
-  } & { [validatorName: string]: Constraint<any> }
+  } & { [validatorName: string]: Constraint<any> };
   type PresenceConstraint = boolean | { allowEmpty: boolean };
 
-  export type ConstraintFunction<T> = (value: any, attributes: any, attributeName: string, options: any, constraints: Schema) => T;
-  export type ConstraintsFunction = (value: any, attributes: any, attributeName: string, options: any, constraints: Schema) => Constraints;
+  export type ConstraintFunction<T> = (
+    value: any,
+    attributes: any,
+    attributeName: string,
+    options: any,
+    constraints: Schema,
+  ) => T;
+  export type ConstraintsFunction = (
+    value: any,
+    attributes: any,
+    attributeName: string,
+    options: any,
+    constraints: Schema,
+  ) => Constraints;
 
-  export type Schema = { [fieldName: string]: Constraints | ConstraintsFunction };
+  export interface Schema {
+    [fieldName: string]: Constraints | ConstraintsFunction;
+  }
 
   export type ValidationResult = undefined | { [fieldName: string]: any };
 
