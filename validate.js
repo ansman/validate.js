@@ -653,7 +653,7 @@
         if (error[0] === '^') {
           error = error.slice(1);
         } else if (options.fullMessages !== false) {
-          error = errorInfo.attributeLabel || v.capitalize(prettify(errorInfo.attribute)) + " " + error;
+          error = (errorInfo.attributeLabel || v.capitalize(prettify(errorInfo.attribute))) + " " + error;
         }
         error = error.replace(/\\\^/g, "^");
         error = v.format(error, {
