@@ -102,9 +102,9 @@
         validators = v.result(constraints[attr], value, attributes, attr, options, constraints);
 
         for (validatorName in validators) {
-          if (validatorName === 'attributeLabel') (
+          if (validatorName === 'attributeLabel') {
             continue;
-          )
+          }
           validator = v.validators[validatorName];
 
           if (!validator) {
