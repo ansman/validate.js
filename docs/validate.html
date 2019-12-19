@@ -234,6 +234,9 @@ validations depending on the attribute value.</p>
             <div class="content"><div class='highlight'><pre>        validators = v.result(constraints[attr], value, attributes, attr, options, constraints);
 
         <span class="hljs-keyword">for</span> (validatorName <span class="hljs-keyword">in</span> validators) {
+          <span class="hljs-keyword">if</span> (validatorName === <span class="hljs-string">'attributeLabel'</span>) {
+            <span class="hljs-keyword">continue</span>;
+          }
           validator = v.validators[validatorName];
 
           <span class="hljs-keyword">if</span> (!validator) {
@@ -266,6 +269,7 @@ validations depending on the attribute value.</p>
           }
           results.push({
             <span class="hljs-attr">attribute</span>: attr,
+            <span class="hljs-attr">attributeLabel</span>: validators.attributeLabel,
             <span class="hljs-attr">value</span>: value,
             <span class="hljs-attr">validator</span>: validatorName,
             <span class="hljs-attr">globalOptions</span>: options,
@@ -1240,7 +1244,7 @@ message is prefixed by ^</p>
         <span class="hljs-keyword">if</span> (error[<span class="hljs-number">0</span>] === <span class="hljs-string">'^'</span>) {
           error = error.slice(<span class="hljs-number">1</span>);
         } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (options.fullMessages !== <span class="hljs-literal">false</span>) {
-          error = v.capitalize(prettify(errorInfo.attribute)) + <span class="hljs-string">" "</span> + error;
+          error = (errorInfo.attributeLabel || v.capitalize(prettify(errorInfo.attribute))) + <span class="hljs-string">" "</span> + error;
         }
         error = error.replace(<span class="hljs-regexp">/\\\^/g</span>, <span class="hljs-string">"^"</span>);
         error = v.format(error, {

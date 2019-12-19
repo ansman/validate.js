@@ -131,6 +131,7 @@ describe("validate", function() {
 
       expect(result).toHaveItems([{
         attribute: "name",
+        attributeLabel: undefined,
         value: "test",
         validator: "fail",
         options: options,
@@ -139,6 +140,7 @@ describe("validate", function() {
         error: "foobar"
       }, {
         attribute: "name",
+        attributeLabel: undefined,
         value: "test",
         validator: "fail2",
         options: true,
@@ -147,6 +149,7 @@ describe("validate", function() {
         error: ["foo", "bar"]
       }, {
         attribute: "name",
+        attributeLabel: undefined,
         value: "test",
         validator: "pass",
         options: true,
@@ -166,6 +169,7 @@ describe("validate", function() {
       expect(validate.runValidations({}, constraints, {})).toHaveItems([
         {
           attribute: "attr1",
+          attributeLabel: undefined,
           value: undefined,
           validator: "pass",
           options: {foo: "bar"},
@@ -174,6 +178,7 @@ describe("validate", function() {
           error: undefined
         }, {
           attribute: "attr2",
+          attributeLabel: undefined,
           value: undefined,
           validator: "fail",
           options: true,
@@ -182,6 +187,7 @@ describe("validate", function() {
           error: "error"
         }, {
           attribute: "attr3",
+          attributeLabel: undefined,
           value: undefined,
           validator: "fail",
           options: true,
@@ -393,6 +399,7 @@ describe("validate", function() {
         var options = {format: "detailed"};
         expect(validate(attributes, c, options)).toHaveItems([{
             attribute: "foo",
+            attributeLabel: undefined,
             value: "foo",
             validator: "length",
             options: {
@@ -405,6 +412,7 @@ describe("validate", function() {
             error: "foobar"
           }, {
             attribute: "bar",
+            attributeLabel: undefined,
             value: 10,
             validator: "numericality",
             options: {
@@ -416,6 +424,7 @@ describe("validate", function() {
             error: "Bar must be greater than 15"
           }, {
             attribute: "bar",
+            attributeLabel: undefined,
             value: 10,
             validator: "numericality",
             options: {
