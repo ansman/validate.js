@@ -164,7 +164,7 @@ describe("validate", function() {
       var constraints = {
         attr1: {pass: {foo: "bar"}},
         attr2: {fail: true},
-        attr3: {fail: true}
+        attr3: {fail: true, attributeLabel: "foobar"}
       };
       expect(validate.runValidations({}, constraints, {})).toHaveItems([
         {
@@ -187,7 +187,7 @@ describe("validate", function() {
           error: "error"
         }, {
           attribute: "attr3",
-          attributeLabel: undefined,
+          attributeLabel: "foobar",
           value: undefined,
           validator: "fail",
           options: true,
