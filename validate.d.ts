@@ -16,12 +16,16 @@ declare namespace validate {
     nullify?: boolean;
     trim?: boolean;
   }
+  
+  export type ValidateErrors<T extends object> = {
+    [key in keyof T]?: string[];
+  };
 
   export interface ValidateJS {
-    (attributes: any, constraints: any, options?: ValidateOption): any;
-    validate(attributes: any, constraints: any, options?: ValidateOption): any;
-    async(attributes: any, constraints: any, options?: AsyncValidateOption): Promise<any>;
-    single(value: any, constraints: any, options?: ValidateOption): any;
+    <T extends object = object>(attributes: any, constraints: T, options?: ValidateOption): ValidateErrors<T> | undefined;
+    validate<T extends object = object>(attributes: any, constraints: T, options?: ValidateOption): ValidateErrors<T> | undefined;
+    async(attributes: any, constraints: object, options?: AsyncValidateOption): Promise<any>;
+    single(value: any, constraints: object, options?: ValidateOption): string[] | undefined;
 
     validators: any;
     formatters: any;
