@@ -1,12 +1,13 @@
 
 declare namespace validate {
   export interface ValidateOption {
-    format?: string;
+    format: "grouped" | "detailed" | "flat";
     prettify?: Function;
     fullMessages?: boolean;
   }
 
   export interface AsyncValidateOption {
+    format: "grouped" | "detailed" | "flat";
     wrapErrors?: Function;
     prettify?: Function;
     cleanAttributes?: boolean;
