@@ -57,7 +57,7 @@
       metadata: "development",
       toString: function() {
         var version = v.format("%{major}.%{minor}.%{patch}", v.version);
-        if (!v.isEmpty(v.version.metadata)) {
+        if (!v.checkIfEmpty(v.version.metadata)) {
           version += "+" + v.version.metadata;
         }
         return version;
@@ -154,7 +154,7 @@
         throw new Error(v.format("Unknown format %{format}", options));
       }
 
-      return v.isEmpty(errors) ? undefined : errors;
+      return v.checkIfEmpty(errors) ? undefined : errors;
     },
 
     // Runs the validations with support for promises.
@@ -307,7 +307,7 @@
       }
     },
 
-    isEmpty: function(value) {
+    checkIfEmpty: function(value) {
       var attr;
 
       // Null and undefined are empty
@@ -600,7 +600,7 @@
     // Remove all errors who's error attribute is empty (null or undefined)
     pruneEmptyErrors: function(errors) {
       return errors.filter(function(error) {
-        return !v.isEmpty(error.error);
+        return !v.checkIfEmpty(error.error);
       });
     },
 
@@ -770,7 +770,7 @@
     // Presence validates that the value isn't empty
     presence: function(value, options) {
       options = v.extend({}, this.options, options);
-      if (options.allowEmpty !== false ? !v.isDefined(value) : v.isEmpty(value)) {
+      if (options.allowEmpty !== false ? !v.isDefined(value) : v.checkIfEmpty(value)) {
         return options.message || this.message || "can't be blank";
       }
     },
@@ -862,7 +862,7 @@
       }
 
       // Coerce the value to a number unless we're being strict.
-      if (options.noStrings !== true && v.isString(value) && !v.isEmpty(value)) {
+      if (options.noStrings !== true && v.isString(value) && !v.checkIfEmpty(value)) {
         value = +value;
       }
 
@@ -1076,7 +1076,7 @@
         this.message ||
         "is not equal to %{attribute}";
 
-      if (v.isEmpty(options.attribute) || !v.isString(options.attribute)) {
+      if (v.checkIfEmpty(options.attribute) || !v.isString(options.attribute)) {
         throw new Error("The attribute must be a non empty string");
       }
 
