@@ -56,6 +56,19 @@ describe("validators.exclusion", function() {
     expect(exclusion("baz", ["foo", "bar"])).not.toBeDefined();
   });
 
+  describe("caseSensitive false", function() {
+    it("finds keys if the within value is an object", function() {
+      expect(exclusion("Foo", {within: {foO: true}, caseSensitive: false })).toBeDefined();
+      expect(exclusion("foo", {within: {foo: true, caseSensitive: false}})).toBeDefined();
+    });
+
+    it("finds options if within value is an array", function() {
+      expect(exclusion("Foo", {within: ["foo", "bar"], caseSensitive: false })).toBeDefined();
+      expect(exclusion("bar", {within: ["foo", "BaR"], caseSensitive: false })).toBeDefined();
+      expect(exclusion("bar", {within: ["foo", "bar"], caseSensitive: false })).toBeDefined();
+    });
+  });
+
   it("supports default options", function() {
     validate.validators.exclusion.options = {
       message: "barfoo",

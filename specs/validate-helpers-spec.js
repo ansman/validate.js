@@ -328,6 +328,22 @@ describe("validate", function() {
       it("works with empty objects", function() {
         expect(contains({}, "foo")).toBe(false);
       });
+
+      describe("case insensitive", function() {
+        it("returns true if the value is a key in the object", function() {
+          expect(contains({foo: false, bar: "bar"}, "foo", true)).toBe(true);
+          expect(contains({Foo: false, bar: "bar"}, "foo", true)).toBe(true);
+          expect(contains({foo: false, bar: "bar"}, "BaR", true)).toBe(true);
+        });
+        
+        it("returns false if the value is not a key in the object", function() {
+          expect(contains({foo: false, bar: "bar"}, "quux", true)).toBe(false);
+          expect(contains({foo: false, bar: "bar"}, null, true)).toBe(false);
+          expect(contains({foo: false, bar: "bar"}, 1, true)).toBe(false);
+          expect(contains({foo: false, bar: "bar"}, true, true)).toBe(false);
+        });
+      });
+
     });
   });
 

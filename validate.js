@@ -430,14 +430,31 @@
       return v.isObject(value) && !v.isArray(value) && !v.isFunction(value);
     },
 
-    contains: function(obj, value) {
+    contains: function(obj, value, caseInsensitive) {
+      var caseSensitive = !caseInsensitive;
+      var toLowerCase = function (k) {
+        return k && k.toLowerCase ? k.toLowerCase() : k;
+      };
+ 
       if (!v.isDefined(obj)) {
         return false;
       }
       if (v.isArray(obj)) {
-        return obj.indexOf(value) !== -1;
+        if (caseSensitive) {
+          return obj.indexOf(value) !== -1;
+        }
+        return obj.map(toLowerCase).indexOf(toLowerCase(value)) !== -1;
       }
-      return value in obj;
+      
+      var valueIsInObj = value in obj;
+      
+      if (caseSensitive || valueIsInObj) {
+        return valueIsInObj;
+      }
+
+      return Object.keys(obj)
+        .map(toLowerCase)
+        .indexOf(toLowerCase(value)) !== -1;
     },
 
     unique: function(array) {
@@ -1021,7 +1038,8 @@
         options = {within: options};
       }
       options = v.extend({}, this.options, options);
-      if (v.contains(options.within, value)) {
+      var caseInsensitive = options.caseSensitive === false;
+      if (v.contains(options.within, value, caseInsensitive)) {
         return;
       }
       var message = options.message ||
@@ -1038,7 +1056,8 @@
         options = {within: options};
       }
       options = v.extend({}, this.options, options);
-      if (!v.contains(options.within, value)) {
+      var caseInsensitive = options.caseSensitive === false;
+      if (!v.contains(options.within, value, caseInsensitive)) {
         return;
       }
       var message = options.message || this.message || "^%{value} is restricted";

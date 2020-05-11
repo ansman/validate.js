@@ -47,6 +47,21 @@ describe("validators.inclusion", function() {
     expect(inclusion("baz", ["foo", "bar"])).toBeDefined();
   });
 
+  describe("caseSensitive false", function() {
+    it("finds keys if the within value is an object", function() {
+      expect(inclusion("Foo", {within: {foo: true}, caseSensitive: false })).not.toBeDefined();
+      expect(inclusion("foo", {within: {fOO: true}, caseSensitive: false })).not.toBeDefined();
+      expect(inclusion("bar", {within: {fOO: true}, caseSensitive: false })).toBeDefined();
+    });
+  
+    it("finds options if the within value is an array", function() {
+      expect(inclusion("Foo", {within: ["foo", "bar"], caseSensitive: false })).not.toBeDefined();
+      expect(inclusion("bar", {within: ["foo", "BaR"], caseSensitive: false })).not.toBeDefined();
+      expect(inclusion("bar", {within: ["foo", "bar"], caseSensitive: false })).not.toBeDefined();
+      expect(inclusion("baz", {within: ["foo", "bar"], caseSensitive: false })).toBeDefined();
+    });
+  });
+
   it("supports default options", function() {
     validate.validators.inclusion.options = {
       message: "barfoo",
