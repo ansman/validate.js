@@ -6,6 +6,10 @@ For documentation please see [validatejs.org/](http://validatejs.org/).
 
 For issues and feature requests visit the [issue tracker](https://github.com/ansman/validate.js/issues).
 
+Archive Notice
+---
+As I do not work as a web developer professionally any longer I do not have the bandwidth to maintain this. This project will continue to live as is but no new features will be added and no bugs will be fixed. There are likely better and more modern alternatives around.  
+
 Building validate.js
 ---
 ### Requirements
