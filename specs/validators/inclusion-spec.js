@@ -10,6 +10,10 @@ describe("validators.inclusion", function() {
   it("allows empty values", function() {
     expect(inclusion(null, {})).not.toBeDefined();
     expect(inclusion(undefined, {})).not.toBeDefined();
+    expect(inclusion('', {
+      within: within,
+      excludes: [function (v) { return v === ''; }],
+    })).not.toBeDefined();
   });
 
   it("returns nothing if the value is allowed", function() {
