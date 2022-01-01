@@ -40,5 +40,8 @@
     "grunt-template-jasmine-istanbul": "0.4.0",
     "coveralls": "2.11.9"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "xregexp": "^4.1.1"
+  }
 }
