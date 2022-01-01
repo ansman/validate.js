@@ -12,6 +12,7 @@ describe("validators.numericality", function() {
     delete n.notGreaterThan;
     delete n.notGreaterThanOrEqualTo;
     delete n.notEqualTo;
+    delete n.notUnequalTo;
     delete n.notLessThan;
     delete n.notLessThanOrEqualTo;
     delete n.notDivisibleBy;
@@ -157,6 +158,30 @@ describe("validators.numericality", function() {
     it("allows for a custom message", function() {
       var expected = "custom message";
       expect(numericality(3.13, {equalTo: 3.14, notEqualTo:expected})).toEqual([expected]);
+    });
+  });
+
+  describe("unequalTo", function() {
+    it("allows numbers that are unequal to", function() {
+      expect(numericality(2.72, {unequalTo: 2.73})).not.toBeDefined();
+    });
+
+    it("doesn't allow numbers that are equal", function() {
+      var expected = ["must be unequal to 2.72"];
+      expect(numericality(2.72, {unequalTo: 2.72})).toEqual(expected);
+    });
+
+    it("allows for a default message", function() {
+      validate.validators.numericality.message = "default generic message";
+      expect(numericality(3.13, {unequalTo: 3.13})).toEqual(["default generic message"]);
+
+      validate.validators.numericality.notUnequalTo = "default message";
+      expect(numericality(3.13, {unequalTo: 3.13})).toEqual(["default message"]);
+    });
+
+    it("allows for a custom message", function() {
+      var expected = "custom message";
+      expect(numericality(3.13, {unequalTo: 3.13, notUnequalTo:expected})).toEqual([expected]);
     });
   });
 

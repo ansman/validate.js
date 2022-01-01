@@ -836,6 +836,7 @@
             greaterThan:          function(v, c) { return v > c; },
             greaterThanOrEqualTo: function(v, c) { return v >= c; },
             equalTo:              function(v, c) { return v === c; },
+            unequalTo:            function(v, c) { return v !== c; },
             lessThan:             function(v, c) { return v < c; },
             lessThanOrEqualTo:    function(v, c) { return v <= c; },
             divisibleBy:          function(v, c) { return v % c === 0; }
