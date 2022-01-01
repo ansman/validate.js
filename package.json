@@ -30,15 +30,15 @@
     "client"
   ],
   "devDependencies": {
-    "grunt": "1.0.1",
-    "grunt-notify": "0.4.5",
-    "grunt-contrib-watch": "1.0.0",
+    "coveralls": "2.11.9",
+    "grunt": "^1.0.4",
+    "grunt-contrib-jasmine": "1.0.3",
     "grunt-contrib-jshint": "1.0.0",
     "grunt-contrib-uglify": "1.0.1",
-    "grunt-contrib-jasmine": "1.0.3",
+    "grunt-contrib-watch": "^1.1.0",
     "grunt-docco": "0.4.0",
-    "grunt-template-jasmine-istanbul": "0.4.0",
-    "coveralls": "2.11.9"
+    "grunt-notify": "0.4.5",
+    "grunt-template-jasmine-istanbul": "0.4.0"
   },
   "license": "MIT"
 }
