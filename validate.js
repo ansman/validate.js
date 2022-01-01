@@ -102,6 +102,9 @@
         validators = v.result(constraints[attr], value, attributes, attr, options, constraints);
 
         for (validatorName in validators) {
+          if (validatorName === 'attributeLabel') {
+            continue;
+          }
           validator = v.validators[validatorName];
 
           if (!validator) {
@@ -121,6 +124,7 @@
           }
           results.push({
             attribute: attr,
+            attributeLabel: validators.attributeLabel,
             value: value,
             validator: validatorName,
             globalOptions: options,
@@ -649,7 +653,7 @@
         if (error[0] === '^') {
           error = error.slice(1);
         } else if (options.fullMessages !== false) {
-          error = v.capitalize(prettify(errorInfo.attribute)) + " " + error;
+          error = (errorInfo.attributeLabel || v.capitalize(prettify(errorInfo.attribute))) + " " + error;
         }
         error = error.replace(/\\\^/g, "^");
         error = v.format(error, {
