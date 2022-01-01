@@ -80,6 +80,7 @@
     runValidations: function(attributes, constraints, options) {
       var results = []
         , attr
+        , constraint
         , validatorName
         , value
         , validators
@@ -89,6 +90,29 @@
 
       if (v.isDomElement(attributes) || v.isJqueryElement(attributes)) {
         attributes = v.collectFormValues(attributes);
+      }
+
+      // In 'exclusive' mode, make sure that there's a constraint for each and
+      // every attribute. Nested attribute names are matched as well.
+      if (options.exclusive === true) {
+        for (attr in attributes) {
+          value = v.getDeepObjectValue(attributes, attr);
+          var declared = false;
+          for (constraint in constraints) {
+            if (constraint === attr || constraint.indexOf(attr + ".") === 0) {
+              declared = true;
+            }
+          }
+          if (!declared) {
+            results.push({
+              attribute: attr,
+              value: value,
+              globalOptions: options,
+              attributes: attributes,
+              error: options.exclusiveErrorMessage || "is not permitted (exclusive mode)",
+            });
+          }
+        }
       }
 
       // Loops through each constraints, finds the correct validator and run it.
